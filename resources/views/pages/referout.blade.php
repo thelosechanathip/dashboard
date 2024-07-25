@@ -74,6 +74,9 @@
             </div>
         </div>
         <div class="row mt-1">
+            <div class="spinner-border" style="position: absolute; top: 50%; left: 55%;" id="loadingIcon" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
             <div class="col">
                 <canvas id="myChart" width="300" height="100"></canvas>
             </div>
@@ -86,6 +89,16 @@
         $(document).ready(function() {
             $('#yearForm').hide();
             $('#allForm').hide();
+
+            function showLoadingIcon() {
+                $('#loadingIcon').show();
+                $('#myChart').hide();
+            }
+
+            function hideLoadingIcon() {
+                $('#loadingIcon').hide();
+                $('#myChart').show();
+            }
 
             $('#submitSelect').click(function() {
                 var selectForm = $('#select').val();
@@ -113,13 +126,13 @@
             }
 
             function fetch_one_year(year) {
+                showLoadingIcon();
                 $.ajax({
                     url: '{{ route('getReferOutData') }}',
                     type: 'GET',
-                    data: {
-                        year: year
-                    },
+                    data: { year: year },
                     success: function(response) {
+                        hideLoadingIcon();
                         var chartDataYear = response.chartDataYear;
 
                         if (chart) {
@@ -131,37 +144,19 @@
                             type: 'bar',
                             data: chartDataYear,
                             options: {
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                },
+                                scales: { y: { beginAtZero: true } },
                                 onClick: function(evt, elements) {
                                     if (elements.length > 0) {
-                                        var index = elements[0]._index;
-                                        var datasetIndex = elements[0]._datasetIndex;
+                                        var index = elements[0].index;
+                                        var datasetIndex = elements[0].datasetIndex;
                                         var month_count = chartDataYear.datasets[datasetIndex].data[index].toLocaleString();
                                         var month = chartDataYear.labels[index];
                                         var year = $('#yearSelect').val();
 
                                         if(parseInt(year) == 0) {
                                             var defaultYear = '{{ $year }}';
-                                            if(parseInt(total) == 0) {
-                                                $('#budgetYear').show();
-                                                setText(total);
-                                            } else {
-                                                $('#budgetYear').show();
-                                                setText(total);
-                                            }
                                             fetch_daily_data(defaultYear, month);
                                         } else {
-                                            if(parseInt(total) == 0) {
-                                                $('#budgetYear').show();
-                                                setText(total);
-                                            } else {
-                                                $('#budgetYear').show();
-                                                setText(total);
-                                            }
                                             fetch_daily_data(year, month);
                                         }
                                     }
@@ -169,7 +164,6 @@
                             }
                         });
 
-                        // ดึงข้อมูลทั้งหมดจากกราฟและคำนวณผลรวม
                         var total = chartDataYear.datasets[0].data.reduce(function(sum, value) {
                             return sum + value;
                         }, 0).toLocaleString();
@@ -183,20 +177,20 @@
                         }
                     },
                     error: function(xhr, status, error) {
+                        hideLoadingIcon();
                         alert('Error: ' + error);
                     }
                 });
             }
 
             function fetch_daily_data(year, month) {
+                showLoadingIcon();
                 $.ajax({
                     url: '{{ route('getReferOutDailyData') }}',
                     type: 'GET',
-                    data: {
-                        year: year,
-                        month: month
-                    },
+                    data: { year: year, month: month },
                     success: function(response) {
+                        hideLoadingIcon();
                         var chartDataDaily = response.chartDataDaily;
 
                         if (chart) {
@@ -207,13 +201,7 @@
                         chart = new Chart(ctx, {
                             type: 'bar',
                             data: chartDataDaily,
-                            options: {
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
+                            options: { scales: { y: { beginAtZero: true } } }
                         });
 
                         var total = chartDataDaily.datasets[0].data.reduce(function(sum, value) {
@@ -229,6 +217,7 @@
                         }
                     },
                     error: function(xhr, status, error) {
+                        hideLoadingIcon();
                         alert('Error: ' + error);
                     }
                 });
@@ -236,11 +225,13 @@
 
             $('#submitAll').click(function() {
                 var formData = $('#allForm').serialize();
+                showLoadingIcon();
                 $.ajax({
                     url: '{{ route('getReferOutSelectData') }}',
                     type: 'GET',
                     data: formData,
                     success: function(response) {
+                        hideLoadingIcon();
                         if(response.status === 500) {
                             alert(response.error);
                         } else {
@@ -254,13 +245,7 @@
                             chart = new Chart(ctx, {
                                 type: 'bar',
                                 data: chartDataDaily,
-                                options: {
-                                    scales: {
-                                        y: {
-                                            beginAtZero: true
-                                        }
-                                    }
-                                }
+                                options: { scales: { y: { beginAtZero: true } } }
                             });
 
                             var total = chartDataDaily.datasets[0].data.reduce(function(sum, value) {
@@ -295,3 +280,4 @@
         });
     </script>
 @endsection
+

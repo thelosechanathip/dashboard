@@ -74,6 +74,9 @@
             </div>
         </div>
         <div class="row mt-1">
+            <div class="spinner-border" style="position: absolute; top: 50%; left: 55%;" id="loadingIcon" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
             <div class="col">
                 <canvas id="myChart" width="300" height="100"></canvas>
             </div>
@@ -86,6 +89,16 @@
         $(document).ready(function() {
             $('#yearForm').hide();
             $('#allForm').hide();
+
+            function showLoadingIcon() {
+                $('#loadingIcon').show();
+                $('#myChart').hide();
+            }
+
+            function hideLoadingIcon() {
+                $('#loadingIcon').hide();
+                $('#myChart').show();
+            }
 
             $('#submitSelect').click(function() {
                 var selectForm = $('#select').val();
@@ -113,6 +126,7 @@
             }
 
             function fetch_one_year(year) {
+                showLoadingIcon();
                 $.ajax({
                     url: '{{ route('getOvstData') }}',
                     type: 'GET',
@@ -120,6 +134,7 @@
                         year: year
                     },
                     success: function(response) {
+                        hideLoadingIcon();
                         var chartDataYear = response.chartDataYear;
 
                         if (chart) {
@@ -180,12 +195,14 @@
                         }
                     },
                     error: function(xhr, status, error) {
+                        hideLoadingIcon();
                         alert('Error: ' + error);
                     }
                 });
             }
 
             function fetch_daily_data(year, month) {
+                showLoadingIcon();
                 $.ajax({
                     url: '{{ route('getOvstDailyData') }}',
                     type: 'GET',
@@ -194,6 +211,7 @@
                         month: month
                     },
                     success: function(response) {
+                        hideLoadingIcon();
                         var chartDataDaily = response.chartDataDaily;
 
                         if (chart) {
@@ -214,6 +232,7 @@
                         });
                     },
                     error: function(xhr, status, error) {
+                        hideLoadingIcon();
                         alert('Error: ' + error);
                     }
                 });
@@ -221,11 +240,13 @@
 
             $('#submitAll').click(function() {
                 var formData = $('#allForm').serialize();
+                showLoadingIcon();
                 $.ajax({
                     url: '{{ route('getOvstSelectData') }}',
                     type: 'GET',
                     data: formData,
                     success: function(response) {
+                        hideLoadingIcon();
                         if(response.status === 500) {
                             alert(response.error);
                         } else {

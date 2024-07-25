@@ -36,7 +36,14 @@
                             <h3 class="fw-bold p-2">กราฟแสดงการขอเลข Authen Code</h3>
                         </div>
                         <div class="mt-5">
-                            <canvas id="myChart"></canvas>
+                            <div class="">
+                                <div class="spinner-border loadingIcon" style="position: absolute; left: 20%; top: 60%;" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <div class="">
+                                    <canvas id="myChart"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -107,7 +114,12 @@
                     <h3>รายชื่อคนไข้ที่ยังไม่ได้มีการขอเลข Authen Code</h3>
                     <a class="btn btn-success" href="{{ route('exportNotAuthenCode') }}">Excel</a>
                 </div>
-                <div class="mt-5" id="table-not-authen-code"></div>
+                <div class="">
+                    <div class="spinner-border loadingIcon" style="position: absolute; left: 50%; top: 60%;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="mt-5" id="table-not-authen-code"></div>
+                </div>
             </div>
         </div>
 
@@ -118,13 +130,27 @@
     <script>
         $(document).ready(function() {
 
+            function showLoadingIcon() {
+                $('.loadingIcon').show();
+                $('#myChart').hide();
+                $('#table-not-authen-code').hide();
+            }
+
+            function hideLoadingIcon() {
+                $('.loadingIcon').hide();
+                $('#myChart').show();
+                $('#table-not-authen-code').show();
+            }
+
             var chart;
 
             function fetch_one_year() {
+                showLoadingIcon();
                 $.ajax({
                     url: '{{ route('getAuthenCodeCount') }}',
                     type: 'GET',
                     success: function(response) {
+                        hideLoadingIcon();
                         var chartData = response.chart;
 
                         if (chart) {
@@ -145,6 +171,7 @@
                         });
                     },
                     error: function(xhr, status, error) {
+                        hideLoadingIcon();
                         alert('Error: ' + error);
                     }
                 });
@@ -155,10 +182,12 @@
             fetchAllAuthenCode();
 
             function fetchAllAuthenCode() {
+                showLoadingIcon();
                 $.ajax({
                     url: '{{ route('authenCodeFetchAll') }}',
                     method: 'get',
                     success: function(response) {
+                        hideLoadingIcon();
                         $("#table-not-authen-code").html(response);
                         $("#table-list-authen-code").DataTable({
                             responsive: true,

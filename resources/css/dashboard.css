@@ -12,11 +12,18 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+/* ICON Download Start */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+/* ICON Download End */
+
 /* SUB MENU CUSTOM START */
 .sub-menu-custom:hover a {
     /* background-color: gray !important; */
     font-weight: 700 !important;
-    color: rgb(4, 4, 154) !important;
+    color: #198754 !important;
     /* transition: transform 1s ease; */
 }
 /* SUB MENU CUSTOM END */
