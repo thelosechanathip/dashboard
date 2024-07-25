@@ -49,49 +49,49 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">รายการ</th>
+                                    <th class="text-center">ofc_lgo</th>
+                                    <th class="text-center">sss</th>
+                                    <th class="text-center">ucs</th>
+                                    <th class="text-center">wel</th>
+                                    <th class="text-center">nrh</th>
+                                    <th class="text-center">other</th>
                                     <th class="text-center">จำนวน</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td class="text-bg-primary">จำนวนคนไข้ที่ได้ทำการขอเลข Authen Code เรียบร้อย</td>
-                                    <td class="text-end text-bg-primary">{{ $summarize_count->total_authen_success }}</td>
+                                    <td class="text-bg-primary text-end">{{ $summarize_count->ofc_lgo_authen }}</td>
+                                    <td class="text-bg-primary text-end">{{ $summarize_count->sss_authen }}</td>
+                                    <td class="text-bg-primary text-end">{{ $summarize_count->ucs_authen }}</td>
+                                    <td class="text-bg-primary text-end">{{ $summarize_count->wel_authen }}</td>
+                                    <td class="text-bg-primary text-end">{{ $summarize_count->nrh_authen }}</td>
+                                    <td class="text-bg-primary text-end">{{ $summarize_count->other_authen }}</td>
+                                    <td class="text-bg-primary text-end">{{ $summarize_count->ovst_authen_all }}</td>
                                 </tr>
-                                @if ($summarize_count->total_not_authen != '0')
+                                @if ($summarize_count->ovst_not_authen_all != '0')
                                     <tr>
                                         <td class="text-bg-danger">จำนวนคนไข้ที่ยังไม่ได้ขอเลข Authen Code</td>
-                                        <td class="text-end text-bg-danger">{{ $summarize_count->total_not_authen }}</td>
+                                        <td class="text-bg-danger text-end">{{ $summarize_count->ofc_lgo_not_authen }}</td>
+                                        <td class="text-bg-danger text-end">{{ $summarize_count->sss_not_authen }}</td>
+                                        <td class="text-bg-danger text-end">{{ $summarize_count->ucs_not_authen }}</td>
+                                        <td class="text-bg-danger text-end">{{ $summarize_count->wel_not_authen }}</td>
+                                        <td class="text-bg-danger text-end">{{ $summarize_count->nrh_not_authen }}</td>
+                                        <td class="text-bg-danger text-end">{{ $summarize_count->other_not_authen }}</td>
+                                        <td class="text-bg-danger text-end">{{ $summarize_count->ovst_not_authen_all }}</td>
                                     </tr>
                                 @else
                                 @endif
                                 <tr>
-                                    <td class="">สิทธิ์ ( ข้าราชการ/รัฐวิสาหกิจ )</td>
-                                    <td class="text-end ">{{ $summarize_count->ofc_lgo }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="">สิทธิ์ ( บัตรประกันสังคม )</td>
-                                    <td class="text-end ">{{ $summarize_count->sss }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="">สิทธิ์ ( UC (บัตรทอง ไม่มี ท.) )</td>
-                                    <td class="text-end ">{{ $summarize_count->ucs }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="">สิทธิ์ ( สปร. (บัตรทอง มี ท.) )</td>
-                                    <td class="text-end ">{{ $summarize_count->wel }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="">สิทธิ์ ( คนต่างด้าวที่ขึ้นทะเบียน )</td>
-                                    <td class="text-end ">{{ $summarize_count->nrh }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="">สิทธิ์ ( อื่นๆ (ต่างด้าวไม่ขึ้นทะเบียน / ชำระเงินเอง) )</td>
-                                    <td class="text-end ">{{ $summarize_count->other }}</td>
-                                </tr>
-                                <tr>
                                     <td class="fw-bold">รวม</td>
+                                    <td class=""></td>
+                                    <td class=""></td>
+                                    <td class=""></td>
+                                    <td class=""></td>
+                                    <td class=""></td>
+                                    <td class=""></td>
                                     <td class="text-end">
-                                        {{ $summarize_count->total_not_authen + $summarize_count->total_authen_success }}
+                                        {{ $summarize_count->ovst_all }}
                                     </td>
                                 </tr>
                             </tbody>
