@@ -1,0 +1,165 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* SUB MENU CUSTOM START */
+.sub-menu-custom:hover a {
+    /* background-color: gray !important; */
+    font-weight: 700 !important;
+    color: rgb(4, 4, 154) !important;
+    /* transition: transform 1s ease; */
+}
+/* SUB MENU CUSTOM END */
+
+.content-wrapper {
+    flex: 1;
+    display: flex;
+}
+
+#sidebar {
+    height: calc(100vh - 113px);
+    transition: transform 0.3s ease;
+    transform: translateX(0);
+    position: fixed;
+    left: 0;
+    width: 250px;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+#sidebarToggle {
+    width: 40px;
+    height: 40px;
+    color: black;
+    transition: transform 0.3s ease;
+}
+
+#sidebarToggle:hover {
+    transform: scale(1.05)
+}
+
+#sidebar-content {
+    margin-top: 57px;
+}
+
+#sidebar.collapsed {
+    transform: translateX(-250px);
+}
+
+#sidebar::-webkit-scrollbar {
+    width: 12px; /* ความกว้างของ scrollbar */
+}
+
+#sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1; /* สีของพื้นหลัง scrollbar track */
+    border-radius: 10px; /* มุมโค้งของ track */
+}
+
+#sidebar::-webkit-scrollbar-thumb {
+    background: #888; /* สีของ scrollbar thumb */
+    border-radius: 10px; /* มุมโค้งของ thumb */
+}
+
+#sidebar::-webkit-scrollbar-thumb:hover {
+    background: #555; /* สีของ scrollbar thumb เมื่อ hover */
+}
+
+#main-content {
+    height: calc(100vh - 113px);
+    overflow-y: auto;
+}
+
+#main-content::-webkit-scrollbar {
+    width: 12px; /* ความกว้างของ scrollbar */
+}
+
+#main-content::-webkit-scrollbar-track {
+    background: #f1f1f1; /* สีของพื้นหลัง scrollbar track */
+    border-radius: 10px; /* มุมโค้งของ track */
+}
+
+#main-content::-webkit-scrollbar-thumb {
+    background: #888; /* สีของ scrollbar thumb */
+    border-radius: 10px; /* มุมโค้งของ thumb */
+}
+
+#main-content::-webkit-scrollbar-thumb:hover {
+    background: #555; /* สีของ scrollbar thumb เมื่อ hover */
+}
+
+.main-content {
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+    flex: 1;
+    padding: 20px;
+}
+
+.full-width {
+    margin-left: 0 !important;
+}
+
+.sidebar .nav-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rotate-icon {
+    transition: transform 0.3s ease-in-out;
+}
+
+.rotate-icon.rotated {
+    transform: rotate(180deg);
+}
+
+.nav-link::after {
+    display: none !important;
+}
+
+.collapse {
+    display: none;
+    transition: height 0.5s ease, display 0.5s ease;
+}
+
+.collapse.show {
+    display: block;
+    height: auto;
+}
+
+.collapsing {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s ease;
+}
+
+.zoom-card {
+    transition: transform 0.3s ease;
+}
+
+.zoom-card:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 1400px) {
+    #sidebar.collapsed {
+        transform: translateX(-250px);
+    }
+
+    .main-content {
+        margin-left: translateX(250px);
+    }
+
+    .full-width {
+        width: 100% !important;
+    }
+}
