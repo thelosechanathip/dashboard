@@ -56,12 +56,12 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">รายการ</th>
-                                    <th class="text-center">ofc_lgo</th>
-                                    <th class="text-center">sss</th>
-                                    <th class="text-center">ucs</th>
-                                    <th class="text-center">wel</th>
-                                    <th class="text-center">nrh</th>
-                                    <th class="text-center">other</th>
+                                    <th class="text-center">OFC_LGO</th>
+                                    <th class="text-center">SSS</th>
+                                    <th class="text-center">UCS</th>
+                                    <th class="text-center">WEL</th>
+                                    <th class="text-center">BRH</th>
+                                    <th class="text-center">OTHER</th>
                                     <th class="text-center">จำนวน</th>
                                 </tr>
                             </thead>

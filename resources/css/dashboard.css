@@ -8,59 +8,9 @@ body {
     flex-direction: column;
 }
 
+/* SCROLL BAR START */
 body::-webkit-scrollbar {
     display: none;
-}
-
-/* ICON Download Start */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-/* ICON Download End */
-
-/* SUB MENU CUSTOM START */
-.sub-menu-custom:hover a {
-    /* background-color: gray !important; */
-    font-weight: 700 !important;
-    color: #198754 !important;
-    /* transition: transform 1s ease; */
-}
-/* SUB MENU CUSTOM END */
-
-.content-wrapper {
-    flex: 1;
-    display: flex;
-}
-
-#sidebar {
-    height: calc(100vh - 113px);
-    transition: transform 0.3s ease;
-    transform: translateX(0);
-    position: fixed;
-    left: 0;
-    width: 250px;
-    z-index: 1000;
-    overflow-y: auto;
-}
-
-#sidebarToggle {
-    width: 40px;
-    height: 40px;
-    color: black;
-    transition: transform 0.3s ease;
-}
-
-#sidebarToggle:hover {
-    transform: scale(1.05)
-}
-
-#sidebar-content {
-    margin-top: 57px;
-}
-
-#sidebar.collapsed {
-    transform: translateX(-250px);
 }
 
 #sidebar::-webkit-scrollbar {
@@ -102,6 +52,56 @@ body::-webkit-scrollbar {
 
 #main-content::-webkit-scrollbar-thumb:hover {
     background: #555; /* สีของ scrollbar thumb เมื่อ hover */
+}
+/* SCROLL BAR END */
+
+/* MENU CUSTOM START */
+.menu-custom:hover a {
+    font-weight: 700 !important;
+    color: #198754 !important;
+}
+/* MENU CUSTOM END */
+
+/* SUB MENU CUSTOM START */
+.sub-menu-custom:hover a {
+    font-weight: 700 !important;
+    color: #198754 !important;
+}
+/* SUB MENU CUSTOM END */
+
+.content-wrapper {
+    flex: 1;
+    display: flex;
+}
+
+#sidebar {
+    height: calc(100vh - 113px);
+    transition: transform 0.3s ease;
+    transform: translateX(0);
+    position: fixed;
+    left: 0;
+    width: 250px;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+#sidebarToggle {
+    width: 40px;
+    height: 40px;
+    color: black;
+    transition: transform 0.3s ease;
+}
+
+#sidebarToggle:hover {
+    transform: scale(1.05)
+}
+
+#sidebar-content {
+    margin-top: 57px;
+}
+
+#sidebar.collapsed {
+    transform: translateX(-250px);
 }
 
 .main-content {
