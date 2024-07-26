@@ -322,6 +322,24 @@
                                         y: {
                                             beginAtZero: true
                                         }
+                                    },
+                                    onClick: function(evt, elements) {
+                                        if (elements.length > 0) {
+                                            var index = elements[0]._index;
+                                            var datasetIndex = elements[0]._datasetIndex;
+                                            var date_count = chartDataDaily.datasets[datasetIndex].data[index].toLocaleString();
+                                            var date = chartDataDaily.labels[index];
+
+                                            // console.log(date);
+                                            if(parseInt(date_count) == 0) {
+                                                $('#budgetYear').show();
+                                                setText(date_count);
+                                            } else {
+                                                $('#budgetYear').show();
+                                                setText(date_count);
+                                            }
+                                            fetch_name_doctor_data(date);
+                                        }
                                     }
                                 }
                             });
