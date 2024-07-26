@@ -71,6 +71,7 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('getIptData', [IptController::class, 'getIptData'])->name('getIptData');
             Route::get('getIptDailyData', [IptController::class, 'getIptDailyData'])->name('getIptDailyData');
             Route::get('getIptSelectData', [IptController::class, 'getIptSelectData'])->name('getIptSelectData');
+            Route::get('getIptNameDoctorData', [IptController::class, 'getIptNameDoctorData'])->name('getIptNameDoctorData');
         // Ipt End
     // Pages End
 

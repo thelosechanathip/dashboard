@@ -230,6 +230,59 @@
                                     y: {
                                         beginAtZero: true
                                     }
+                                },
+                                onClick: function(evt, elements) {
+                                    if (elements.length > 0) {
+                                        var index = elements[0]._index;
+                                        var date_count = chartDataDaily.datasets[datasetIndex].data[index].toLocaleString();
+                                        var date = chartDataDaily.labels[index];
+
+                                        // console.log(date);
+                                        if(parseInt(date_count) == 0) {
+                                            $('#budgetYear').show();
+                                            setText(date_count);
+                                        } else {
+                                            $('#budgetYear').show();
+                                            setText(date_count);
+                                        }
+                                        fetch_name_doctor_data(date);
+                                    }
+                                }
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        hideLoadingIcon();
+                        alert('Error: ' + error);
+                    }
+                });
+            }
+
+            function fetch_name_doctor_data(date) {
+                showLoadingIcon();
+                $.ajax({
+                    url: '{{ route('getIptNameDoctorData') }}',
+                    type: 'GET',
+                    data: {
+                        date: date
+                    },
+                    success: function(response) {
+                        hideLoadingIcon();
+                        var chartDataDaily = response.chartDataDaily;
+
+                        if (chart) {
+                            chart.destroy();
+                        }
+
+                        var ctx = document.getElementById('myChart').getContext('2d');
+                        chart = new Chart(ctx, {
+                            type: 'bar',
+                            data: chartDataDaily,
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
                                 }
                             }
                         });

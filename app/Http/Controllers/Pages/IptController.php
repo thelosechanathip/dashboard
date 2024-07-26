@@ -212,6 +212,47 @@ class IptController extends Controller
         }
     }
 
+    // ถึงตรงนี้
+    public function getIptNameDoctorData(Request $request) {
+        try {
+            $date = $request->input('date');
+
+            $daily_count = DB::table('ipt')
+                ->select(DB::raw('DATE(regdate) as date'), DB::raw('COUNT(*) as count'))
+                ->whereDate('regdate', $date)
+                ->groupBy(DB::raw('DATE(regdate)'))
+                ->orderBy('date')
+                ->get();
+
+            $dates = [];
+            $counts = [];
+            foreach ($daily_count as $data) {
+                $dates[] = $data->date;
+                $counts[] = $data->count;
+            }
+
+            $chartDataDaily = [
+                'labels' => $dates,
+                'datasets' => [
+                    [
+                        'label' => 'จำนวน Admit รายวัน',
+                        'data' => $counts,
+                        'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                        'borderColor' => 'rgba(54, 162, 235, 3)',
+                        'borderWidth' => 1
+                    ]
+                ]
+            ];
+
+            return response()->json(['chartDataDaily' => $chartDataDaily]);
+        } catch (\Exception $e) {
+            // บันทึกข้อผิดพลาดลงใน log
+            \Log::error($e->getMessage());
+            return response()->json(['error' => 'Server Error'], 500);
+        }
+    }
+    // ถึงตรงนี้
+
     public function getIptSelectData(Request $request) {
         try {
             $minDate = $request->min_date;
