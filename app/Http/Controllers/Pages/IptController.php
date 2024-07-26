@@ -217,26 +217,37 @@ class IptController extends Controller
         try {
             $date = $request->input('date');
 
-            $daily_count = DB::table('ipt')
-                ->select(DB::raw('DATE(regdate) as date'), DB::raw('COUNT(*) as count'))
-                ->whereDate('regdate', $date)
-                ->groupBy(DB::raw('DATE(regdate)'))
-                ->orderBy('date')
-                ->get();
-
-            $dates = [];
-            $counts = [];
-            foreach ($daily_count as $data) {
-                $dates[] = $data->date;
-                $counts[] = $data->count;
+            // Validate the date input
+            if (!$date || !strtotime($date)) {
+                return response()->json(['error' => 'Invalid date format'], 400);
             }
 
-            $chartDataDaily = [
-                'labels' => $dates,
+            $daily_count = DB::connection('mysql')->select(
+                "
+                    SELECT
+                        dt.name AS doctor_name,
+                        COUNT(i.admdoctor) AS count_doctor_ipt
+                    FROM ipt i
+                    LEFT OUTER JOIN doctor dt ON i.admdoctor = dt.code
+                    WHERE regdate = ?
+                    GROUP BY i.admdoctor
+                ",
+                [$date]
+            );
+
+            $doctor_names = [];
+            $count_doctor_iptes = [];
+            foreach ($daily_count as $data) {
+                $doctor_names[] = $data->doctor_name;
+                $count_doctor_iptes[] = $data->count_doctor_ipt;
+            }
+
+            $chartNameDoctorData = [
+                'labels' => $doctor_names,
                 'datasets' => [
                     [
                         'label' => 'จำนวน Admit รายวัน',
-                        'data' => $counts,
+                        'data' => $count_doctor_iptes,
                         'backgroundColor' => 'rgba(54, 162, 235, 1)',
                         'borderColor' => 'rgba(54, 162, 235, 3)',
                         'borderWidth' => 1
@@ -244,9 +255,9 @@ class IptController extends Controller
                 ]
             ];
 
-            return response()->json(['chartDataDaily' => $chartDataDaily]);
+            return response()->json(['chartNameDoctorData' => $chartNameDoctorData]);
         } catch (\Exception $e) {
-            // บันทึกข้อผิดพลาดลงใน log
+            // Log the error
             \Log::error($e->getMessage());
             return response()->json(['error' => 'Server Error'], 500);
         }

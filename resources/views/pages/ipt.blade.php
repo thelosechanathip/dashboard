@@ -234,6 +234,7 @@
                                 onClick: function(evt, elements) {
                                     if (elements.length > 0) {
                                         var index = elements[0]._index;
+                                        var datasetIndex = elements[0]._datasetIndex;
                                         var date_count = chartDataDaily.datasets[datasetIndex].data[index].toLocaleString();
                                         var date = chartDataDaily.labels[index];
 
@@ -268,7 +269,7 @@
                     },
                     success: function(response) {
                         hideLoadingIcon();
-                        var chartDataDaily = response.chartDataDaily;
+                        var chartNameDoctorData = response.chartNameDoctorData;
 
                         if (chart) {
                             chart.destroy();
@@ -277,7 +278,7 @@
                         var ctx = document.getElementById('myChart').getContext('2d');
                         chart = new Chart(ctx, {
                             type: 'bar',
-                            data: chartDataDaily,
+                            data: chartNameDoctorData,
                             options: {
                                 scales: {
                                     y: {
