@@ -67,8 +67,9 @@ class AuthenCodeController extends Controller
                 LEFT OUTER JOIN vn_stat vs ON o.vn = vs.vn
                 LEFT OUTER JOIN pttype ptt ON vs.pttype = ptt.pttype
                 WHERE o.vstdate = CURDATE()
-                AND pt.nationality = '99'
-                AND vp.auth_code IS NULL;
+                    AND pt.nationality = '99'
+                    AND vp.auth_code IS NULL
+                ORDER BY o.hn DESC
             "
         );
         return (array) $summarize_report;
@@ -83,50 +84,50 @@ class AuthenCodeController extends Controller
         // Execute the query to get the summarized counts
         $summarize_count = DB::connection('mysql')->select(
             "
-            SELECT
-                COUNT(t1.vn) AS ovst_all,
-                COUNT(t2.vn) AS ovst_authen_all,
-                COUNT(CASE WHEN t2.pttype_spp_name = 'ข้าราชการ/รัฐวิสาหกิจ' THEN 1 END) AS ofc_lgo_authen,
-                COUNT(CASE WHEN t2.pttype_spp_name = 'บัตรประกันสังคม' THEN 1 END) AS sss_authen,
-                COUNT(CASE WHEN t2.pttype_spp_name = 'UC (บัตรทอง ไม่มี ท.)' THEN 1 END) AS ucs_authen,
-                COUNT(CASE WHEN t2.pttype_spp_name = 'สปร. (บัตรทอง มี ท.)' THEN 1 END) AS wel_authen,
-                COUNT(CASE WHEN t2.pttype_spp_name = 'คนต่างด้าวที่ขึ้นทะเบียน' THEN 1 END) AS nrh_authen,
-                COUNT(CASE WHEN t2.pttype_spp_name = 'อื่นๆ (ต่างด้าวไม่ขึ้นทะเบียน / ชำระเงินเอง)' THEN 1 END) AS other_authen,
-                COUNT(t3.vn) AS ovst_not_authen_all,
-                COUNT(CASE WHEN t3.pttype_spp_name = 'ข้าราชการ/รัฐวิสาหกิจ' THEN 1 END) AS ofc_lgo_not_authen,
-                COUNT(CASE WHEN t3.pttype_spp_name = 'บัตรประกันสังคม' THEN 1 END) AS sss_not_authen,
-                COUNT(CASE WHEN t3.pttype_spp_name = 'UC (บัตรทอง ไม่มี ท.)' THEN 1 END) AS ucs_not_authen,
-                COUNT(CASE WHEN t3.pttype_spp_name = 'สปร. (บัตรทอง มี ท.)' THEN 1 END) AS wel_not_authen,
-                COUNT(CASE WHEN t3.pttype_spp_name = 'คนต่างด้าวที่ขึ้นทะเบียน' THEN 1 END) AS nrh_not_authen,
-                COUNT(CASE WHEN t3.pttype_spp_name = 'อื่นๆ (ต่างด้าวไม่ขึ้นทะเบียน / ชำระเงินเอง)' THEN 1 END) AS other_not_authen
-            FROM (
                 SELECT
-                    vn,
-                    hn,
-                    vstdate
-                FROM ovst
-                WHERE vstdate = CURRENT_DATE()
-            ) AS t1
-            LEFT JOIN (
-                SELECT
-                    vp.vn,
-                    ptts.pttype_spp_name
-                FROM visit_pttype vp
-                LEFT JOIN vn_stat vs ON vp.vn = vs.vn
-                LEFT JOIN pttype ptt ON vs.pttype = ptt.pttype
-                LEFT JOIN pttype_spp ptts ON ptt.pttype_spp_id = ptts.pttype_spp_id
-                WHERE vp.auth_code IS NOT NULL
-            ) AS t2 ON t1.vn = t2.vn
-            LEFT JOIN (
-                SELECT
-                    vp.vn,
-                    ptts.pttype_spp_name
-                FROM visit_pttype vp
-                LEFT JOIN vn_stat vs ON vp.vn = vs.vn
-                LEFT JOIN pttype ptt ON vs.pttype = ptt.pttype
-                LEFT JOIN pttype_spp ptts ON ptt.pttype_spp_id = ptts.pttype_spp_id
-                WHERE vp.auth_code IS NULL
-            ) AS t3 ON t1.vn = t3.vn
+                    COUNT(t1.vn) AS ovst_all,
+                    COUNT(t2.vn) AS ovst_authen_all,
+                    COUNT(CASE WHEN t2.pttype_spp_name = 'ข้าราชการ/รัฐวิสาหกิจ' THEN 1 END) AS ofc_lgo_authen,
+                    COUNT(CASE WHEN t2.pttype_spp_name = 'บัตรประกันสังคม' THEN 1 END) AS sss_authen,
+                    COUNT(CASE WHEN t2.pttype_spp_name = 'UC (บัตรทอง ไม่มี ท.)' THEN 1 END) AS ucs_authen,
+                    COUNT(CASE WHEN t2.pttype_spp_name = 'สปร. (บัตรทอง มี ท.)' THEN 1 END) AS wel_authen,
+                    COUNT(CASE WHEN t2.pttype_spp_name = 'คนต่างด้าวที่ขึ้นทะเบียน' THEN 1 END) AS nrh_authen,
+                    COUNT(CASE WHEN t2.pttype_spp_name = 'อื่นๆ (ต่างด้าวไม่ขึ้นทะเบียน / ชำระเงินเอง)' THEN 1 END) AS other_authen,
+                    COUNT(t3.vn) AS ovst_not_authen_all,
+                    COUNT(CASE WHEN t3.pttype_spp_name = 'ข้าราชการ/รัฐวิสาหกิจ' THEN 1 END) AS ofc_lgo_not_authen,
+                    COUNT(CASE WHEN t3.pttype_spp_name = 'บัตรประกันสังคม' THEN 1 END) AS sss_not_authen,
+                    COUNT(CASE WHEN t3.pttype_spp_name = 'UC (บัตรทอง ไม่มี ท.)' THEN 1 END) AS ucs_not_authen,
+                    COUNT(CASE WHEN t3.pttype_spp_name = 'สปร. (บัตรทอง มี ท.)' THEN 1 END) AS wel_not_authen,
+                    COUNT(CASE WHEN t3.pttype_spp_name = 'คนต่างด้าวที่ขึ้นทะเบียน' THEN 1 END) AS nrh_not_authen,
+                    COUNT(CASE WHEN t3.pttype_spp_name = 'อื่นๆ (ต่างด้าวไม่ขึ้นทะเบียน / ชำระเงินเอง)' THEN 1 END) AS other_not_authen
+                FROM (
+                    SELECT
+                        vn,
+                        hn,
+                        vstdate
+                    FROM ovst
+                    WHERE vstdate = CURRENT_DATE()
+                ) AS t1
+                LEFT JOIN (
+                    SELECT
+                        vp.vn,
+                        ptts.pttype_spp_name
+                    FROM visit_pttype vp
+                    LEFT JOIN vn_stat vs ON vp.vn = vs.vn
+                    LEFT JOIN pttype ptt ON vs.pttype = ptt.pttype
+                    LEFT JOIN pttype_spp ptts ON ptt.pttype_spp_id = ptts.pttype_spp_id
+                    WHERE vp.auth_code IS NOT NULL
+                ) AS t2 ON t1.vn = t2.vn
+                LEFT JOIN (
+                    SELECT
+                        vp.vn,
+                        ptts.pttype_spp_name
+                    FROM visit_pttype vp
+                    LEFT JOIN vn_stat vs ON vp.vn = vs.vn
+                    LEFT JOIN pttype ptt ON vs.pttype = ptt.pttype
+                    LEFT JOIN pttype_spp ptts ON ptt.pttype_spp_id = ptts.pttype_spp_id
+                    WHERE vp.auth_code IS NULL
+                ) AS t3 ON t1.vn = t3.vn
             "
         );
 
