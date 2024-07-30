@@ -199,11 +199,24 @@ class AuthenCodeController extends Controller
 
     public function exportNotAuthenCode() {
         $summarize_report = $this->query_authen_code();
-        if(count($summarize_report) > 0) {
-            return Excel::download(new AuthenCodeExport($summarize_report), 'authencode.xlsx');
+        if (count($summarize_report) > 0) {
+            // ส่ง JSON กลับไปยัง AJAX
+            return response()->json([
+                'status' => 200,
+                'title' => 'success',
+                'message' => 'Download Success',
+                'icon' => 'success',
+                'download_url' => route('downloadAuthenCode')
+            ]);
         } else {
             echo "<script>alert('ไม่มีคนไข้ที่ยังไม่ได้ขอเลข Authen Code')</script>";
-            return route()->to('report_index_authen_code');
+            return redirect()->route('report_index_authen_code');
         }
+    }
+
+    // สร้างฟังก์ชันใหม่สำหรับดาวน์โหลดไฟล์
+    public function downloadAuthenCode() {
+        $summarize_report = $this->query_authen_code();
+        return Excel::download(new AuthenCodeExport($summarize_report), 'authencode.xlsx');
     }
 }

@@ -56,7 +56,7 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">รายการ</th>
-                                    <th class="text-center">OFC_LGO</th>
+                                    <th class="text-center">OFC/LGO</th>
                                     <th class="text-center">SSS</th>
                                     <th class="text-center">UCS</th>
                                     <th class="text-center">WEL</th>
@@ -112,7 +112,8 @@
             <div class="p-5">
                 <div class="d-flex align-items-center justify-content-between">
                     <h3>รายชื่อคนไข้ที่ยังไม่ได้มีการขอเลข Authen Code</h3>
-                    <a class="btn btn-success" href="{{ route('exportNotAuthenCode') }}">Excel</a>
+                    {{-- <a class="btn btn-success" href="{{ route('exportNotAuthenCode') }}">Excel</a> --}}
+                    <a class="btn btn-success" id="exportNotAuthenCode">Excel</a>
                 </div>
                 <div class="">
                     <div class="spinner-border loadingIcon" style="position: absolute; left: 50%; top: 60%;" role="status">
@@ -196,6 +197,24 @@
                     }
                 });
             }
+
+            $('#exportNotAuthenCode').on('click', function() {
+                $.ajax({
+                    url: '{{ route('exportNotAuthenCode') }}',
+                    method: 'get',
+                    success: function(response) {
+                        hideLoadingIcon();
+                        if (response.status === 200) {
+                            swal.fire(
+                                response.status,
+                                response.message,
+                                response.icon
+                            );
+                            window.location.href = response.download_url;
+                        }
+                    }
+                })
+            });
 
         });
     </script>

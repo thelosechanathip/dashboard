@@ -3,7 +3,12 @@
         <ul class="nav flex-column">
             <li class="nav-item menu-custom">
                 <a class="nav-link {{ request()->routeIs('dashboard') ? 'active text-success fw-bold' : 'text-dark' }}" aria-current="page" href="{{ route('dashboard') }}">
-                    <span><i class="bi bi-house-door me-3 text-success"></i>Dashboard</span>
+                    <span><i class="bi bi-house-door-fill me-3 text-success"></i>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item menu-custom">
+                <a class="nav-link {{ request()->routeIs('palliative_care') ? 'active text-success fw-bold' : 'text-dark' }}" aria-current="page" href="{{ route('palliative_care') }}">
+                    <span><i class="bi bi-person-hearts me-3 text-success"></i>Palliative Care</span>
                 </a>
             </li>
             <li class="nav-item">

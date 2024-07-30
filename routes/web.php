@@ -9,6 +9,7 @@ use App\Http\Controllers\Pages\ErRegistController;
 use App\Http\Controllers\Pages\ReferOutController;
 use App\Http\Controllers\Pages\ReferInController;
 use App\Http\Controllers\Pages\IptController;
+use App\Http\Controllers\Pages\PalliativeCareController;
 use App\Http\Controllers\Reportes\AuthenCodeController;
 
 /*
@@ -73,6 +74,12 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('getIptSelectData', [IptController::class, 'getIptSelectData'])->name('getIptSelectData');
             Route::get('getIptNameDoctorData', [IptController::class, 'getIptNameDoctorData'])->name('getIptNameDoctorData');
         // Ipt End
+
+        // Palliative Care Start
+            Route::get('palliative_care', [PalliativeCareController::class, 'index'])->name('palliative_care');
+            Route::get('getPalliativeCareSelectData', [PalliativeCareController::class, 'getPalliativeCareSelectData'])->name('getPalliativeCareSelectData');
+            Route::get('palliativeCareFetchAll', [PalliativeCareController::class, 'palliativeCareFetchAll'])->name('palliativeCareFetchAll');
+        // Palliative Care End
     // Pages End
 
     // Reportes Start
@@ -81,6 +88,7 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('getAuthenCodeCount', [AuthenCodeController::class, 'getAuthenCodeCount'])->name('getAuthenCodeCount');
             Route::get('authenCodeFetchAll', [AuthenCodeController::class, 'authenCodeFetchAll'])->name('authenCodeFetchAll');
             Route::get('exportNotAuthenCode', [AuthenCodeController::class, 'exportNotAuthenCode'])->name('exportNotAuthenCode');
+            Route::get('downloadAuthenCode', [AuthenCodeController::class, 'downloadAuthenCode'])->name('downloadAuthenCode');
         // Authen Code End
     // Reportes End
 });
