@@ -26,7 +26,7 @@
                 @endif
             </div>
         </div>
-        <div class="mt-2 d-flex justify-content-between align-items-center">
+        <div class="mt-2 d-flex justify-content-between align-items-center border-bottom full-width-bar">
             <div class="d-flex align-items-center">
                 <form id="selectForm" class="me-3">
                     @csrf
@@ -284,7 +284,8 @@
                                     y: {
                                         beginAtZero: true
                                     }
-                                }
+                                },
+                                // indexAxis: 'y',
                             }
                         });
                     },

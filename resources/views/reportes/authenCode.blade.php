@@ -60,7 +60,7 @@
                                     <th class="text-center">SSS</th>
                                     <th class="text-center">UCS</th>
                                     <th class="text-center">WEL</th>
-                                    <th class="text-center">BRH</th>
+                                    <th class="text-center">NRH</th>
                                     <th class="text-center">OTHER</th>
                                     <th class="text-center">จำนวน</th>
                                 </tr>
