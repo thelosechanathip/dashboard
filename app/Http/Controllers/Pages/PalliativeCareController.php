@@ -117,123 +117,140 @@ class PalliativeCareController extends Controller
         // $min_date = $request->min_date;
         // $max_date = $request->max_date;
 
-        // if ($request->service_unit == '99999') {
-        //     $service_unit = "";
-        // } else if ($request->service_unit == '00000') {
-        //     $service_unit = "NOT IN('11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976', '00000')";
-        // } else {
-        //     $service_unit = "= '{$request->service_unit}'";
-        // }
-
-        // if ($request->death_type == '99999') {
-        //     $death_type = "";
-        // } else {
-        //     $death_type = "= '{$request->death_type}'";
-        // }
-
-        $min_date = $request->min_date;
-        $max_date = $request->max_date;
-
-        $palliativeCareFetchListName = DB::connection('mysql')->select(
-            "
-                SELECT
-                    hn,
-                    vn,
-                    vstdate
-                FROM ovst
-                WHERE vstdate BETWEEN ? AND ?
-            ",
-            [$min_date, $max_date]
-        );
-
-        // $palliativeCareFetchListName = DB::connection('mysql')->select(
-        //     "
-        //         SELECT
-        //             MAX(ov.vstdate) AS vstdate,
-        //             ANY_VALUE(pp.name) AS name,
-        //             ov.hn,
-        //             pt.cid,
-        //             CONCAT(pt.pname, pt.fname, ' ', pt.lname) AS ptname,
-        //             pt.birthday,
-        //             (YEAR(NOW()) - YEAR(pt.birthday)) AS age,
-        //             CONCAT(pt.addrpart, ' หมู่ ', pt.moopart, ' ', th.full_name) AS addr,
-        //             ANY_VALUE(zn.rpst_name) AS rpst_name,
-        //             ANY_VALUE(zn.rpst_id) AS rpst_id,
-        //             (SELECT vn.pdx FROM vn_stat vn WHERE vn.vn = ov.vn) AS C,
-        //             IF(ov.pdx = 'Z515' OR ov.dx0 = 'Z515' OR ov.dx1 = 'Z515' OR ov.dx2 = 'Z515' OR ov.dx3 = 'Z515' OR ov.dx4 = 'Z515' OR ov.dx5 = 'Z515', 'Z515', NULL) AS Z,
-        //             IF(ov.pdx = 'Z718' OR ov.dx0 = 'Z718' OR ov.dx1 = 'Z718' OR ov.dx2 = 'Z718' OR ov.dx3 = 'Z718' OR ov.dx4 = 'Z718' OR ov.dx5 = 'Z718', 'Z718', NULL) AS Z718,
-        //             IF(ISNULL(pt.death) OR pt.death = '', 'N', pt.death) AS death,
-        //             (
-        //                 SELECT COUNT(*)
-        //                 FROM ovst_community_service a1
-        //                 INNER JOIN vn_stat vn ON vn.vn = a1.vn
-        //                 WHERE vn.hn = ov.hn
-        //                 AND a1.ovst_community_service_type_id BETWEEN 1 AND 103
-        //             ) AS dayc,
-        //             (
-        //                 SELECT COUNT(*)
-        //                 FROM ovst_community_service a1
-        //                 INNER JOIN vn_stat vn ON vn.vn = a1.vn
-        //                 INNER JOIN ovstdiag di ON di.vn = vn.vn
-        //                 WHERE di.icd10 = 'Z718'
-        //                 AND vn.hn = ov.hn
-        //                 AND a1.ovst_community_service_type_id BETWEEN 1 AND 103
-        //             ) AS dayc1,
-        //             palliative.up.date AS dd1,
-        //             DATEDIFF(NOW(), (
-        //                 SELECT MAX(a1.entry_datetime)
-        //                 FROM ovst_community_service a1
-        //                 INNER JOIN vn_stat vn ON vn.vn = a1.vn
-        //                 WHERE vn.hn = ov.hn
-        //                 AND a1.ovst_community_service_type_id BETWEEN 1 AND 103
-        //             )) AS daym,
-        //             (
-        //                 SELECT SUM(s.PallativeCare)
-        //                 FROM rcmdb.repeclaim s
-        //                 WHERE s.HN = ov.hn
-        //                 AND s.PallativeCare > 0
-        //             ) AS money
-        //         FROM vn_stat ov
-        //         LEFT JOIN pttype pp ON pp.pttype = ov.pttype
-        //         LEFT JOIN ovst_community_service oc ON oc.vn = ov.vn AND oc.ovst_community_service_type_id BETWEEN 1 AND 103
-        //         LEFT JOIN patient pt ON pt.hn = ov.hn
-        //         LEFT JOIN palliative.uploads up ON up.cid = pt.cid
-        //         LEFT JOIN thaiaddress th ON th.addressid = CONCAT(pt.chwpart, pt.amppart, pt.tmbpart)
-        //         LEFT JOIN zbm_rpst zr ON zr.chwpart = pt.chwpart AND zr.amppart = pt.amppart AND zr.tmbpart = pt.tmbpart AND zr.moopart = pt.moopart
-        //         LEFT JOIN zbm_rpst_name zn ON zn.rpst_id = zr.rpst_id
-        //         WHERE pt.death {$death_type}
-        //         AND (ov.pdx = 'Z515' OR ov.dx0 = 'Z515' OR ov.dx1 = 'Z515' OR ov.dx2 = 'Z515' OR ov.dx3 = 'Z515' OR ov.dx4 = 'Z515' OR ov.dx5 = 'Z515')
-        //         AND ov.vstdate BETWEEN {$min_date} AND {$max_date}
-        //         AND zr.rpst_id {$service_unit}
-        //         GROUP BY ov.hn
-        //         ORDER BY ov.vstdate DESC;
-        //     "
-        // );
-
-        // // ตรวจสอบผลลัพธ์ของ query
-        // if (empty($palliativeCareFetchListName)) {
-        //     Log::info('No data found for the given criteria.');
-        // } else {
-        //     Log::info('Data retrieved successfully.');
-        // }
+        $palliativeCareFetchListName = DB::connect('mysql')->select(
+                "
+                    SELECT
+                        MAX(vs.vstdate),
+                        ptt.name AS 'pttype_name',
+                        vs.hn,
+                        pt_all.cid,
+                        pt_all.fullname,
+                        pt_all.birthday,
+                        pt_all.age,
+                        pt_all.fulladdress,
+                        pt_all.rpst_id,
+                        pt_all.rpst_name,
+                        vs.pdx,
+                        CASE
+                            WHEN vs.pdx = 'Z515'
+                                OR vs.dx0 = 'Z515'
+                                OR vs.dx1 = 'Z515'
+                                OR vs.dx2 = 'Z515'
+                                OR vs.dx3 = 'Z515'
+                                OR vs.dx4 = 'Z515'
+                                OR vs.dx5 = 'Z515'
+                            THEN 'Z515'
+                            ELSE NULL
+                        END AS Z515,
+                        CASE
+                            WHEN vs.pdx = 'Z718'
+                                OR vs.dx0 = 'Z718'
+                                OR vs.dx1 = 'Z718'
+                                OR vs.dx2 = 'Z718'
+                                OR vs.dx3 = 'Z718'
+                                OR vs.dx4 = 'Z718'
+                                OR vs.dx5 = 'Z718'
+                            THEN 'Z718'
+                            ELSE NULL
+                        END AS Z718,
+                        (
+                            SELECT COUNT(*)
+                            FROM ovst_community_service a1
+                            INNER JOIN vn_stat vn ON vn.vn = a1.vn
+                            WHERE vn.hn = vs.hn
+                            AND a1.ovst_community_service_type_id BETWEEN 1 AND 103
+                        ) AS dayc,
+                        (
+                            SELECT COUNT(*)
+                            FROM ovst_community_service a1
+                            INNER JOIN vn_stat vn ON vn.vn = a1.vn
+                            INNER JOIN ovstdiag di ON di.vn = vn.vn
+                            WHERE di.icd10 = 'Z718'
+                            AND vn.hn = vs.hn
+                            AND a1.ovst_community_service_type_id BETWEEN 1 AND 103
+                        ) AS dayc1,
+                        pt_all.death,
+                        DATEDIFF(NOW(), (
+                            SELECT MAX(a1.entry_datetime)
+                            FROM ovst_community_service a1
+                            INNER JOIN vn_stat vn ON vn.vn = a1.vn
+                            WHERE vn.hn = vs.hn
+                            AND a1.ovst_community_service_type_id BETWEEN 1 AND 103
+                        )) AS daym,
+                        (
+                            SELECT SUM(s.PallativeCare)
+                            FROM rcmdb.repeclaim s
+                            WHERE s.HN = vs.hn
+                            AND s.PallativeCare > 0
+                        ) AS money
+                    FROM(
+                        SELECT
+                            *
+                        FROM vn_stat vs
+                        WHERE vs.vstdate BETWEEN '2023-07-01' AND '2024-07-31'
+                    ) AS vs
+                    INNER JOIN (
+                        SELECT
+                            pt.hn,
+                            pt.cid,
+                            CONCAT(pt.pname, pt.fname, ' ', pt.lname) AS fullname,
+                            pt.birthday,
+                            (YEAR(CURRENT_DATE()) - YEAR(pt.birthday)) AS age,
+                            CONCAT(pt.addrpart, ' หมู่ ', pt.moopart, ' ', ta.full_name) AS fulladdress,
+                            pt.hcode,
+                            pt.death,
+                            zr.rpst_id,
+                            zrn.rpst_name
+                        FROM patient pt
+                        INNER JOIN thaiaddress ta ON CONCAT(pt.chwpart, pt.amppart, pt.tmbpart) = ta.addressid
+                        INNER JOIN zbm_rpst zr ON ta.addressid = CONCAT(zr.chwpart, zr.amppart, zr.tmbpart)
+                        INNER JOIN zbm_rpst_name zrn ON zr.rpst_id = zrn.rpst_id
+                    ) AS pt_all ON vs.hn = pt_all.hn
+                    INNER JOIN pttype ptt ON vs.pttype = ptt.pttype
+                    LEFT OUTER JOIN ovst_community_service AS oc ON oc.vn = vs.vn AND oc.ovst_community_service_type_id BETWEEN 1 AND 103
+                    WHERE
+                        (vs.pdx = 'Z515' OR vs.dx0 = 'Z515' OR vs.dx1 = 'Z515' OR vs.dx2 = 'Z515' OR vs.dx3 = 'Z515' OR vs.dx4 = 'Z515' OR vs.dx5 = 'Z515')
+                        AND pt_all.rpst_id = '05532'
+                    GROUP BY vs.hn
+                    ORDER BY vs.hn DESC
+                "
+            );
 
         $output = '';
 
-        if (count($palliativeCareFetchListName) > 0) {
+        if ($palliativeCareFetchListName->isNotEmpty()) {
             $output .= '<table id="table-fetch-list-name" class="table table-striped align-middle dt-responsive nowrap" style="width: 100%">
             <thead>
-              <tr>
-                <th>VN</th>
-                <th>HN</th>
-                <th>วันที่รับบริการ</th>
-              </tr>
+                <tr>
+                    <th>วันที่รับบริการ</th>
+                    <th>HN</th>
+                    <th>ประเภทผู้ป่วย</th>
+                    <th>ชื่อผู้ป่วย</th>
+                    <th>เลขบัตรประชาชน</th>
+                    <th>วันเกิด</th>
+                    <th>อายุ</th>
+                    <th>ที่อยู่</th>
+                    <th>ชื่อเขต</th>
+                    <th>สถานะเขต</th>
+                    <th>วันตาย</th>
+                    <th>ค่ายา</th>
+                </tr>
             </thead>
             <tbody>';
             foreach ($palliativeCareFetchListName as $pcfln) {
                 $output .= '<tr>
-                <td>' . $pcfln->vn . '</td>
-                <td>' . $pcfln->hn . '</td>
                 <td>' . $pcfln->vstdate . '</td>
+                <td>' . $pcfln->hn . '</td>
+                <td>' . $pcfln->pttype_name . '</td>
+                <td>' . $pcfln->ptname . '</td>
+                <td>' . $pcfln->cid . '</td>
+                <td>' . $pcfln->birthday . '</td>
+                <td>' . $pcfln->age . '</td>
+                <td>' . $pcfln->addr . '</td>
+                <td>' . $pcfln->rpst_name . '</td>
+                <td>' . $pcfln->rpst_id . '</td>
+                <td>' . $pcfln->dd1 . '</td>
+                <td>' . $pcfln->money . '</td>
               </tr>';
             }
             $output .= '</tbody></table>';
@@ -242,6 +259,4 @@ class PalliativeCareController extends Controller
             echo '<h1 class="text-center text-secondary my-5">ไม่มีคนไข้ Palliative Care</h1>';
         }
     }
-
-
 }

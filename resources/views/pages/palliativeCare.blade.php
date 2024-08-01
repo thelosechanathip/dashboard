@@ -133,10 +133,18 @@
             <div class="row">
                 <div class="col-12">
                     <div class="container">
-                        <div class="mt-5">
+                        <div class="my-5">
                             <canvas id="palliative_my_chart" width="300" height="100"></canvas>
                         </div>
-                        <div class="mb-5">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 card shadow-lg w-auto" id="palliative_list_name_table">
+            <div class="row">
+                <div class="col-12">
+                    <div class="container">
+                        <div class="my-5">
                             <div class="" id="fetch-list-name"></div>
                         </div>
                     </div>
@@ -154,6 +162,7 @@
             $('#palliative_count_death_all_chart').hide();
             $('#palliative_count_death_form').hide();
             $('#palliative_list_name_form').hide();
+            $('#palliative_list_name_table').hide();
 
             $('#select').change(function() {
                 var selectForm = $('#select').val();
@@ -171,15 +180,10 @@
 
             function showLoadingIcon() {
                 $('.loadingIcon').show();
-                $('#palliative_my_chart').hide();
-                $('#palliative_count_death_all_chart').show();
-                $('#table-not-authen-code').hide();
             }
 
             function hideLoadingIcon() {
                 $('.loadingIcon').hide();
-                $('#palliative_my_chart').show();
-                $('#table-not-authen-code').show();
             }
 
             hideLoadingIcon();
@@ -209,6 +213,8 @@
                     data: formData,
                     success: function(response) {
                         hideLoadingIcon();
+                        $('#palliative_count_death_all_chart').show();
+                        $('#palliative_list_name_table').hide();
                         var chart_count_death = response.chart_count_death;
 
                         if (chart) {
@@ -246,7 +252,8 @@
                     data: formData,
                     success: function(response) {
                         hideLoadingIcon();
-                        // console.log(response.message);  // เพิ่ม console.log เพื่อตรวจสอบการตอบกลับ
+                        $('#palliative_list_name_table').show();
+                        $('#palliative_count_death_all_chart').hide();
                         $("#fetch-list-name").html(response);
                         $("#table-fetch-list-name").DataTable({
                             responsive: true,
