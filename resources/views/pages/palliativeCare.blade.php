@@ -140,12 +140,12 @@
                 </div>
             </div>
         </div>
-        <div class="mt-3 card shadow-lg w-auto" id="palliative_list_name_table">
-            <div class="row">
-                <div class="col-12">
-                    <div class="container">
-                        <div class="my-5">
-                            <div class="" id="fetch-list-name"></div>
+        <div class="mt-3 card shadow-lg w-100" id="palliative_list_name_table">
+            <div class="row w-100">
+                <div class="col-12 w-auto">
+                    <div class="mx-5 w-auto">
+                        <div class="my-5 ms-0 w-auto">
+                            <div class="w-auto" id="fetch-list-name"></div>
                         </div>
                     </div>
                 </div>
@@ -257,7 +257,14 @@
                         $("#fetch-list-name").html(response);
                         $("#table-fetch-list-name").DataTable({
                             responsive: true,
-                            order: [0, 'desc']
+                            order: [0, 'desc'],
+                            autoWidth: false,
+                            columnDefs: [
+                                {
+                                    targets: "_all",
+                                    className: "dt-head-center dt-body-center"
+                                }
+                            ]
                         });
                     }
                 });

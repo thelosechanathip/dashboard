@@ -114,119 +114,139 @@ class PalliativeCareController extends Controller
     }
 
     public function getPalliativeCareFetchListName(Request $request) {
-        // $min_date = $request->min_date;
-        // $max_date = $request->max_date;
+        $min_date = $request->min_date;
+        $max_date = $request->max_date;
 
-        $palliativeCareFetchListName = DB::table('vn_stat as vs')
-        ->select(
-            DB::raw('MAX(vs.vstdate) as vstdate'),
-            'ptt.name as pttype_name',
-            'vs.hn',
-            'pt_all.cid',
-            'pt_all.fullname',
-            'pt_all.birthday',
-            'pt_all.age',
-            'pt_all.fulladdress',
-            'pt_all.rpst_id',
-            'pt_all.rpst_name',
-            'vs.pdx',
-            DB::raw("CASE
+        $palliativeCareFetchListName = DB::connection('mysql')->select(
+            "
+                SELECT
+                    vs.vstdate,
+                    ptt.name as pttype_name,
+                    vs.hn,
+                    pt_all.cid,
+                    pt_all.fullname,
+                    pt_all.birthday,
+                    pt_all.age,
+                    pt_all.fulladdress,
+                    pt_all.rpst_id,
+                    pt_all.rpst_name,
+                    vs.pdx,
+                    CASE
                         WHEN vs.pdx = 'Z515' OR vs.dx0 = 'Z515' OR vs.dx1 = 'Z515' OR vs.dx2 = 'Z515' OR vs.dx3 = 'Z515' OR vs.dx4 = 'Z515' OR vs.dx5 = 'Z515'
                         THEN 'Z515'
                         ELSE NULL
-                    END AS Z515"),
-            DB::raw("CASE
+                    END AS Z515,
+                    CASE
                         WHEN vs.pdx = 'Z718' OR vs.dx0 = 'Z718' OR vs.dx1 = 'Z718' OR vs.dx2 = 'Z718' OR vs.dx3 = 'Z718' OR vs.dx4 = 'Z718' OR vs.dx5 = 'Z718'
                         THEN 'Z718'
                         ELSE NULL
-                    END AS Z718"),
-            DB::raw("(SELECT COUNT(*)
-                      FROM ovst_community_service a1
-                      INNER JOIN vn_stat vn ON vn.vn = a1.vn
-                      WHERE vn.hn = vs.hn
-                      AND a1.ovst_community_service_type_id BETWEEN 1 AND 103) AS dayc"),
-            DB::raw("(SELECT COUNT(*)
-                      FROM ovst_community_service a1
-                      INNER JOIN vn_stat vn ON vn.vn = a1.vn
-                      INNER JOIN ovstdiag di ON di.vn = vn.vn
-                      WHERE di.icd10 = 'Z718'
-                      AND vn.hn = vs.hn
-                      AND a1.ovst_community_service_type_id BETWEEN 1 AND 103) AS dayc1"),
-            'pt_all.death',
-            DB::raw("DATEDIFF(NOW(), (SELECT MAX(a1.entry_datetime)
-                      FROM ovst_community_service a1
-                      INNER JOIN vn_stat vn ON vn.vn = a1.vn
-                      WHERE vn.hn = vs.hn
-                      AND a1.ovst_community_service_type_id BETWEEN 1 AND 103)) AS daym"),
-            DB::raw("(SELECT SUM(s.PallativeCare)
-                      FROM rcmdb.repeclaim s
-                      WHERE s.HN = vs.hn
-                      AND s.PallativeCare > 0) AS money")
-        )
-        ->join(DB::raw("(SELECT pt.hn, pt.cid, CONCAT(pt.pname, pt.fname, ' ', pt.lname) AS fullname, pt.birthday,
-                            (YEAR(CURRENT_DATE()) - YEAR(pt.birthday)) AS age,
-                            CONCAT(pt.addrpart, ' หมู่ ', pt.moopart, ' ', ta.full_name) AS fulladdress,
-                            pt.hcode, pt.death, zr.rpst_id, zrn.rpst_name
-                        FROM patient pt
-                        INNER JOIN thaiaddress ta ON CONCAT(pt.chwpart, pt.amppart, pt.tmbpart) = ta.addressid
-                        INNER JOIN zbm_rpst zr ON ta.addressid = CONCAT(zr.chwpart, zr.amppart, zr.tmbpart)
-                        INNER JOIN zbm_rpst_name zrn ON zr.rpst_id = zrn.rpst_id) as pt_all"),
-            'vs.hn', '=', 'pt_all.hn')
-        ->join('pttype as ptt', 'vs.pttype', '=', 'ptt.pttype')
-        ->leftJoin('ovst_community_service as oc', function($join) {
-            $join->on('oc.vn', '=', 'vs.vn')
-                 ->whereBetween('oc.ovst_community_service_type_id', [1, 103]);
-        })
-        ->where(function($query) {
-            $query->where('vs.pdx', 'Z515')
-                  ->orWhere('vs.dx0', 'Z515')
-                  ->orWhere('vs.dx1', 'Z515')
-                  ->orWhere('vs.dx2', 'Z515')
-                  ->orWhere('vs.dx3', 'Z515')
-                  ->orWhere('vs.dx4', 'Z515')
-                  ->orWhere('vs.dx5', 'Z515');
-        })
-        ->where('pt_all.rpst_id', '05532')
-        ->whereBetween('vs.vstdate', ['2023-07-01', '2024-07-31'])
-        ->groupBy('vs.hn')
-        ->orderBy('vs.hn', 'DESC')
-        ->get();
+                    END AS Z718,
+                    (SELECT COUNT(*)
+                        FROM ovst_community_service a1
+                        INNER JOIN vn_stat vn ON vn.vn = a1.vn
+                        WHERE vn.hn = vs.hn
+                        AND a1.ovst_community_service_type_id BETWEEN 1 AND 103) AS dayc,
+                    (SELECT COUNT(*)
+                        FROM ovst_community_service a1
+                        INNER JOIN vn_stat vn ON vn.vn = a1.vn
+                        INNER JOIN ovstdiag di ON di.vn = vn.vn
+                        WHERE di.icd10 = 'Z718'
+                        AND vn.hn = vs.hn
+                        AND a1.ovst_community_service_type_id BETWEEN 1 AND 103) AS dayc1,
+                    pt_all.death,
+                    DATEDIFF(NOW(), (SELECT MAX(a1.entry_datetime)
+                        FROM ovst_community_service a1
+                        INNER JOIN vn_stat vn ON vn.vn = a1.vn
+                        WHERE vn.hn = vs.hn
+                        AND a1.ovst_community_service_type_id BETWEEN 1 AND 103)) AS daym,
+                    (SELECT SUM(s.PallativeCare)
+                        FROM rcmdb.repeclaim s
+                        WHERE s.HN = vs.hn
+                        AND s.PallativeCare > 0) AS money
+                FROM (
+                    SELECT
+                        vs.vstdate,
+                        vs.hn,
+                        vs.vn,
+                        vs.pdx,
+                        vs.dx0,
+                        vs.dx1,
+                        vs.dx2,
+                        vs.dx3,
+                        vs.dx4,
+                        vs.dx5,
+                        vs.pttype
+                    FROM vn_stat vs
+                    WHERE vs.vstdate BETWEEN '2023-07-01' AND '2024-07-31'
+                ) AS vs
+                INNER JOIN (
+                    SELECT pt.hn, pt.cid, CONCAT(pt.pname, pt.fname, ' ', pt.lname) AS fullname, pt.birthday,
+                        (YEAR(CURRENT_DATE()) - YEAR(pt.birthday)) AS age,
+                        CONCAT(pt.addrpart, ' หมู่ ', pt.moopart, ' ', ta.full_name) AS fulladdress,
+                        pt.hcode, pt.death, zr.rpst_id, zrn.rpst_name
+                    FROM patient pt
+                    INNER JOIN thaiaddress ta ON CONCAT(pt.chwpart, pt.amppart, pt.tmbpart) = ta.addressid
+                    INNER JOIN zbm_rpst zr ON ta.addressid = CONCAT(zr.chwpart, zr.amppart, zr.tmbpart)
+                    INNER JOIN zbm_rpst_name zrn ON zr.rpst_id = zrn.rpst_id
+                ) as pt_all ON vs.hn = pt_all.hn
+                INNER JOIN pttype as ptt ON vs.pttype = ptt.pttype
+                LEFT JOIN ovst_community_service as oc ON oc.vn = vs.vn AND oc.ovst_community_service_type_id BETWEEN 1 AND 103
+                WHERE (vs.pdx = 'Z515' OR vs.dx0 = 'Z515' OR vs.dx1 = 'Z515' OR vs.dx2 = 'Z515' OR vs.dx3 = 'Z515' OR vs.dx4 = 'Z515' OR vs.dx5 = 'Z515')
+                AND pt_all.rpst_id = '05532'
+                GROUP BY vs.hn
+                ORDER BY vs.vn DESC
+            "
+        );
 
         $output = '';
 
-        if ($palliativeCareFetchListName->isNotEmpty()) {
+        if (count($palliativeCareFetchListName) > 0) {
             $output .= '<table id="table-fetch-list-name" class="table table-striped align-middle dt-responsive nowrap" style="width: 100%">
             <thead>
                 <tr>
                     <th>วันที่รับบริการ</th>
+                    <th>สิทธิ์</th>
                     <th>HN</th>
-                    <th>ประเภทผู้ป่วย</th>
-                    <th>ชื่อผู้ป่วย</th>
+                    <th>ชื่อ - สกุล</th>
                     <th>เลขบัตรประชาชน</th>
                     <th>วันเกิด</th>
                     <th>อายุ</th>
                     <th>ที่อยู่</th>
-                    <th>ชื่อเขต</th>
-                    <th>สถานะเขต</th>
-                    <th>วันตาย</th>
-                    <th>ค่ายา</th>
+                    <th>รพสต</th>
+                    <th>รหัส PDX</th>
+                    <th>เยี่ยมบ้าน<br>Z718</th>
+                    <th>เยี่ยมบ้าน<br>รพ.(ครั้ง)</th>
+                    <th>ชดเชย</th>
+                    <th>หมายเหตุ</th>
                 </tr>
             </thead>
             <tbody>';
             foreach ($palliativeCareFetchListName as $pcfln) {
-                $output .= '<tr>
+                if ($pcfln->death == 'Y') {
+                    $class = 'death-yes';
+                    $deathMessage = 'คนไข้เสียชีวิตแล้ว';
+                } else if ($pcfln->death == 'N') {
+                    $class = 'death-no';
+                    $deathMessage = 'คนไข้ยังมีชีวิตอยู่';
+                } else {
+                    $class = 'death-unknown';
+                    $deathMessage = 'สถานะไม่ทราบ';
+                }
+                $output .= '<tr class="' . $class . '">
                 <td>' . $pcfln->vstdate . '</td>
-                <td>' . $pcfln->hn . '</td>
                 <td>' . $pcfln->pttype_name . '</td>
-                <td>' . $pcfln->ptname . '</td>
+                <td>' . $pcfln->hn . '</td>
+                <td>' . $pcfln->fullname . '</td>
                 <td>' . $pcfln->cid . '</td>
                 <td>' . $pcfln->birthday . '</td>
                 <td>' . $pcfln->age . '</td>
-                <td>' . $pcfln->addr . '</td>
+                <td>' . $pcfln->fulladdress . '</td>
                 <td>' . $pcfln->rpst_name . '</td>
-                <td>' . $pcfln->rpst_id . '</td>
-                <td>' . $pcfln->dd1 . '</td>
+                <td>' . $pcfln->pdx . '</td>
+                <td>' . $pcfln->dayc . '</td>
+                <td>' . $pcfln->dayc1 . '</td>
                 <td>' . $pcfln->money . '</td>
+                <td>' . $deathMessage . '</td>
               </tr>';
             }
             $output .= '</tbody></table>';

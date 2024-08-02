@@ -13,6 +13,30 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+/* Table Start */
+table.dataTable th {
+    max-width: 150px !important;
+}
+table.dataTable td {
+    max-width: 150px !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+table tbody tr .death-yes {
+    background-color: red !important; /* เปลี่ยนสีพื้นหลังของแถว */
+    color: white !important; /* เปลี่ยนสีข้อความของแถว */
+}
+table tbody tr .death-no {
+    background-color: green !important;
+    color: white !important;
+}
+table tbody tr .death-unknown {
+    background-color: yellow !important;
+    color: black !important;
+}
+/* Table End */
+
 #sidebar::-webkit-scrollbar {
     width: 12px; /* ความกว้างของ scrollbar */
 }
