@@ -201,7 +201,7 @@ class PalliativeCareController extends Controller
         $output = '';
 
         if (count($palliativeCareFetchListName) > 0) {
-            $output .= '<table id="table-fetch-list-name" class="table table-striped align-middle dt-responsive nowrap" style="width: 100%">
+            $output .= '<table id="table-fetch-list-name" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
             <thead>
                 <tr>
                     <th>วันที่รับบริการ</th>
@@ -223,10 +223,10 @@ class PalliativeCareController extends Controller
             <tbody>';
             foreach ($palliativeCareFetchListName as $pcfln) {
                 if ($pcfln->death == 'Y') {
-                    $class = 'death-yes';
+                    $class = 'table-danger';
                     $deathMessage = 'คนไข้เสียชีวิตแล้ว';
                 } else if ($pcfln->death == 'N') {
-                    $class = 'death-no';
+                    $class = 'table-success';
                     $deathMessage = 'คนไข้ยังมีชีวิตอยู่';
                 } else {
                     $class = 'death-unknown';
