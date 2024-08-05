@@ -203,6 +203,8 @@
 
             // ดึงข้อมูลเสียชีวิต Palliative Care ตาม Diag Start
             $('#palliative_count_death_submit').click(function(e) {
+                $('#palliative_list_name_table').hide();
+                $('#palliative_count_death_all_chart').hide();
                 e.preventDefault();
                 var formData = $('#palliative_count_death_form').serialize();
                 showLoadingIcon();
@@ -243,6 +245,8 @@
             // ดึงข้อมูลเสียชีวิต Palliative Care ตาม Diag End
 
             $('#palliative_list_name_submit').click(function(e) {
+                $('#palliative_list_name_table').hide();
+                $('#palliative_count_death_all_chart').hide();
                 e.preventDefault();
                 var formData = $('#palliative_list_name_form').serialize();
                 showLoadingIcon();

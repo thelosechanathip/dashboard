@@ -253,14 +253,36 @@ class PalliativeCareController extends Controller
             foreach ($palliativeCareFetchListName as $pcfln) {
                 if ($pcfln->death == 'Y') {
                     $class = 'table-danger';
+                    $bgColor = "";
                     $deathMessage = 'คนไข้เสียชีวิตแล้ว';
-                } else if ($pcfln->death == 'N') {
-                    $class = 'table-success';
-                    $deathMessage = 'คนไข้ยังมีชีวิตอยู่';
                 } else {
-                    $class = 'death-unknown';
-                    $deathMessage = 'สถานะไม่ทราบ';
+                    $class = 'table-light';
+                    $bgColor = "";
+                    $deathMessage = 'คนไข้ยังมีชีวิตอยู่';
+                    if($pcfln->daym < 30) {
+                        $class = 'table-success';
+                        $deathMessage = '<span class="">เยี่ยม ' . $pcfln->daym . ' วันที่แล้ว</span>';
+                    } else if($pcfln->daym < 60) {
+                        $class = 'table-primary';
+                        $deathMessage = '<span class="">เยี่ยม 1 เดือนที่แล้ว</span>';
+                    } else if($pcfln->daym < 90) {
+                        $class = 'table-primary';
+                        $deathMessage = '<span class="">เยี่ยม 2 เดือนที่แล้ว</span>';
+                    } else if($pcfln->daym < 120) {
+                        $class = 'table-warning';
+                        $deathMessage = '<span class="">เยี่ยม 3 เดือนที่แล้ว</span>';
+                    } else if($pcfln->daym < 210) {
+                        $class = 'table-warning';
+                        $deathMessage = '<span class="">เยี่ยม 6 เดือนที่แล้ว</span>';
+                    } else if($pcfln->daym < 420) {
+                        $class = 'table-danger';
+                        $deathMessage = '<span class="">เยี่ยม 1 ปีที่แล้ว</span>';
+                    } else {
+                        $class = '';
+                        $deathMessage = '<span class="">เยี่ยมมากกว่า 1 ปี</span>';
+                    }
                 }
+
                 $output .= '<tr class="' . $class . '">
                 <td>' . $pcfln->vstdate . '</td>
                 <td>' . $pcfln->pttype_name . '</td>
@@ -275,7 +297,7 @@ class PalliativeCareController extends Controller
                 <td>' . $pcfln->dayc . '</td>
                 <td>' . $pcfln->dayc1 . '</td>
                 <td>' . $pcfln->money . '</td>
-                <td>' . $deathMessage . '</td>
+                <td class="' . $bgColor . '">' . $deathMessage . '</td>
               </tr>';
             }
             $output .= '</tbody></table>';
