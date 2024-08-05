@@ -117,6 +117,34 @@ class PalliativeCareController extends Controller
         $min_date = $request->min_date;
         $max_date = $request->max_date;
 
+        if($request->service_unit == 0) {
+            return response()->json([
+                'status' => 400,
+                'title' => 'Error',
+                'message' => 'กรุณาเลือกหน่วยบริการ',
+                'icon' => 'error'
+            ]);
+        } else if($request->service_unit == 99999) {
+            $service_unit = "";
+        } else if($request->service_unit == 11111) {
+            $service_unit = "AND pt_all.rpst_id NOT IN('11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976')";
+        } else {
+            $service_unit = "AND pt_all.rpst_id = $request->service_unit";
+        }
+
+        if($request->death_type == 0) {
+            return response()->json([
+                'status' => 400,
+                'title' => 'Error',
+                'message' => 'กรุณาเลือกสถานะ',
+                'icon' => 'error'
+            ]);
+        } else if($request->death_type == 99999) {
+            $death_type = "";
+        } else {
+            $death_type = "AND pt_all.death = '{$request->death_type}'";
+        }
+
         $palliativeCareFetchListName = DB::connection('mysql')->select(
             "
                 SELECT
@@ -177,7 +205,7 @@ class PalliativeCareController extends Controller
                         vs.dx5,
                         vs.pttype
                     FROM vn_stat vs
-                    WHERE vs.vstdate BETWEEN '2023-07-01' AND '2024-07-31'
+                    WHERE vs.vstdate BETWEEN '{$min_date}' AND '{$max_date}'
                 ) AS vs
                 INNER JOIN (
                     SELECT pt.hn, pt.cid, CONCAT(pt.pname, pt.fname, ' ', pt.lname) AS fullname, pt.birthday,
@@ -186,13 +214,14 @@ class PalliativeCareController extends Controller
                         pt.hcode, pt.death, zr.rpst_id, zrn.rpst_name
                     FROM patient pt
                     INNER JOIN thaiaddress ta ON CONCAT(pt.chwpart, pt.amppart, pt.tmbpart) = ta.addressid
-                    INNER JOIN zbm_rpst zr ON ta.addressid = CONCAT(zr.chwpart, zr.amppart, zr.tmbpart)
+                    INNER JOIN zbm_rpst zr ON CONCAT(pt.chwpart, pt.amppart, pt.tmbpart, pt.moopart) = CONCAT(zr.chwpart, zr.amppart, zr.tmbpart, zr.moopart)
                     INNER JOIN zbm_rpst_name zrn ON zr.rpst_id = zrn.rpst_id
                 ) as pt_all ON vs.hn = pt_all.hn
                 INNER JOIN pttype as ptt ON vs.pttype = ptt.pttype
                 LEFT JOIN ovst_community_service as oc ON oc.vn = vs.vn AND oc.ovst_community_service_type_id BETWEEN 1 AND 103
                 WHERE (vs.pdx = 'Z515' OR vs.dx0 = 'Z515' OR vs.dx1 = 'Z515' OR vs.dx2 = 'Z515' OR vs.dx3 = 'Z515' OR vs.dx4 = 'Z515' OR vs.dx5 = 'Z515')
-                AND pt_all.rpst_id = '05532'
+                {$service_unit}
+                {$death_type}
                 GROUP BY vs.hn
                 ORDER BY vs.vn DESC
             "
@@ -252,7 +281,7 @@ class PalliativeCareController extends Controller
             $output .= '</tbody></table>';
             echo $output;
         } else {
-            echo '<h1 class="text-center text-secondary my-5">ไม่มีคนไข้ Palliative Care</h1>';
+            echo '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลคนไข้ Palliative Care ในรายการที่เลือก</h1>';
         }
     }
 }

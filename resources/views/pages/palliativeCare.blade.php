@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <main class="main-content">
+    <main class="main-content" id="main">
         {{-- Title แสดงข้อมูล ชื่อผู้ใช้งาน และ แผนก Start --}}
         <div
             class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
@@ -91,7 +91,7 @@
                             <input type="date" class="form-control" id="max_date" name="max_date" placeholder="max_date" required>
                         </div>
                     </div>
-                    {{-- <div class="col d-flex align-items-center">
+                    <div class="col d-flex align-items-center">
                         <div class="" style="min-width: 120px;">
                             <span class="" style="width: 100%;">เลือกหน่วยบริการ</span>
                         </div>
@@ -99,7 +99,7 @@
                             style="min-width: 200px;">
                             <option selected value="0">------------</option>
                             <option value="99999">ทั้งหมด</option>
-                            <option value="00000">นอกเขตบริการ</option>
+                            <option value="11111">นอกเขตบริการ</option>
                             @foreach($zbm_rpst_name as $zrn)
                                 <option value="{{ $zrn->rpst_id }}">{{ $zrn->rpst_name }}</option>
                             @endforeach
@@ -116,7 +116,7 @@
                             <option value="Y">เสียชีวิต</option>
                             <option value="N">ยังมีชีวิต</option>
                         </select>
-                    </div> --}}
+                    </div>
                     <div class="col d-flex align-items-center">
                         <button type="button" id="palliative_list_name_submit" class="btn btn-primary ms-3">ยืนยัน</button>
                     </div>
@@ -163,6 +163,7 @@
             $('#palliative_count_death_form').hide();
             $('#palliative_list_name_form').hide();
             $('#palliative_list_name_table').hide();
+            $('.loadingIcon').hide();
 
             $('#select').change(function() {
                 var selectForm = $('#select').val();
@@ -185,8 +186,6 @@
             function hideLoadingIcon() {
                 $('.loadingIcon').hide();
             }
-
-            hideLoadingIcon();
 
             function setText(request) {
                 if(request == 0) {
@@ -215,6 +214,7 @@
                         hideLoadingIcon();
                         $('#palliative_count_death_all_chart').show();
                         $('#palliative_list_name_table').hide();
+                        $("#palliative_list_name_form")[0].reset();
                         var chart_count_death = response.chart_count_death;
 
                         if (chart) {
@@ -252,20 +252,32 @@
                     data: formData,
                     success: function(response) {
                         hideLoadingIcon();
-                        $('#palliative_list_name_table').show();
-                        $('#palliative_count_death_all_chart').hide();
-                        $("#fetch-list-name").html(response);
-                        $("#table-fetch-list-name").DataTable({
-                            responsive: true,
-                            order: [0, 'desc'],
-                            autoWidth: false,
-                            columnDefs: [
-                                {
-                                    targets: "_all",
-                                    className: "dt-head-center dt-body-center"
-                                }
-                            ]
-                        });
+                        if(response.status === 400) {
+                            swal.fire(
+                                response.title,
+                                response.message,
+                                response.icon
+                            );
+                        } else {
+                            $('#palliative_list_name_table').show();
+                            $('#palliative_count_death_all_chart').hide();
+                            $("#palliative_count_death_form")[0].reset();
+                            $('#setText').hide();
+                            $('#setCount').hide();
+                            $("#fetch-list-name").html(response);
+                            $("#table-fetch-list-name").DataTable({
+                                responsive: true,
+                                order: [0, 'desc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ]
+                            });
+                        }
                     }
                 });
             });
