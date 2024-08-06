@@ -2,13 +2,13 @@
     <div class="container-fluid">
         <div class="d-flex justify-center align-items-center">
             <a class="navbar-brand" href="{{ route('dashboard') }}">Dashboard</a>
-            <button id="sidebarToggle" class="shadow-lg rounded-4 bg-outline-success">
+            <button id="sidebarToggle" class="shadow-lg rounded-4 btn btn-outline-success text-light">
                 <i class="bi bi-list"></i>
             </button>
         </div>
         <div class="" >
             <div class="dropdown ms-auto">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-outline-success text-light dropdown-toggle " type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                     {{ $data['name'] }}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">

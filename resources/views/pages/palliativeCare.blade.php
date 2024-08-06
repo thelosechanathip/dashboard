@@ -118,7 +118,7 @@
                         </select>
                     </div>
                     <div class="col d-flex align-items-center">
-                        <button type="button" id="palliative_list_name_submit" class="btn btn-primary ms-3">ยืนยัน</button>
+                        <button type="button" id="palliative_list_name_submit" class="btn btn-primary ms-1">ยืนยัน</button>
                     </div>
                     <div class="spinner-border loadingIcon " style="" role="status">
                         <span class="visually-hidden">Loading...</span>

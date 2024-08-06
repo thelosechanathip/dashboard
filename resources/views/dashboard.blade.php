@@ -23,8 +23,10 @@
             <div class="col-3">
                 <div class="card shadow-lg rounded-2 zoom-card">
                     <a href="{{ route('indexOvst') }}" class="text-decoration-none text-dark">
-                        <div class="card-body ps-5">
+                        <div class="card-body d-flex justify-content-center align-items-center">
                             <h5 class="card-title fw-bold">ผู้เข้ามารับบริการ</h5>
+                        </div>
+                        <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
                             <p class="card-text"><span>ภายในวันนี้ : </span>{{ $ovst_count }} <span>ราย</span></p>
                         </div>
                     </a>
@@ -33,8 +35,10 @@
             <div class="col-3">
                 <div class="card shadow-lg rounded-2 zoom-card">
                     <a href="{{ route('indexErRegist') }}" class="text-decoration-none text-dark">
-                        <div class="card-body ps-5">
+                        <div class="card-body d-flex justify-content-center align-items-center">
                             <h5 class="card-title fw-bold">ER</h5>
+                        </div>
+                        <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
                             <p class="card-text"><span>ภายในวันนี้ : </span>{{ $er_regist_count }} <span>ราย</span></p>
                         </div>
                     </a>
@@ -43,8 +47,10 @@
             <div class="col-3">
                 <div class="card shadow-lg rounded-2 zoom-card">
                     <a href="{{ route('indexReferOut') }}" class="text-decoration-none text-dark">
-                        <div class="card-body ps-5">
+                        <div class="card-body d-flex justify-content-center align-items-center">
                             <h5 class="card-title fw-bold">Refer Out</h5>
+                        </div>
+                        <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
                             <p class="card-text"><span>ภายในวันนี้ : </span>{{ $refer_out_count }} <span>ราย</span></p>
                         </div>
                     </a>
@@ -53,8 +59,10 @@
             <div class="col-3">
                 <div class="card shadow-lg rounded-2 zoom-card">
                     <a href="{{ route('indexReferIn') }}" class="text-decoration-none text-dark">
-                        <div class="card-body ps-5">
+                        <div class="card-body d-flex justify-content-center align-items-center">
                             <h5 class="card-title fw-bold">Refer In</h5>
+                        </div>
+                        <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
                             <p class="card-text"><span>ภายในวันนี้ : </span>{{ $refer_in_count }} <span>ราย</span></p>
                         </div>
                     </a>
@@ -65,8 +73,10 @@
             <div class="col-3">
                 <div class="card shadow-lg rounded-2 zoom-card">
                     <a href="{{ route('indexIpt') }}" class="text-decoration-none text-dark">
-                        <div class="card-body ps-5">
+                        <div class="card-body d-flex justify-content-center align-items-center">
                             <h5 class="card-title fw-bold">Admit</h5>
+                        </div>
+                        <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
                             <p class="card-text"><span>ภายในวันนี้ : </span>{{ $ipt_count }} <span>ราย</span></p>
                         </div>
                     </a>

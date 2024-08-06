@@ -117,6 +117,15 @@ class PalliativeCareController extends Controller
         $min_date = $request->min_date;
         $max_date = $request->max_date;
 
+        if($min_date == 0 || $max_date == 0) {
+            return response()->json([
+                'status' => 400,
+                'title' => 'Error',
+                'message' => 'กรุณาเลือกวันที่รับบริการ',
+                'icon' => 'error'
+            ]);
+        }
+
         if($request->service_unit == 0) {
             return response()->json([
                 'status' => 400,
