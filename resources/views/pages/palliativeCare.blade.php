@@ -189,9 +189,13 @@
 
             function setText(request) {
                 if(request == 0) {
+                    $('#setText').show();
+                    $('#setCount').show();
                     $('#setText').text('');
                     $('#setCount').text('ไม่มีคนไข้ Palliative Care');
                 } else {
+                    $('#setText').show();
+                    $('#setCount').show();
                     $('#setText').text('จำนวนคนไข้ Palliative Care ทั้งหมดที่เสียชีวิตแยกตาม Diag ทั้งหมด : ');
                     $('#setCount').text(request + ' ราย');
                 }
@@ -205,6 +209,8 @@
             $('#palliative_count_death_submit').click(function(e) {
                 $('#palliative_list_name_table').hide();
                 $('#palliative_count_death_all_chart').hide();
+                $('#setText').hide();
+                $('#setCount').hide();
                 e.preventDefault();
                 var formData = $('#palliative_count_death_form').serialize();
                 showLoadingIcon();
@@ -214,30 +220,40 @@
                     data: formData,
                     success: function(response) {
                         hideLoadingIcon();
-                        $('#palliative_count_death_all_chart').show();
-                        $('#palliative_list_name_table').hide();
-                        $("#palliative_list_name_form")[0].reset();
-                        var chart_count_death = response.chart_count_death;
-
-                        if (chart) {
-                            chart.destroy();
-                        }
-
-                        var ctx = document.getElementById('palliative_my_chart').getContext('2d');
-                        chart = new Chart(ctx, {
-                            type: 'bar',
-                            data: chart_count_death,
-                            options: chart_count_death.options
-                        });
-
-                        var total = chart_count_death.datasets[0].data.reduce(function(sum, value) {
-                            return sum + value;
-                        }, 0).toLocaleString();
-
-                        if(parseInt(total) == 0) {
-                            setText(total);
+                        if(response.status === 400) {
+                            swal.fire(
+                                response.title,
+                                response.message,
+                                response.icon
+                            );
+                            $('#palliative_count_death_all_chart').hide();
+                            $('#palliative_list_name_table').hide();
                         } else {
-                            setText(total);
+                            $('#palliative_count_death_all_chart').show();
+                            $('#palliative_list_name_table').hide();
+                            $("#palliative_list_name_form")[0].reset();
+                            var chart_count_death = response.chart_count_death;
+
+                            if (chart) {
+                                chart.destroy();
+                            }
+
+                            var ctx = document.getElementById('palliative_my_chart').getContext('2d');
+                            chart = new Chart(ctx, {
+                                type: 'bar',
+                                data: chart_count_death,
+                                options: chart_count_death.options
+                            });
+
+                            var total = chart_count_death.datasets[0].data.reduce(function(sum, value) {
+                                return sum + value;
+                            }, 0).toLocaleString();
+
+                            if(parseInt(total) == 0) {
+                                setText(total);
+                            } else {
+                                setText(total);
+                            }
                         }
                     }
                 });
@@ -247,6 +263,8 @@
             $('#palliative_list_name_submit').click(function(e) {
                 $('#palliative_list_name_table').hide();
                 $('#palliative_count_death_all_chart').hide();
+                $('#setText').hide();
+                $('#setCount').hide();
                 e.preventDefault();
                 var formData = $('#palliative_list_name_form').serialize();
                 showLoadingIcon();

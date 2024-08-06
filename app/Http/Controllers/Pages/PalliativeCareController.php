@@ -68,7 +68,7 @@ class PalliativeCareController extends Controller
     }
 
     public function getPalliativeCareSelectData(Request $request) {
-        if($request->all() === null) {
+        if($request->min_date == 0 || $request->max_date == 0) {
             return response()->json([
                 'status' => 400,
                 'title' => 'Error',
@@ -127,9 +127,9 @@ class PalliativeCareController extends Controller
         } else if($request->service_unit == 99999) {
             $service_unit = "";
         } else if($request->service_unit == 11111) {
-            $service_unit = "AND pt_all.rpst_id NOT IN('11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976')";
+            $service_unit = "AND vs.hospsub NOT IN('11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976')";
         } else {
-            $service_unit = "AND pt_all.rpst_id = $request->service_unit";
+            $service_unit = "AND vs.hospsub = '{$request->service_unit}'";
         }
 
         if($request->death_type == 0) {
@@ -149,81 +149,97 @@ class PalliativeCareController extends Controller
             "
                 SELECT
                     vs.vstdate,
-                    ptt.name as pttype_name,
+                    ptt.name AS 'pttype_name',
                     vs.hn,
                     pt_all.cid,
                     pt_all.fullname,
                     pt_all.birthday,
                     pt_all.age,
                     pt_all.fulladdress,
-                    pt_all.rpst_id,
-                    pt_all.rpst_name,
+                    zrn.rpst_id,
+                    zrn.rpst_name,
                     vs.pdx,
                     CASE
-                        WHEN vs.pdx = 'Z515' OR vs.dx0 = 'Z515' OR vs.dx1 = 'Z515' OR vs.dx2 = 'Z515' OR vs.dx3 = 'Z515' OR vs.dx4 = 'Z515' OR vs.dx5 = 'Z515'
+                        WHEN vs.pdx = 'Z515'
+                            OR vs.dx0 = 'Z515'
+                            OR vs.dx1 = 'Z515'
+                            OR vs.dx2 = 'Z515'
+                            OR vs.dx3 = 'Z515'
+                            OR vs.dx4 = 'Z515'
+                            OR vs.dx5 = 'Z515'
                         THEN 'Z515'
                         ELSE NULL
                     END AS Z515,
                     CASE
-                        WHEN vs.pdx = 'Z718' OR vs.dx0 = 'Z718' OR vs.dx1 = 'Z718' OR vs.dx2 = 'Z718' OR vs.dx3 = 'Z718' OR vs.dx4 = 'Z718' OR vs.dx5 = 'Z718'
+                        WHEN vs.pdx = 'Z718'
+                            OR vs.dx0 = 'Z718'
+                            OR vs.dx1 = 'Z718'
+                            OR vs.dx2 = 'Z718'
+                            OR vs.dx3 = 'Z718'
+                            OR vs.dx4 = 'Z718'
+                            OR vs.dx5 = 'Z718'
                         THEN 'Z718'
                         ELSE NULL
                     END AS Z718,
-                    (SELECT COUNT(*)
+                    (
+                        SELECT COUNT(*)
                         FROM ovst_community_service a1
                         INNER JOIN vn_stat vn ON vn.vn = a1.vn
                         WHERE vn.hn = vs.hn
-                        AND a1.ovst_community_service_type_id BETWEEN 1 AND 103) AS dayc,
-                    (SELECT COUNT(*)
+                        AND a1.ovst_community_service_type_id BETWEEN 1 AND 103
+                    ) AS dayc,
+                    (
+                        SELECT COUNT(*)
                         FROM ovst_community_service a1
                         INNER JOIN vn_stat vn ON vn.vn = a1.vn
                         INNER JOIN ovstdiag di ON di.vn = vn.vn
                         WHERE di.icd10 = 'Z718'
                         AND vn.hn = vs.hn
-                        AND a1.ovst_community_service_type_id BETWEEN 1 AND 103) AS dayc1,
+                        AND a1.ovst_community_service_type_id BETWEEN 1 AND 103
+                    ) AS dayc1,
                     pt_all.death,
-                    DATEDIFF(NOW(), (SELECT MAX(a1.entry_datetime)
+                    DATEDIFF(NOW(), (
+                        SELECT MAX(a1.entry_datetime)
                         FROM ovst_community_service a1
                         INNER JOIN vn_stat vn ON vn.vn = a1.vn
                         WHERE vn.hn = vs.hn
-                        AND a1.ovst_community_service_type_id BETWEEN 1 AND 103)) AS daym,
-                    (SELECT SUM(s.PallativeCare)
+                        AND a1.ovst_community_service_type_id BETWEEN 1 AND 103
+                    )) AS daym
+                    ,(SELECT COUNT(r.REP) FROM eclaimdb.m_registerdata r LEFT JOIN eclaimdb.m_ppcom p ON p.ECLAIM_NO=r.ECLAIM_NO WHERE NOT ISNULL(p.ECLAIM_NO) AND p.GR_ITEMNAME='3 Palliative Care' AND r.HN=vs.hn) AS ec
+                    ,(
+                        SELECT SUM(s.PallativeCare)
                         FROM rcmdb.repeclaim s
                         WHERE s.HN = vs.hn
-                        AND s.PallativeCare > 0) AS money
-                FROM (
+                        AND s.PallativeCare > 0
+                    ) AS money
+                FROM(
                     SELECT
-                        vs.vstdate,
-                        vs.hn,
-                        vs.vn,
-                        vs.pdx,
-                        vs.dx0,
-                        vs.dx1,
-                        vs.dx2,
-                        vs.dx3,
-                        vs.dx4,
-                        vs.dx5,
-                        vs.pttype
+                        *
                     FROM vn_stat vs
                     WHERE vs.vstdate BETWEEN '{$min_date}' AND '{$max_date}'
                 ) AS vs
                 INNER JOIN (
-                    SELECT pt.hn, pt.cid, CONCAT(pt.pname, pt.fname, ' ', pt.lname) AS fullname, pt.birthday,
+                    SELECT
+                        pt.hn,
+                        pt.cid,
+                        CONCAT(pt.pname, pt.fname, ' ', pt.lname) AS fullname,
+                        pt.birthday,
                         (YEAR(CURRENT_DATE()) - YEAR(pt.birthday)) AS age,
                         CONCAT(pt.addrpart, ' หมู่ ', pt.moopart, ' ', ta.full_name) AS fulladdress,
-                        pt.hcode, pt.death, zr.rpst_id, zrn.rpst_name
+                        pt.hcode,
+                        pt.death
                     FROM patient pt
-                    INNER JOIN thaiaddress ta ON CONCAT(pt.chwpart, pt.amppart, pt.tmbpart) = ta.addressid
-                    INNER JOIN zbm_rpst zr ON CONCAT(pt.chwpart, pt.amppart, pt.tmbpart, pt.moopart) = CONCAT(zr.chwpart, zr.amppart, zr.tmbpart, zr.moopart)
-                    INNER JOIN zbm_rpst_name zrn ON zr.rpst_id = zrn.rpst_id
-                ) as pt_all ON vs.hn = pt_all.hn
-                INNER JOIN pttype as ptt ON vs.pttype = ptt.pttype
-                LEFT JOIN ovst_community_service as oc ON oc.vn = vs.vn AND oc.ovst_community_service_type_id BETWEEN 1 AND 103
-                WHERE (vs.pdx = 'Z515' OR vs.dx0 = 'Z515' OR vs.dx1 = 'Z515' OR vs.dx2 = 'Z515' OR vs.dx3 = 'Z515' OR vs.dx4 = 'Z515' OR vs.dx5 = 'Z515')
-                {$service_unit}
-                {$death_type}
+                    LEFT OUTER JOIN thaiaddress ta ON CONCAT(pt.chwpart, pt.amppart, pt.tmbpart) = ta.addressid
+                ) AS pt_all ON vs.hn = pt_all.hn
+                INNER JOIN pttype ptt ON vs.pttype = ptt.pttype
+                LEFT OUTER JOIN ovst_community_service AS oc ON oc.vn = vs.vn AND oc.ovst_community_service_type_id BETWEEN 1 AND 103
+                LEFT OUTER JOIN zbm_rpst_name zrn ON vs.hospsub = zrn.rpst_id
+                WHERE
+                    (vs.pdx = 'Z515' OR vs.dx0 = 'Z515' OR vs.dx1 = 'Z515' OR vs.dx2 = 'Z515' OR vs.dx3 = 'Z515' OR vs.dx4 = 'Z515' OR vs.dx5 = 'Z515')
+                    {$service_unit}
+                    {$death_type}
                 GROUP BY vs.hn
-                ORDER BY vs.vn DESC
+                ORDER BY vs.hn DESC;
             "
         );
 
