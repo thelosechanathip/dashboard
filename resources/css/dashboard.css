@@ -35,8 +35,30 @@ table tbody tr .death-unknown {
     background-color: yellow !important;
     color: black !important;
 }
-
 /* Table End */
+
+/* Modal Start */
+.modal {
+    transition: opacity 0.1s ease-in-out;
+}
+
+.modal-dialog {
+    transition: transform 0.1s ease-in-out;
+}
+
+.modal.show .modal-dialog {
+    transform: translateY(0);
+}
+
+.modal.fade .modal-dialog {
+    transform: translateY(-50px);
+}
+
+.modal-dialog-custom {
+    max-width: 70%; /* กำหนดความกว้างเป็น 80% ของหน้าจอ */
+}
+
+/* Modal End */
 
 #sidebar::-webkit-scrollbar {
     width: 12px; /* ความกว้างของ scrollbar */

@@ -5,6 +5,40 @@
 @endsection
 
 @section('content')
+    <!-- Modal เยี่ยมบ้าน รพ.ครั้ง Start -->
+    <div class="modal fade " id="home_visiting_information" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="home_visiting_information_title">ข้อมูลการเยี่ยมบ้าน</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container" id="show-home-visiting-information"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade " id="home_visiting_information_z718" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="home_visiting_information_z718_title">ข้อมูลการเยี่ยมบ้าน Family Meeting</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container" id="show-home-visiting-information-z718"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal เยี่ยมบ้าน รพ.ครั้ง End -->
     <main class="main-content" id="main">
         {{-- Title แสดงข้อมูล ชื่อผู้ใช้งาน และ แผนก Start --}}
         <div
@@ -300,6 +334,39 @@
                                 ]
                             });
                         }
+                    }
+                });
+            });
+
+            $(document).on('click', '.home-visiting-information', function (e) {
+                e.preventDefault();
+                let id = $(this).attr('id');
+                $.ajax({
+                    url: '{{ route('getHomeVisitingInformation') }}',
+                    method: 'get',
+                    data: {
+                        id: id,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        $("#show-home-visiting-information").html(response);
+                    }
+                });
+            });
+
+            $(document).on('click', '.home-visiting-information-z718', function (e) {
+                e.preventDefault();
+                let id = $(this).attr('id');
+                $.ajax({
+                    url: '{{ route('getHomeVisitingInformationZ718') }}',
+                    method: 'get',
+                    data: {
+                        id: id,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        $("#show-home-visiting-information-z718").html(response);
+                        // console.log(response.message);
                     }
                 });
             });

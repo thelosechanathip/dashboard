@@ -78,8 +78,9 @@ Route::middleware(['check.something'])->group(function() {
         // Palliative Care Start
             Route::get('palliative_care', [PalliativeCareController::class, 'index'])->name('palliative_care');
             Route::get('getPalliativeCareSelectData', [PalliativeCareController::class, 'getPalliativeCareSelectData'])->name('getPalliativeCareSelectData');
-            // Route::get('palliativeCareFetchAll', [PalliativeCareController::class, 'palliativeCareFetchAll'])->name('palliativeCareFetchAll');
             Route::get('getPalliativeCareFetchListName', [PalliativeCareController::class, 'getPalliativeCareFetchListName'])->name('getPalliativeCareFetchListName');
+            Route::get('getHomeVisitingInformation', [PalliativeCareController::class, 'getHomeVisitingInformation'])->name('getHomeVisitingInformation');
+            Route::get('getHomeVisitingInformationZ718', [PalliativeCareController::class, 'getHomeVisitingInformationZ718'])->name('getHomeVisitingInformationZ718');
         // Palliative Care End
     // Pages End
 
