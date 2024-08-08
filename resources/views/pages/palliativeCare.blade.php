@@ -14,6 +14,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="text-center">
+                        <div class="spinner-border loadingIcon" style="" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                     <div class="container" id="show-home-visiting-information"></div>
                 </div>
                 <div class="modal-footer">
@@ -30,6 +35,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="text-center">
+                        <div class="spinner-border loadingIcon" style="" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                     <div class="container" id="show-home-visiting-information-z718"></div>
                 </div>
                 <div class="modal-footer">
@@ -341,6 +351,9 @@
             $(document).on('click', '.home-visiting-information', function (e) {
                 e.preventDefault();
                 let id = $(this).attr('id');
+                $('#show-home-visiting-information').hide();
+                $('#show-home-visiting-information-z718').hide();
+                showLoadingIcon();
                 $.ajax({
                     url: '{{ route('getHomeVisitingInformation') }}',
                     method: 'get',
@@ -349,6 +362,8 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
+                        hideLoadingIcon();
+                        $('#show-home-visiting-information').show();
                         $("#show-home-visiting-information").html(response);
                     }
                 });
@@ -357,6 +372,9 @@
             $(document).on('click', '.home-visiting-information-z718', function (e) {
                 e.preventDefault();
                 let id = $(this).attr('id');
+                $('#show-home-visiting-information').hide();
+                $('#show-home-visiting-information-z718').hide();
+                showLoadingIcon();
                 $.ajax({
                     url: '{{ route('getHomeVisitingInformationZ718') }}',
                     method: 'get',
@@ -365,6 +383,8 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
+                        hideLoadingIcon();
+                        $('#show-home-visiting-information-z718').show();
                         $("#show-home-visiting-information-z718").html(response);
                         // console.log(response.message);
                     }
