@@ -9,6 +9,15 @@ use Illuminate\Support\Facades\DB;
 
 class PalliativeCareController extends Controller
 {
+    private function queryEclaimReceivedMoney() {
+        $rcmdb_repeclaim = DB::connection('mysql')->select(
+            "
+                SELECT * ,SUBSTRING(FileName ,19,6)AS dd FROM rcmdb.repeclaim WHERE PallativeCare>0 ORDER BY Rep DESC
+            "
+        );
+
+        return (array) $rcmdb_repeclaim;
+    }
 
     private function SePPS($hpi) {
         if (strpos($hpi, 'PPS = 10 %') || strpos($hpi, '10%') || strpos($hpi, '10 %')) $rss="PPS=10%";
@@ -355,13 +364,13 @@ class PalliativeCareController extends Controller
                         $class = 'table-primary';
                         $deathMessage = '<span class="">เยี่ยม 2 เดือนที่แล้ว</span>';
                     } else if($pcfln->daym < 120) {
-                        $class = 'table-warning';
+                        $class = 'table-success';
                         $deathMessage = '<span class="">เยี่ยม 3 เดือนที่แล้ว</span>';
                     } else if($pcfln->daym < 210) {
-                        $class = 'table-warning';
+                        $class = 'table-success';
                         $deathMessage = '<span class="">เยี่ยม 6 เดือนที่แล้ว</span>';
                     } else if($pcfln->daym < 420) {
-                        $class = 'table-danger';
+                        $class = 'table-warning';
                         $deathMessage = '<span class="">เยี่ยม 1 ปีที่แล้ว</span>';
                     } else {
                         $class = '';
@@ -654,6 +663,110 @@ class PalliativeCareController extends Controller
                 'messsage' => 'ไม่มี HN ส่งมา',
                 'icon' => 'error'
             ]);
+        }
+    }
+
+    public function getEclaimReceivedMoney() {
+        $rcmdb_repeclaim = $this->queryEclaimReceivedMoney();
+
+        $output = '';
+
+        if (count($rcmdb_repeclaim) > 0) {
+            $output .= '<table id="table-eclaim-received-money" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>HN</th>
+                    <th>เลขบัตรประชาชน</th>
+                    <th>ชื่อ - สกุล</th>
+                    <th>จำนวนเงิน</th>
+                    <th>วันที่ได้รับเงิน</th>
+                    <th>REP</th>
+                </tr>
+            </thead>
+            <tbody>';
+            foreach ($rcmdb_repeclaim as $rr) {
+                $output .= '<tr>
+                <td>' . $rr->HN . '</td>
+                <td>' . $rr->PID . '</td>
+                <td>' . $rr->PtName . '</td>
+                <td>' . $rr->PallativeCare . '</td>
+                <td>' . $rr->dd . '</td>
+                <td>' . $rr->Rep . '</td>
+              </tr>';
+            }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการ E-Claim</h1>';
+        }
+    }
+
+    public function getNumberOfNewPatients() {
+        $result_1 = "MONTH(v.vstdate) = MONTH(CURRENT_DATE())";
+        $result_2 = "LAST_DAY(CURRENT_DATE() - INTERVAL 1 MONTH)";
+
+        $number_of_new_patients = DB::connection('mysql')->select(
+            "
+                SELECT DISTINCT
+                    o.hn AS 'hn', pp.name AS pttype_name,
+                    (YEAR(NOW()) - YEAR(pt.birthday)) AS age,
+                    v.pdx, o.vstdate AS day1,
+                    CONCAT(pt.pname, '', pt.fname, ' ', pt.lname) AS fullname,
+                    pt.informaddr AS fulladdress
+                FROM ovstdiag o
+                LEFT OUTER JOIN vn_stat v ON v.vn = o.vn
+                LEFT JOIN patient pt ON pt.hn = o.hn
+                LEFT JOIN vn_stat vn ON vn.vn = o.vn
+                LEFT JOIN pttype pp ON pp.pttype = vn.pttype
+                LEFT JOIN ipt i ON i.vn = v.vn
+                WHERE o.icd10 IN ('Z515')
+                AND {$result_1}
+                AND o.hn NOT IN (
+                    SELECT DISTINCT o.hn
+                    FROM ovstdiag o
+                    LEFT OUTER JOIN vn_stat v ON v.vn = o.vn
+                    WHERE o.icd10 IN ('Z515')
+                    AND v.vstdate <= {$result_2}
+                )
+                GROUP BY o.hn
+                ORDER BY o.vn DESC
+            "
+        );
+
+        $output = '';
+
+        if (count($number_of_new_patients) > 0) {
+            $output .= '<table id="table-eclaim-received-money" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th>hn</th>
+                    <th>ชื่อ - สกุล</th>
+                    <th>pdx</th>
+                    <th>สิทธิ์</th>
+                    <th>อายุ</th>
+                    <th>วันที่</th>
+                    <th>ที่อยู่</th>
+                </tr>
+            </thead>
+            <tbody>';
+            $i = 1;
+            foreach ($number_of_new_patients as $nonp) {
+                $output .= '<tr>
+                <td>' . $i . '</td>
+                <td>' . $nonp->hn . '</td>
+                <td>' . $nonp->fullname . '</td>
+                <td>' . $nonp->pdx . '</td>
+                <td>' . $nonp->pttype_name . '</td>
+                <td>' . $nonp->age . '</td>
+                <td>' . $nonp->day1 . '</td>
+                <td>' . $nonp->fulladdress . '</td>
+              </tr>';
+            }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
         }
     }
 }

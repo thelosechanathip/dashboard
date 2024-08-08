@@ -48,6 +48,50 @@
             </div>
         </div>
     </div>
+    <div class="modal fade " id="eclaim-received-money-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eclaim-received-money-modal_title">ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="spinner-border loadingIcon" style="" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <div class="container" id="show-eclaim-received-money"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        {{-- จำนวนผู้ป่วยรายใหม่ Start --}}
+        <div class="modal fade " id="number-of-new-patients-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="number-of-new-patients-modal_title">รายงานจำนวนคนไข้รายใหม่</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <div class="spinner-border loadingIcon" style="" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="container" id="show-number-of-new-patients"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- จำนวนผู้ป่วยรายใหม่ End --}}
     <!-- Modal เยี่ยมบ้าน รพ.ครั้ง End -->
     <main class="main-content" id="main">
         {{-- Title แสดงข้อมูล ชื่อผู้ใช้งาน และ แผนก Start --}}
@@ -76,9 +120,18 @@
                             <option value="1">ดูจำนวนผู้เสียชีวิต</option>
                             <option value="2">ดูรายชื่อ Palliative Care</option>
                         </select>
-                        {{-- <button type="button" id="submitSelect" class="btn btn-primary">ยืนยัน</button> --}}
                     </div>
                 </form>
+                <div class="px-2">
+                    <button type="button" class="btn btn-warning eclaim-received-money mb-3 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#eclaim-received-money-modal">
+                        ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว
+                    </button>
+                </div>
+                <div class="px-2">
+                    <button type="button" class="btn btn-warning number-of-new-patients mb-3 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#number-of-new-patients-modal">
+                        จำนวนผู้ป่วยรายใหม่
+                    </button>
+                </div>
             </div>
             <div class="">
                 <p><span id="setText"></span><span id="setCount"></span></p>
@@ -386,7 +439,59 @@
                         hideLoadingIcon();
                         $('#show-home-visiting-information-z718').show();
                         $("#show-home-visiting-information-z718").html(response);
+                    }
+                });
+            });
+
+            $(document).on('click', '.eclaim-received-money', function (e) {
+                e.preventDefault();
+                $('#show-eclaim-received-money').hide();
+                showLoadingIcon();
+                $.ajax({
+                    url: '{{ route('getEclaimReceivedMoney') }}',
+                    method: 'get',
+                    success: function(response) {
+                        hideLoadingIcon();
+                        $('#show-eclaim-received-money').show();
+                        $("#show-eclaim-received-money").html(response);
+                        $("#table-eclaim-received-money").DataTable({
+                            responsive: true,
+                            order: [0, 'desc'],
+                            autoWidth: false,
+                            columnDefs: [
+                                {
+                                    targets: "_all",
+                                    className: "dt-head-center dt-body-center"
+                                }
+                            ]
+                        });
+                    }
+                });
+            });
+
+            $(document).on('click', '.number-of-new-patients', function (e) {
+                e.preventDefault();
+                $('#show-number-of-new-patients').hide();
+                showLoadingIcon();
+                $.ajax({
+                    url: '{{ route('getNumberOfNewPatients') }}',
+                    method: 'get',
+                    success: function(response) {
+                        hideLoadingIcon();
                         // console.log(response.message);
+                        $('#show-number-of-new-patients').show();
+                        $("#show-number-of-new-patients").html(response);
+                        $("#table-number-of-new-patients").DataTable({
+                            responsive: true,
+                            order: [0, 'desc'],
+                            autoWidth: false,
+                            columnDefs: [
+                                {
+                                    targets: "_all",
+                                    className: "dt-head-center dt-body-center"
+                                }
+                            ]
+                        });
                     }
                 });
             });
