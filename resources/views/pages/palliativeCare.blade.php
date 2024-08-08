@@ -6,249 +6,309 @@
 
 @section('content')
     <!-- Modal เยี่ยมบ้าน รพ.ครั้ง Start -->
-    <div class="modal fade " id="home_visiting_information" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="home_visiting_information_title">ข้อมูลการเยี่ยมบ้าน</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="text-center">
-                        <div class="spinner-border loadingIcon" style="" role="status">
-                            <span class="visually-hidden">Loading...</span>
+        {{-- ทะเบียนเยี่ยมบ้าน รพ.(ครั้ง) Start --}}
+            <div class="modal fade " id="home_visiting_information" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="home_visiting_information_title">ข้อมูลการเยี่ยมบ้าน</h5>
+                            <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                    </div>
-                    <div class="container" id="show-home-visiting-information"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade " id="home_visiting_information_z718" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="home_visiting_information_z718_title">ข้อมูลการเยี่ยมบ้าน Family Meeting</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="text-center">
-                        <div class="spinner-border loadingIcon" style="" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                    <div class="container" id="show-home-visiting-information-z718"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade " id="eclaim-received-money-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="eclaim-received-money-modal_title">ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="text-center">
-                        <div class="spinner-border loadingIcon" style="" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                    <div class="container" id="show-eclaim-received-money"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-        {{-- จำนวนผู้ป่วยรายใหม่ Start --}}
-        <div class="modal fade " id="number-of-new-patients-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="number-of-new-patients-modal_title">รายงานจำนวนคนไข้รายใหม่</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="text-center">
-                            <div class="spinner-border loadingIcon" style="" role="status">
-                                <span class="visually-hidden">Loading...</span>
+                        <div class="modal-body">
+                            <div class="text-center">
+                                <div class="spinner-border loadingIcon" style="" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
                             </div>
+                            <div class="container" id="show-home-visiting-information"></div>
                         </div>
-                        <div class="container" id="show-number-of-new-patients"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger zoom-card" data-bs-dismiss="modal">Close</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        {{-- ทะเบียนเยี่ยมบ้าน รพ.(ครั้ง) End --}}
+        {{-- ทะเบียนเยี่ยมบ้าน  Z718 Start --}}
+            <div class="modal fade " id="home_visiting_information_z718" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="home_visiting_information_z718_title">ข้อมูลการเยี่ยมบ้าน Family Meeting</h5>
+                            <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="text-center">
+                                <div class="spinner-border loadingIcon" style="" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            <div class="container" id="show-home-visiting-information-z718"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger zoom-card" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{-- ทะเบียนเยี่ยมบ้าน  Z718 End --}}
+        {{-- ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว Start --}}
+            <div class="modal fade " id="eclaim-received-money-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="eclaim-received-money-modal_title">ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว</h5>
+                            <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="text-center">
+                                <div class="spinner-border loadingIcon" style="" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            <div class="container" id="show-eclaim-received-money"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger zoom-card" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{-- ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว End --}}
+        {{-- จำนวนผู้ป่วยรายใหม่ Start --}}
+            <div class="modal fade " id="number-of-new-patients-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="number-of-new-patients-modal_title">รายงานจำนวนคนไข้รายใหม่</h5>
+                            <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="text-center">
+                                <div class="spinner-border loadingIcon" style="" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            {{-- <div class="container mb-4 row">
+                                <div class="card shadow-lg rounded-2 col-3">
+                                    <p href="" class="text-decoration-none text-dark">
+                                        <div class="card-body d-flex justify-content-center align-items-center">
+                                            <h4 class="card-title"><i class="bi bi-person-fill fw-bold me-2"></i>จำนวนคนไข้รายใหม่</h3>
+                                        </div>
+                                    </p>
+                                </div>
+                                <div class="col-9">
+                                    <form id="number_of_new_patients_form">
+                                        @csrf
+                                        <div class="mb-3 d-flex align-items-center row">
+                                            <div class="col d-flex align-items-center">
+                                                <div class="" style="min-width: 80px;">
+                                                    <span class="" style="width: 100%;">วันที่เริ่มต้น</span>
+                                                </div>
+                                                <div>
+                                                    <input type="date" class="form-control" id="min_date" name="min_date" placeholder="min_date" required>
+                                                </div>
+                                            </div>
+                                            <div class="col d-flex align-items-center">
+                                                <div class="" style="min-width: 70px;">
+                                                    <span class="" style="width: 100%;">ถึงวันที่</span>
+                                                </div>
+                                                <div>
+                                                    <input type="date" class="form-control" id="max_date" name="max_date" placeholder="max_date" required>
+                                                </div>
+                                            </div>
+                                            <div class="col d-flex align-items-center">
+                                                <button type="button" id="number_of_new_patients_submit" class="btn btn-primary ms-3">ยืนยัน</button>
+                                            </div>
+                                            <div class="spinner-border loadingIcon " style="" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div> --}}
+                            <div class="container" id="show-number-of-new-patients"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger zoom-card" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {{-- จำนวนผู้ป่วยรายใหม่ End --}}
     <!-- Modal เยี่ยมบ้าน รพ.ครั้ง End -->
     <main class="main-content" id="main">
         {{-- Title แสดงข้อมูล ชื่อผู้ใช้งาน และ แผนก Start --}}
-        <div
-            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
-            <div class="">
-                <h1 class="h2">Palliative Care</h1>
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
+                <div class="">
+                    <h1 class="h2">Palliative Care</h1>
+                </div>
+                <div class="d-flex">
+                    <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
+                    <p>&nbsp;&nbsp;&nbsp;</p>
+                    <p> <span class="fw-bold">แผนก :</span> {{ $data['groupname'] }}</p>
+                </div>
             </div>
-            <div class="d-flex">
-                <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
-                <p>&nbsp;&nbsp;&nbsp;</p>
-                <p> <span class="fw-bold">แผนก :</span> {{ $data['groupname'] }}</p>
-            </div>
-        </div>
         {{-- Title แสดงข้อมูล ชื่อผู้ใช้งาน และ แผนก End --}}
 
         <div class="mt-2 d-flex justify-content-between align-items-center border-bottom full-width-bar">
             <div class="d-flex align-items-center">
-                <form id="selectForm" class="me-3">
-                    @csrf
-                    <div class="mb-3 d-flex align-items-center">
-                        <span class="w-100">รายการ</span>
-                        <select class="form-select ms-2 me-2" id="select" aria-label="Default select example"
-                            style="min-width: 210px;">
-                            <option selected value="0">-------------------------</option>
-                            <option value="1">ดูจำนวนผู้เสียชีวิต</option>
-                            <option value="2">ดูรายชื่อ Palliative Care</option>
-                        </select>
-                    </div>
-                </form>
+                {{-- Form Select สำหรับเลือกรายการ Start --}}
+                    <form id="selectForm" class="me-3">
+                        @csrf
+                        <div class="mb-3 d-flex align-items-center">
+                            <span class="w-100">รายการ</span>
+                            <select class="form-select ms-2 me-2" id="select" aria-label="Default select example"
+                                style="min-width: 210px;">
+                                <option selected value="0">-------------------------</option>
+                                <option value="1">ดูจำนวนผู้เสียชีวิต</option>
+                                <option value="2">ดูรายชื่อ Palliative Care</option>
+                            </select>
+                        </div>
+                    </form>
+                {{-- Form Select สำหรับเลือกรายการ End --}}
                 <div class="px-2">
-                    <button type="button" class="btn btn-warning eclaim-received-money mb-3 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#eclaim-received-money-modal">
-                        ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว
-                    </button>
+                    {{-- Button แสดงทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว Start --}}
+                        <button type="button" class="btn btn-warning eclaim-received-money mb-3 d-flex align-items-center zoom-card" data-bs-toggle="modal" data-bs-target="#eclaim-received-money-modal">
+                            ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว
+                        </button>
+                    {{-- Button แสดงทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว End --}}
                 </div>
                 <div class="px-2">
-                    <button type="button" class="btn btn-warning number-of-new-patients mb-3 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#number-of-new-patients-modal">
-                        จำนวนผู้ป่วยรายใหม่
-                    </button>
+                    {{-- Button แสดงผู้ปู่วย Palliative Care รายใหม่ Start --}}
+                        <button type="button" class="btn btn-warning number-of-new-patients mb-3 d-flex align-items-center zoom-card" data-bs-toggle="modal" data-bs-target="#number-of-new-patients-modal">
+                            ผู้ป่วย Palliative Care รายใหม่
+                        </button>
+                    {{-- Button แสดงผู้ปู่วย Palliative Care รายใหม่ End --}}
                 </div>
             </div>
             <div class="">
-                <p><span id="setText"></span><span id="setCount"></span></p>
+
             </div>
         </div>
 
         <div class="mt-3 d-flex align-item-center justify-content-start">
-            {{-- Form ดึงจำนวนคนไข้ที่เสียชีวิต Palliative Care แยกตาม Diag Start --}}
-            <form id="palliative_count_death_form">
-                @csrf
-                <div class="mb-3 d-flex align-items-center row">
-                    <div class="col d-flex align-items-center">
-                        <div class="" style="min-width: 80px;">
-                            <span class="" style="width: 100%;">วันที่เริ่มต้น</span>
+            <div class="row">
+                <div class="d-flex align-items-center justify-content-between">
+                    {{-- Form ดึงจำนวนคนไข้ที่เสียชีวิต Palliative Care แยกตาม Diag Start --}}
+                    <form id="palliative_count_death_form" class="text-start">
+                        @csrf
+                        <div class="mb-3 d-flex align-items-center row">
+                            <div class="col d-flex align-items-center">
+                                <div class="" style="min-width: 80px;">
+                                    <span class="" style="width: 100%;">วันที่เริ่มต้น</span>
+                                </div>
+                                <div>
+                                    <input type="date" class="form-control" id="min_date" name="min_date" placeholder="min_date" required>
+                                </div>
+                            </div>
+                            <div class="col d-flex align-items-center">
+                                <div class="" style="min-width: 70px;">
+                                    <span class="" style="width: 100%;">ถึงวันที่</span>
+                                </div>
+                                <div>
+                                    <input type="date" class="form-control" id="max_date" name="max_date" placeholder="max_date" required>
+                                </div>
+                            </div>
+                            <div class="col d-flex align-items-center">
+                                <button type="button" id="palliative_count_death_submit" class="btn btn-primary ms-3">ยืนยัน</button>
+                            </div>
+                            <div class="spinner-border loadingIcon " style="" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
                         </div>
-                        <div>
-                            <input type="date" class="form-control" id="min_date" name="min_date" placeholder="min_date" required>
+                    </form>
+                    {{-- Form ดึงจำนวนคนไข้ที่เสียชีวิต Palliative Care แยกตาม Diag End --}}
+                    {{-- Form ดึงรายชื่อคนไข้ Palliative Care Start --}}
+                    <form id="palliative_list_name_form">
+                        @csrf
+                        <div class="mb-3 d-flex align-items-center row">
+                            <div class="col d-flex align-items-center">
+                                <div class="" style="min-width: 80px;">
+                                    <span class="" style="width: 100%;">วันที่เริ่มต้น</span>
+                                </div>
+                                <div>
+                                    <input type="date" class="form-control" id="min_date" name="min_date" placeholder="min_date" required>
+                                </div>
+                            </div>
+                            <div class="col d-flex align-items-center">
+                                <div class="" style="min-width: 70px;">
+                                    <span class="" style="width: 100%;">ถึงวันที่</span>
+                                </div>
+                                <div>
+                                    <input type="date" class="form-control" id="max_date" name="max_date" placeholder="max_date" required>
+                                </div>
+                            </div>
+                            <div class="col d-flex align-items-center">
+                                <div class="" style="min-width: 120px;">
+                                    <span class="" style="width: 100%;">เลือกหน่วยบริการ</span>
+                                </div>
+                                <select class="form-select ms-2" placeholder="เลือกหน่วยบริการ" id="service_unit" name="service_unit" aria-label="Default select example"
+                                    style="min-width: 200px;">
+                                    <option selected value="0">------------</option>
+                                    <option value="99999">ทั้งหมด</option>
+                                    <option value="11111">นอกเขตบริการ</option>
+                                    @foreach($zbm_rpst_name as $zrn)
+                                        <option value="{{ $zrn->rpst_id }}">{{ $zrn->rpst_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col d-flex align-items-center">
+                                <div class="" style="min-width: 80px;">
+                                    <span class="" style="width: 100%;">เลือกสถานะ</span>
+                                </div>
+                                <select class="form-select ms-2" placeholder="เลือกหน่วยบริการ" id="death_type" name="death_type" aria-label="Default select example"
+                                    style="min-width: 200px;">
+                                    <option selected value="0">------------</option>
+                                    <option value="99999">ทั้งหมด</option>
+                                    <option value="Y">เสียชีวิต</option>
+                                    <option value="N">ยังมีชีวิต</option>
+                                </select>
+                            </div>
+                            <div class="col d-flex align-items-center">
+                                <button type="button" id="palliative_list_name_submit" class="btn btn-primary ms-1">ยืนยัน</button>
+                            </div>
+                            <div class="spinner-border loadingIcon " style="" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col d-flex align-items-center">
-                        <div class="" style="min-width: 70px;">
-                            <span class="" style="width: 100%;">ถึงวันที่</span>
-                        </div>
-                        <div>
-                            <input type="date" class="form-control" id="max_date" name="max_date" placeholder="max_date" required>
-                        </div>
-                    </div>
-                    <div class="col d-flex align-items-center">
-                        <button type="button" id="palliative_count_death_submit" class="btn btn-primary ms-3">ยืนยัน</button>
-                    </div>
-                    <div class="spinner-border loadingIcon " style="" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+                    </form>
+                    {{-- Form ดึงรายชื่อคนไข้ Palliative Care End --}}
                 </div>
-            </form>
-            {{-- Form ดึงจำนวนคนไข้ที่เสียชีวิต Palliative Care แยกตาม Diag End --}}
-            {{-- Form ดึงรายชื่อคนไข้ Palliative Care Start --}}
-            <form id="palliative_list_name_form">
-                @csrf
-                <div class="mb-3 d-flex align-items-center row">
-                    <div class="col d-flex align-items-center">
-                        <div class="" style="min-width: 80px;">
-                            <span class="" style="width: 100%;">วันที่เริ่มต้น</span>
-                        </div>
-                        <div>
-                            <input type="date" class="form-control" id="min_date" name="min_date" placeholder="min_date" required>
-                        </div>
-                    </div>
-                    <div class="col d-flex align-items-center">
-                        <div class="" style="min-width: 70px;">
-                            <span class="" style="width: 100%;">ถึงวันที่</span>
-                        </div>
-                        <div>
-                            <input type="date" class="form-control" id="max_date" name="max_date" placeholder="max_date" required>
-                        </div>
-                    </div>
-                    <div class="col d-flex align-items-center">
-                        <div class="" style="min-width: 120px;">
-                            <span class="" style="width: 100%;">เลือกหน่วยบริการ</span>
-                        </div>
-                        <select class="form-select ms-2" placeholder="เลือกหน่วยบริการ" id="service_unit" name="service_unit" aria-label="Default select example"
-                            style="min-width: 200px;">
-                            <option selected value="0">------------</option>
-                            <option value="99999">ทั้งหมด</option>
-                            <option value="11111">นอกเขตบริการ</option>
-                            @foreach($zbm_rpst_name as $zrn)
-                                <option value="{{ $zrn->rpst_id }}">{{ $zrn->rpst_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col d-flex align-items-center">
-                        <div class="" style="min-width: 80px;">
-                            <span class="" style="width: 100%;">เลือกสถานะ</span>
-                        </div>
-                        <select class="form-select ms-2" placeholder="เลือกหน่วยบริการ" id="death_type" name="death_type" aria-label="Default select example"
-                            style="min-width: 200px;">
-                            <option selected value="0">------------</option>
-                            <option value="99999">ทั้งหมด</option>
-                            <option value="Y">เสียชีวิต</option>
-                            <option value="N">ยังมีชีวิต</option>
-                        </select>
-                    </div>
-                    <div class="col d-flex align-items-center">
-                        <button type="button" id="palliative_list_name_submit" class="btn btn-primary ms-1">ยืนยัน</button>
-                    </div>
-                    <div class="spinner-border loadingIcon " style="" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            </form>
-            {{-- Form ดึงรายชื่อคนไข้ Palliative Care End --}}
+            </div>
         </div>
 
         {{-- แสดงข้อมูลเสียชีวิต Palliative Care ตาม Diag แบบ Chart Start --}}
-        <div class="mt-3 card shadow-lg w-auto" id="palliative_count_death_all_chart">
-            <div class="row">
-                <div class="col-12">
-                    <div class="container">
-                        <div class="my-5">
-                            <canvas id="palliative_my_chart" width="300" height="100"></canvas>
+            <div class="mt-3 card shadow-lg w-auto" id="palliative_count_death_all_chart">
+                <div class="row">
+                    {{-- แสดงข้อมูลของจำนวนผู้ป่วย Start --}}
+                    <p class="text-end p-5"><span id="setText"></span><span id="setCount"></span></p>
+                    {{-- แสดงข้อมูลของจำนวนผู้ป่วย End --}}
+                    <div class="col-12">
+                        <div class="container">
+                            <div class="my-5">
+                                <canvas id="palliative_my_chart" width="300" height="100"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="mt-3 card shadow-lg w-100" id="palliative_list_name_table">
-            <div class="row w-100">
-                <div class="col-12 w-auto">
-                    <div class="mx-5 w-auto">
-                        <div class="my-5 ms-0 w-auto">
-                            <div class="w-auto" id="fetch-list-name"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         {{-- แสดงข้อมูลเสียชีวิต Palliative Care ตาม Diag แบบ Chart End --}}
+        {{-- แสดงข้อมูล Palliative Care ตาม วันที่, สถานบริการ, สถานการมีชีวิตหรือเสียชีวิต แบบ Table Start --}}
+            <div class="mt-3 card shadow-lg w-100" id="palliative_list_name_table">
+                <div class="row w-100">
+                    <div class="col-12 w-auto">
+                        <div class="mx-5 w-auto">
+                            <div class="my-5 ms-0 w-auto">
+                                <div class="w-auto" id="fetch-list-name"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{-- แสดงข้อมูล Palliative Care ตาม วันที่, สถานบริการ, สถานการมีชีวิตหรือเสียชีวิต แบบ Table End --}}
+
     </main>
 @endsection
 
@@ -256,139 +316,268 @@
     <script>
         $(document).ready(function() {
 
-            $('#palliative_count_death_all_chart').hide();
-            $('#palliative_count_death_form').hide();
-            $('#palliative_list_name_form').hide();
-            $('#palliative_list_name_table').hide();
-            $('.loadingIcon').hide();
-
-            $('#select').change(function() {
-                var selectForm = $('#select').val();
-                if (selectForm != '0' && selectForm == '1') {
-                    $('#palliative_count_death_form').show();
-                    $('#palliative_list_name_form').hide();
-                } else if (selectForm != '0' && selectForm == '2') {
-                    $('#palliative_list_name_form').show();
-                    $('#palliative_count_death_form').hide();
-                } else {
-                    $('#palliative_list_name_form').hide();
-                    $('#palliative_count_death_form').hide();
-                }
-            });
-
-            function showLoadingIcon() {
-                $('.loadingIcon').show();
-            }
-
-            function hideLoadingIcon() {
+            // เริ่มต้น Hide Start
+                $('#palliative_count_death_all_chart').hide();
+                $('#palliative_count_death_form').hide();
+                $('#palliative_list_name_form').hide();
+                $('#palliative_list_name_table').hide();
                 $('.loadingIcon').hide();
-            }
+            // เริ่มต้น Hide End
 
-            function setText(request) {
-                if(request == 0) {
-                    $('#setText').show();
-                    $('#setCount').show();
-                    $('#setText').text('');
-                    $('#setCount').text('ไม่มีคนไข้ Palliative Care');
-                } else {
-                    $('#setText').show();
-                    $('#setCount').show();
-                    $('#setText').text('จำนวนคนไข้ Palliative Care ทั้งหมดที่เสียชีวิตแยกตาม Diag ทั้งหมด : ');
-                    $('#setCount').text(request + ' ราย');
+            // จาก form ID "select" เลือกแบบ Realtime Start
+                $('#select').change(function() {
+                    var selectForm = $('#select').val();
+                    if (selectForm != '0' && selectForm == '1') {
+                        $('#palliative_count_death_form').show();
+                        $('#palliative_list_name_form').hide();
+                    } else if (selectForm != '0' && selectForm == '2') {
+                        $('#palliative_list_name_form').show();
+                        $('#palliative_count_death_form').hide();
+                    } else {
+                        $('#palliative_list_name_form').hide();
+                        $('#palliative_count_death_form').hide();
+                    }
+                });
+            // จาก form ID "select" เลือกแบบ Realtime End
+
+            // Icon Download Start
+                function showLoadingIcon() {
+                    $('.loadingIcon').show();
                 }
-            }
+
+                function hideLoadingIcon() {
+                    $('.loadingIcon').hide();
+                }
+            // Icon Download End
+
+            // Set Text Start
+                function setText(request) {
+                    if(request == 0) {
+                        $('#setText').show();
+                        $('#setCount').show();
+                        $('#setText').text('');
+                        $('#setCount').text('ไม่มีคนไข้ Palliative Care ที่เสียชีวิต');
+                    } else {
+                        $('#setText').show();
+                        $('#setCount').show();
+                        $('#setText').text('จำนวนคนไข้ Palliative Care ทั้งหมดที่เสียชีวิตแยกตาม Diag ทั้งหมด : ');
+                        $('#setCount').text(request + ' ราย');
+                    }
+                }
+            // Set Text End
+
+            // Hide Form && Chart && Table Start
+                function hideForm() {
+                    $('#setText').hide();
+                    $('#setCount').hide();
+                    $('#palliative_list_name_table').hide();
+                    $('#palliative_count_death_all_chart').hide();
+                    $('#palliative_list_name_table').hide();
+                    $('#palliative_count_death_all_chart').hide();
+                    $('#palliative_count_death_form').hide();
+                    $('#palliative_list_name_form').hide();
+                    $('#select').val('0');
+                }
+            // Hide Form && Chart && Table End
 
             // ตัวแปรเก็บ Chart Start
-            var chart;
+                var chart;
             // ตัวแปรเก็บ Chart End
 
             // ดึงข้อมูลเสียชีวิต Palliative Care ตาม Diag Start
-            $('#palliative_count_death_submit').click(function(e) {
-                $('#palliative_list_name_table').hide();
-                $('#palliative_count_death_all_chart').hide();
-                $('#setText').hide();
-                $('#setCount').hide();
-                e.preventDefault();
-                var formData = $('#palliative_count_death_form').serialize();
-                showLoadingIcon();
-                $.ajax({
-                    url: '{{ route('getPalliativeCareSelectData') }}',
-                    type: 'GET',
-                    data: formData,
-                    success: function(response) {
-                        hideLoadingIcon();
-                        if(response.status === 400) {
-                            swal.fire(
-                                response.title,
-                                response.message,
-                                response.icon
-                            );
-                            $('#palliative_count_death_all_chart').hide();
-                            $('#palliative_list_name_table').hide();
-                        } else {
-                            $('#palliative_count_death_all_chart').show();
-                            $('#palliative_list_name_table').hide();
-                            $("#palliative_list_name_form")[0].reset();
-                            var chart_count_death = response.chart_count_death;
+                $('#palliative_count_death_submit').click(function(e) {
+                    // ป้องกันการ Reload ของหน้าเว็บใหม่
+                    e.preventDefault();
 
-                            if (chart) {
-                                chart.destroy();
-                            }
+                    // ดึงข้อมูลจาก Form ด้วย ID
+                    var formData = $('#palliative_count_death_form').serialize();
 
-                            var ctx = document.getElementById('palliative_my_chart').getContext('2d');
-                            chart = new Chart(ctx, {
-                                type: 'bar',
-                                data: chart_count_death,
-                                options: chart_count_death.options
-                            });
+                    $('#palliative_list_name_table').hide();
+                    $('#palliative_count_death_all_chart').hide();
+                    $('#setText').hide();
+                    $('#setCount').hide();
+                    // เรียกใช้งาน Function เพื่อแสดง Icon Download
+                    showLoadingIcon();
 
-                            var total = chart_count_death.datasets[0].data.reduce(function(sum, value) {
-                                return sum + value;
-                            }, 0).toLocaleString();
+                    $.ajax({
+                        // ส่งคำขอข้อมูลไปยัง Route
+                        url: '{{ route('getPalliativeCareSelectData') }}',
+                        // Method Get
+                        type: 'GET',
+                        // ส่งข้อมูลด้วยตัวแปร formData
+                        data: formData,
+                        // เมื่อมีการส่ง Response กลับมา
+                        success: function(response) {
+                            // เรียกใช้งาน Function เพื่อปิด Icon Download
+                            hideLoadingIcon();
 
-                            if(parseInt(total) == 0) {
-                                setText(total);
+                            if(response.status === 400) {
+                                // แสดงข้อมูลแบบ Sweet Alert 2 Start
+                                swal.fire(
+                                    response.title,
+                                    response.message,
+                                    response.icon
+                                );
+                                // แสดงข้อมูลแบบ Sweet Alert 2 End
+                                $('#palliative_count_death_all_chart').hide();
+                                $('#palliative_list_name_table').hide();
                             } else {
-                                setText(total);
+                                $('#palliative_count_death_all_chart').show();
+                                $('#palliative_list_name_table').hide();
+                                // Reset Form ที่มี ID ตามด้านล่าง
+                                $("#palliative_list_name_form")[0].reset();
+
+                                // นำ Response ที่มี Chart นำไปเก็บไว้ในตัวแปร chart_count_death
+                                var chart_count_death = response.chart_count_death;
+
+                                // Check ว่ามี Chart หรือไม่
+                                if (chart) {
+                                    chart.destroy();
+                                }
+
+                                // เข้าถึง ID ตามด้านล่างเพื่อทำให้ ID นั้นๆ แสดงรูปแบบ Chart ออกมา
+                                var ctx = document.getElementById('palliative_my_chart').getContext('2d');
+                                chart = new Chart(ctx, {
+                                    // แสดง Chart ในรูปแบบกราฟแท่ง
+                                    type: 'bar',
+                                    // ดึงข้อมูลจาก Response มาแสดง
+                                    data: chart_count_death,
+                                    // ดึงข้อมูลจาก Response ในส่วนของ Options มาแสดง
+                                    options: chart_count_death.options
+                                });
+
+                                // ดึงข้อมูลจาก Response มารวมกันเพื่อหาผลรวมของข้อมูล
+                                var total = chart_count_death.datasets[0].data.reduce(function(sum, value) {
+                                    return sum + value;
+                                }, 0).toLocaleString();
+
+                                // ตรวจสอบข้อมูลว่า = 0 หรือไม่ แล้วค่าไปยัง Function setText เพื่อทำการ Set ข้อความและจำนวนข้อมูลที่ต้องการแสดง
+                                if(parseInt(total) == 0) {
+                                    setText(total);
+                                } else {
+                                    setText(total);
+                                }
                             }
                         }
-                    }
+                    });
                 });
-            });
             // ดึงข้อมูลเสียชีวิต Palliative Care ตาม Diag End
 
-            $('#palliative_list_name_submit').click(function(e) {
-                $('#palliative_list_name_table').hide();
-                $('#palliative_count_death_all_chart').hide();
-                $('#setText').hide();
-                $('#setCount').hide();
-                e.preventDefault();
-                var formData = $('#palliative_list_name_form').serialize();
-                showLoadingIcon();
-                $.ajax({
-                    url: '{{ route('getPalliativeCareFetchListName') }}',
-                    type: 'GET',
-                    data: formData,
-                    success: function(response) {
-                        hideLoadingIcon();
-                        if(response.status === 400) {
-                            swal.fire(
-                                response.title,
-                                response.message,
-                                response.icon
-                            );
-                        } else {
-                            $('#palliative_list_name_table').show();
-                            $('#palliative_count_death_all_chart').hide();
-                            $("#palliative_count_death_form")[0].reset();
-                            $('#setText').hide();
-                            $('#setCount').hide();
-                            $("#fetch-list-name").html(response);
-                            $("#table-fetch-list-name").DataTable({
+            // ดึงข้อมูลรายชื่อคนไข้ Palliative Care ตาม วันที่, เวลา, สถานบริการ, สถานะการมีชีวิตหรือเสียชีวิต Start
+                $('#palliative_list_name_submit').click(function(e) {
+                    e.preventDefault();
+                    var formData = $('#palliative_list_name_form').serialize();
+
+                    $('#palliative_list_name_table').hide();
+                    $('#palliative_count_death_all_chart').hide();
+                    $('#setText').hide();
+                    $('#setCount').hide();
+                    showLoadingIcon();
+
+                    $.ajax({
+                        url: '{{ route('getPalliativeCareFetchListName') }}',
+                        type: 'GET',
+                        data: formData,
+                        success: function(response) {
+                            hideLoadingIcon();
+                            if(response.status === 400) {
+                                swal.fire(
+                                    response.title,
+                                    response.message,
+                                    response.icon
+                                );
+                            } else {
+                                $('#palliative_list_name_table').show();
+                                $('#palliative_count_death_all_chart').hide();
+                                $("#palliative_count_death_form")[0].reset();
+                                $('#setText').hide();
+                                $('#setCount').hide();
+                                $("#fetch-list-name").html(response);
+                                $("#table-fetch-list-name").DataTable({
+                                    responsive: true,
+                                    order: [0, 'desc'],
+                                    autoWidth: false,
+                                    buttons: ['excel'],
+                                    columnDefs: [
+                                        {
+                                            targets: "_all",
+                                            className: "dt-head-center dt-body-center"
+                                        }
+                                    ]
+                                });
+                            }
+                        }
+                    });
+                });
+            // ดึงข้อมูลรายชื่อคนไข้ Palliative Care ตาม วันที่, เวลา, สถานบริการ, สถานะการมีชีวิตหรือเสียชีวิต End
+
+            // ดึงข้อมูลการเยี่ยมบ้าน รพ.(ครั้ง) แสดงบน Modal Start
+                $(document).on('click', '.home-visiting-information', function (e) {
+                    e.preventDefault();
+                    let id = $(this).attr('id');
+                    $('#show-home-visiting-information').hide();
+                    $('#show-home-visiting-information-z718').hide();
+                    $('#setText').hide();
+                    $('#setCount').hide();
+                    showLoadingIcon();
+                    $.ajax({
+                        url: '{{ route('getHomeVisitingInformation') }}',
+                        method: 'get',
+                        data: {
+                            id: id,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            hideLoadingIcon();
+                            $('#show-home-visiting-information').show();
+                            $("#show-home-visiting-information").html(response);
+                        }
+                    });
+                });
+            // ดึงข้อมูลการเยี่ยมบ้าน รพ.(ครั้ง) แสดงบน Modal End
+
+            // ดึงข้อมูลการเยี่ยมบ้าน Z718 แสดงบน Modal Start
+                $(document).on('click', '.home-visiting-information-z718', function (e) {
+                    e.preventDefault();
+                    let id = $(this).attr('id');
+                    $('#show-home-visiting-information').hide();
+                    $('#show-home-visiting-information-z718').hide();
+                    $('#setText').hide();
+                    $('#setCount').hide();
+                    showLoadingIcon();
+                    $.ajax({
+                        url: '{{ route('getHomeVisitingInformationZ718') }}',
+                        method: 'get',
+                        data: {
+                            id: id,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            hideLoadingIcon();
+                            $('#show-home-visiting-information-z718').show();
+                            $("#show-home-visiting-information-z718").html(response);
+                        }
+                    });
+                });
+            // ดึงข้อมูลการเยี่ยมบ้าน Z718 แสดงบน Modal End
+
+            // ดึงข้อมูลทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้วแสดงบน Modal Start
+                $(document).on('click', '.eclaim-received-money', function (e) {
+                    e.preventDefault();
+                    $('#show-eclaim-received-money').hide();
+                    hideForm();
+                    showLoadingIcon();
+                    $.ajax({
+                        url: '{{ route('getEclaimReceivedMoney') }}',
+                        method: 'get',
+                        success: function(response) {
+                            hideLoadingIcon();
+                            $('#show-eclaim-received-money').show();
+                            $("#show-eclaim-received-money").html(response);
+                            $("#table-eclaim-received-money").DataTable({
                                 responsive: true,
                                 order: [0, 'desc'],
                                 autoWidth: false,
-                                buttons: ['excel'],
                                 columnDefs: [
                                     {
                                         targets: "_all",
@@ -397,104 +586,39 @@
                                 ]
                             });
                         }
-                    }
+                    });
                 });
-            });
+            // ดึงข้อมูลทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้วแสดงบน Modal End
 
-            $(document).on('click', '.home-visiting-information', function (e) {
-                e.preventDefault();
-                let id = $(this).attr('id');
-                $('#show-home-visiting-information').hide();
-                $('#show-home-visiting-information-z718').hide();
-                showLoadingIcon();
-                $.ajax({
-                    url: '{{ route('getHomeVisitingInformation') }}',
-                    method: 'get',
-                    data: {
-                        id: id,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        hideLoadingIcon();
-                        $('#show-home-visiting-information').show();
-                        $("#show-home-visiting-information").html(response);
-                    }
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ Start
+                $(document).on('click', '.number-of-new-patients', function (e) {
+                    e.preventDefault();
+                    $('#show-number-of-new-patients').hide();
+                    hideForm();
+                    showLoadingIcon();
+                    $.ajax({
+                        url: '{{ route('getNumberOfNewPatients') }}',
+                        method: 'get',
+                        success: function(response) {
+                            hideLoadingIcon();
+                            // console.log(response.message);
+                            $('#show-number-of-new-patients').show();
+                            $("#show-number-of-new-patients").html(response);
+                            $("#table-number-of-new-patients").DataTable({
+                                responsive: true,
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ]
+                            });
+                        }
+                    });
                 });
-            });
-
-            $(document).on('click', '.home-visiting-information-z718', function (e) {
-                e.preventDefault();
-                let id = $(this).attr('id');
-                $('#show-home-visiting-information').hide();
-                $('#show-home-visiting-information-z718').hide();
-                showLoadingIcon();
-                $.ajax({
-                    url: '{{ route('getHomeVisitingInformationZ718') }}',
-                    method: 'get',
-                    data: {
-                        id: id,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        hideLoadingIcon();
-                        $('#show-home-visiting-information-z718').show();
-                        $("#show-home-visiting-information-z718").html(response);
-                    }
-                });
-            });
-
-            $(document).on('click', '.eclaim-received-money', function (e) {
-                e.preventDefault();
-                $('#show-eclaim-received-money').hide();
-                showLoadingIcon();
-                $.ajax({
-                    url: '{{ route('getEclaimReceivedMoney') }}',
-                    method: 'get',
-                    success: function(response) {
-                        hideLoadingIcon();
-                        $('#show-eclaim-received-money').show();
-                        $("#show-eclaim-received-money").html(response);
-                        $("#table-eclaim-received-money").DataTable({
-                            responsive: true,
-                            order: [0, 'desc'],
-                            autoWidth: false,
-                            columnDefs: [
-                                {
-                                    targets: "_all",
-                                    className: "dt-head-center dt-body-center"
-                                }
-                            ]
-                        });
-                    }
-                });
-            });
-
-            $(document).on('click', '.number-of-new-patients', function (e) {
-                e.preventDefault();
-                $('#show-number-of-new-patients').hide();
-                showLoadingIcon();
-                $.ajax({
-                    url: '{{ route('getNumberOfNewPatients') }}',
-                    method: 'get',
-                    success: function(response) {
-                        hideLoadingIcon();
-                        // console.log(response.message);
-                        $('#show-number-of-new-patients').show();
-                        $("#show-number-of-new-patients").html(response);
-                        $("#table-number-of-new-patients").DataTable({
-                            responsive: true,
-                            order: [0, 'desc'],
-                            autoWidth: false,
-                            columnDefs: [
-                                {
-                                    targets: "_all",
-                                    className: "dt-head-center dt-body-center"
-                                }
-                            ]
-                        });
-                    }
-                });
-            });
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ End
 
         });
     </script>

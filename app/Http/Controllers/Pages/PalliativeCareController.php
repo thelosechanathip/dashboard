@@ -705,6 +705,38 @@ class PalliativeCareController extends Controller
         $result_1 = "MONTH(v.vstdate) = MONTH(CURRENT_DATE())";
         $result_2 = "LAST_DAY(CURRENT_DATE() - INTERVAL 1 MONTH)";
 
+        // $number_of_new_patients_count = DB::connection('mysql')->select(
+        //     "
+        //         SELECT
+        //             COUNT(*) AS result
+        //         FROM (
+        //             SELECT DISTINCT
+        //                 o.hn AS 'hn', pp.name AS pttype_name,
+        //                 (YEAR(NOW()) - YEAR(pt.birthday)) AS age,
+        //                 v.pdx, o.vstdate AS day1,
+        //                 CONCAT(pt.pname, '', pt.fname, ' ', pt.lname) AS fullname,
+        //                 pt.informaddr AS fulladdress
+        //             FROM ovstdiag o
+        //             LEFT OUTER JOIN vn_stat v ON v.vn = o.vn
+        //             LEFT JOIN patient pt ON pt.hn = o.hn
+        //             LEFT JOIN vn_stat vn ON vn.vn = o.vn
+        //             LEFT JOIN pttype pp ON pp.pttype = vn.pttype
+        //             LEFT JOIN ipt i ON i.vn = v.vn
+        //             WHERE o.icd10 IN ('Z515')
+        //             AND MONTH(v.vstdate) = MONTH(CURRENT_DATE())
+        //             AND o.hn NOT IN (
+        //                 SELECT DISTINCT o.hn
+        //                 FROM ovstdiag o
+        //                 LEFT OUTER JOIN vn_stat v ON v.vn = o.vn
+        //                 WHERE o.icd10 IN ('Z515')
+        //                 AND v.vstdate <= LAST_DAY(CURRENT_DATE() - INTERVAL 1 MONTH)
+        //             )
+        //             GROUP BY o.hn
+        //             ORDER BY o.vn DESC
+        //         ) AS t1
+        //     "
+        // );
+
         $number_of_new_patients = DB::connection('mysql')->select(
             "
                 SELECT DISTINCT
@@ -736,7 +768,8 @@ class PalliativeCareController extends Controller
         $output = '';
 
         if (count($number_of_new_patients) > 0) {
-            $output .= '<table id="table-eclaim-received-money" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+            $output .= '
+            <table id="table-number-of-new-patients" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
             <thead>
                 <tr>
                     <th>ลำดับ</th>
@@ -750,10 +783,10 @@ class PalliativeCareController extends Controller
                 </tr>
             </thead>
             <tbody>';
-            $i = 1;
+            $i = 0;
             foreach ($number_of_new_patients as $nonp) {
                 $output .= '<tr>
-                <td>' . $i . '</td>
+                <td>' . ++$i . '</td>
                 <td>' . $nonp->hn . '</td>
                 <td>' . $nonp->fullname . '</td>
                 <td>' . $nonp->pdx . '</td>
