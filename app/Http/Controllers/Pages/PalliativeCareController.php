@@ -783,47 +783,56 @@ class PalliativeCareController extends Controller
     }
 
     public function getNumberOfNewPatientsSelect(Request $request) {
-        $request_1 = "v.vstdate BETWEEN '{$request->min_date}' AND '{$request->max_date}'";
-        $request_2 = "'{$request->min_date}'";
-
-        $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2);
-
-        $output = '';
-
-        if (count($number_of_new_patients) != false) {
-            $output .= '
-            <table id="table-number-of-new-patients-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>ลำดับ</th>
-                    <th>hn</th>
-                    <th>ชื่อ - สกุล</th>
-                    <th>pdx</th>
-                    <th>สิทธิ์</th>
-                    <th>อายุ</th>
-                    <th>วันที่</th>
-                    <th>ที่อยู่</th>
-                </tr>
-            </thead>
-            <tbody>';
-            $i = 0;
-            foreach ($number_of_new_patients as $nonp) {
-                $changeDate = $this->DateThai($nonp->day1);
-                $output .= '<tr>
-                <td>' . ++$i . '</td>
-                <td>' . $nonp->hn . '</td>
-                <td>' . $nonp->fullname . '</td>
-                <td>' . $nonp->pdx . '</td>
-                <td>' . $nonp->pttype_name . '</td>
-                <td>' . $nonp->age . '</td>
-                <td>' . $changeDate . '</td>
-                <td>' . $nonp->fulladdress . '</td>
-              </tr>';
-            }
-            $output .= '</tbody></table>';
-            echo $output;
+        if($request->min_date == 0 || $request->max_date == 0) {
+            return response()->json([
+                'status' => 400,
+                'title' => 'Error',
+                'message' => 'กรุณาเลือกวันที่รับบริการ',
+                'icon' => 'error'
+            ]);
         } else {
-            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
+            $request_1 = "v.vstdate BETWEEN '{$request->min_date}' AND '{$request->max_date}'";
+            $request_2 = "'{$request->min_date}'";
+
+            $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2);
+
+            $output = '';
+
+            if (count($number_of_new_patients) != false) {
+                $output .= '
+                <table id="table-number-of-new-patients-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>hn</th>
+                        <th>ชื่อ - สกุล</th>
+                        <th>pdx</th>
+                        <th>สิทธิ์</th>
+                        <th>อายุ</th>
+                        <th>วันที่</th>
+                        <th>ที่อยู่</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $i = 0;
+                foreach ($number_of_new_patients as $nonp) {
+                    $changeDate = $this->DateThai($nonp->day1);
+                    $output .= '<tr>
+                    <td>' . ++$i . '</td>
+                    <td>' . $nonp->hn . '</td>
+                    <td>' . $nonp->fullname . '</td>
+                    <td>' . $nonp->pdx . '</td>
+                    <td>' . $nonp->pttype_name . '</td>
+                    <td>' . $nonp->age . '</td>
+                    <td>' . $changeDate . '</td>
+                    <td>' . $nonp->fulladdress . '</td>
+                </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
+            }
         }
     }
 }
