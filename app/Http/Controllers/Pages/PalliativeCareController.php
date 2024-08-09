@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Pages;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+// เรียกใช้งาน Database
 use Illuminate\Support\Facades\DB;
 
 class PalliativeCareController extends Controller
 {
+    // ดึงข้อมูล คนไข้ Palliative Care รายใหม่จาก Database Start
     private function queryNumberOfNewPatients($request_1, $request_2) {
         if($request_1 == 0 && $request_2 == 0) {
             return false;
@@ -44,7 +46,9 @@ class PalliativeCareController extends Controller
 
         return (array) $number_of_new_patients;
     }
+    // ดึงข้อมูล คนไข้ Palliative Care รายใหม่จาก Database End
 
+    // ดึงข้อมูล ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว Start
     private function queryEclaimReceivedMoney() {
         $rcmdb_repeclaim = DB::connection('mysql')->select(
             "
@@ -54,7 +58,9 @@ class PalliativeCareController extends Controller
 
         return (array) $rcmdb_repeclaim;
     }
+    // ดึงข้อมูล ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว End
 
+    // แยกรายการของ Colunm hpi เพื่อดึงค่าของ PPS ออกมาใช้งาน Start
     private function SePPS($hpi) {
         if (strpos($hpi, 'PPS = 10 %') || strpos($hpi, '10%') || strpos($hpi, '10 %')) $rss="PPS=10%";
         else if (strpos($hpi, 'PPS = 20 %') || strpos($hpi, '20%') || strpos($hpi, '20 %')) $rss="PPS=20%";
@@ -68,7 +74,9 @@ class PalliativeCareController extends Controller
         else $rss="PPS= -";
         return $rss;
     }
+    // แยกรายการของ Colunm hpi เพื่อดึงค่าของ PPS ออกมาใช้งาน End
 
+    // แยกรายการของ Colunm hpi เพื่อดึงค่าของ PS ออกมาใช้งาน Start
     private function SePS($hpi) {
         if (strpos($hpi, 'PS = 1/10') || strpos($hpi, '1/10')) $rss="PS=1/10";
         else if (strpos($hpi, 'PS = 2/10') || strpos($hpi, '2/10')) $rss="PS=2/10";
@@ -82,7 +90,9 @@ class PalliativeCareController extends Controller
         else $rss="PS= -";
         return $rss;
     }
+    // แยกรายการของ Colunm hpi เพื่อดึงค่าของ PS ออกมาใช้งาน End
 
+    // แยกรายการของ Colunm hpi เพื่อดึงค่าของ เตียง ออกมาใช้งาน Start
     private function SeBed($hpi) {
         if (strpos($hpi, 'เตียง1') || strpos($hpi, 'เตียง 1') || strpos($hpi, 'เตียง=1') || strpos($hpi, 'เตียง = 1') || strpos($hpi, 'เตียง= 1') || strpos($hpi, 'เตียง =1')) $rss="เตียง 1";
         else if (strpos($hpi, 'เตียง2') || strpos($hpi, 'เตียง 2') || strpos($hpi, 'เตียง=2') || strpos($hpi, 'เตียง = 2') || strpos($hpi, 'เตียง= 2') || strpos($hpi, 'เตียง =2')) $rss="เตียง 2";
@@ -91,7 +101,9 @@ class PalliativeCareController extends Controller
         else $rss="เตียง= -";
         return $rss;
     }
+    // แยกรายการของ Colunm hpi เพื่อดึงค่าของ เตียง ออกมาใช้งาน End
 
+    // แยกรายการของ Colunm hpi เพื่อดึงค่าของ BI ออกมาใช้งาน Start
     private function SeBi($hpi) {
         for($i=100;$i>=0;$i--){
             if (strpos(strtolower($hpi), 'bi'.$i) || strpos(strtolower($hpi), 'bi '.$i) || strpos(strtolower($hpi), 'bi  '.$i) || strpos(strtolower($hpi), 'bi='.$i) || strpos(strtolower($hpi), 'bi = '.$i) || strpos(strtolower($hpi), 'bi= '.$i) || strpos(strtolower($hpi), 'bi ='.$i))
@@ -105,7 +117,9 @@ class PalliativeCareController extends Controller
 
         return $ress;
     }
+    // แยกรายการของ Colunm hpi เพื่อดึงค่าของ BI ออกมาใช้งาน End
 
+    // แปลงวันที่จาก ค.ศ. ให้เป็นวันที่ของไทย Start
     private function DateThai($strDate) {
         $strYear = date("Y",strtotime($strDate))+543;
         $strMonth= date("n",strtotime($strDate));
@@ -114,7 +128,9 @@ class PalliativeCareController extends Controller
         $strMonthThai=$strMonthCut[$strMonth];
         return "$strDay $strMonthThai $strYear";
     }
+    // แปลงวันที่จาก ค.ศ. ให้เป็นวันที่ของไทย End
 
+    // จำนวนผู้เสียชีวิตใน Palliative Care แยกตาม Diag Start
     private function getChartCountDeath($summarize_count_death) {
         $count_death = [];
         $death_name = [];
@@ -155,7 +171,9 @@ class PalliativeCareController extends Controller
         ];
         return $chart_count_death;
     }
+    // จำนวนผู้เสียชีวิตใน Palliative Care แยกตาม Diag End
 
+    // หน้าแรกของ Palliative Care Start
     public function index(Request $request) {
         $data = $request->session()->all();
 
@@ -172,7 +190,9 @@ class PalliativeCareController extends Controller
 
         return view('pages.palliativeCare', compact('data', 'zbm_rpst_name'));
     }
+    // หน้าแรกของ Palliative Care End
 
+    // Funtion สำหรับจัดการเกี่ยวกับข้อมูลคนไข้ Palliative Care ที่เสียชีวิตตาม Diag Start
     public function getPalliativeCareSelectData(Request $request) {
         if($request->min_date == 0 || $request->max_date == 0) {
             return response()->json([
@@ -218,7 +238,9 @@ class PalliativeCareController extends Controller
             }
         }
     }
+    // Funtion สำหรับจัดการเกี่ยวกับข้อมูลคนไข้ Palliative Care ที่เสียชีวิตตาม Diag End
 
+    // Funtion สำหรับจัดการเกี่ยวกับข้อมูลรายชื่อคนไข้ Palliative Care Start
     public function getPalliativeCareFetchListName(Request $request) {
         $min_date = $request->min_date;
         $max_date = $request->max_date;
@@ -448,7 +470,9 @@ class PalliativeCareController extends Controller
             echo '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลคนไข้ Palliative Care ในรายการที่เลือก</h1>';
         }
     }
+    // Funtion สำหรับจัดการเกี่ยวกับข้อมูลรายชื่อคนไข้ Palliative Care End
 
+    // Funtion สำหรับจัดการเกี่ยวกับข้อมูลการเยี่ยมบ้าน รพ.(ครั้ง) Start
     public function getHomeVisitingInformation(Request $request) {
         $hn = $request->id;
 
@@ -573,7 +597,9 @@ class PalliativeCareController extends Controller
             ]);
         }
     }
+    // Funtion สำหรับจัดการเกี่ยวกับข้อมูลการเยี่ยมบ้าน รพ.(ครั้ง) End
 
+    // Funtion สำหรับจัดการเกี่ยวกับข้อมูลการเยี่ยมบ้าน Z718 Start
     public function getHomeVisitingInformationZ718(Request $request) {
         $hn = $request->id;
 
@@ -701,7 +727,9 @@ class PalliativeCareController extends Controller
             ]);
         }
     }
+    // Funtion สำหรับจัดการเกี่ยวกับข้อมูลการเยี่ยมบ้าน Z718 End
 
+    // Function สำหรับจัดการ ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว Start
     public function getEclaimReceivedMoney() {
         $rcmdb_repeclaim = $this->queryEclaimReceivedMoney();
 
@@ -736,7 +764,9 @@ class PalliativeCareController extends Controller
             echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการ E-Claim</h1>';
         }
     }
+    // Function สำหรับจัดการ ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว End
 
+    // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตามเดือนและปีปัจจุบัน Start
     public function getNumberOfNewPatients() {
         $request_1 = "MONTH(v.vstdate) = MONTH(CURRENT_DATE())";
         $request_2 = "LAST_DAY(CURRENT_DATE() - INTERVAL 1 MONTH)";
@@ -781,7 +811,9 @@ class PalliativeCareController extends Controller
             echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
         }
     }
+    // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตามเดือนและปีปัจจุบัน End
 
+    // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตาม วัน-เดือน-ปี ของ Request ที่ส่งเข้ามา Start
     public function getNumberOfNewPatientsSelect(Request $request) {
         if($request->min_date == 0 || $request->max_date == 0) {
             return response()->json([
@@ -835,4 +867,5 @@ class PalliativeCareController extends Controller
             }
         }
     }
+    // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตาม วัน-เดือน-ปี ของ Request ที่ส่งเข้ามา End
 }
