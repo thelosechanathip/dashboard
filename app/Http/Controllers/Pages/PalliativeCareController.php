@@ -9,6 +9,42 @@ use Illuminate\Support\Facades\DB;
 
 class PalliativeCareController extends Controller
 {
+    private function queryNumberOfNewPatients($request_1, $request_2) {
+        if($request_1 == 0 && $request_2 == 0) {
+            return false;
+        }
+
+        $number_of_new_patients = DB::connection('mysql')->select(
+            "
+                SELECT DISTINCT
+                    o.hn AS 'hn', pp.name AS pttype_name,
+                    (YEAR(NOW()) - YEAR(pt.birthday)) AS age,
+                    v.pdx, o.vstdate AS day1,
+                    CONCAT(pt.pname, '', pt.fname, ' ', pt.lname) AS fullname,
+                    pt.informaddr AS fulladdress
+                FROM ovstdiag o
+                LEFT OUTER JOIN vn_stat v ON v.vn = o.vn
+                LEFT JOIN patient pt ON pt.hn = o.hn
+                LEFT JOIN vn_stat vn ON vn.vn = o.vn
+                LEFT JOIN pttype pp ON pp.pttype = vn.pttype
+                LEFT JOIN ipt i ON i.vn = v.vn
+                WHERE o.icd10 IN ('Z515')
+                AND {$request_1}
+                AND o.hn NOT IN (
+                    SELECT DISTINCT o.hn
+                    FROM ovstdiag o
+                    LEFT OUTER JOIN vn_stat v ON v.vn = o.vn
+                    WHERE o.icd10 IN ('Z515')
+                    AND v.vstdate <= {$request_2}
+                )
+                GROUP BY o.hn
+                ORDER BY o.vn DESC
+            "
+        );
+
+        return (array) $number_of_new_patients;
+    }
+
     private function queryEclaimReceivedMoney() {
         $rcmdb_repeclaim = DB::connection('mysql')->select(
             "
@@ -393,12 +429,12 @@ class PalliativeCareController extends Controller
                 <td>' . $pcfln->rpst_name . '</td>
                 <td>' . $pcfln->pdx . '</td>
                 <td>
-                    <button type="button" id="' . $pcfln->hn . '" class="btn btn-warning home-visiting-information-z718" data-bs-toggle="modal" data-bs-target="#home_visiting_information_z718">
+                    <button type="button" id="' . $pcfln->hn . '" class="btn btn-warning home-visiting-information-z718 zoom-card" data-bs-toggle="modal" data-bs-target="#home_visiting_information_z718">
                         ' . $pcfln->dayc1 . '
                     </button>
                 </td>
                 <td>
-                    <button type="button" id="' . $pcfln->hn . '" class="btn btn-warning home-visiting-information" data-bs-toggle="modal" data-bs-target="#home_visiting_information">
+                    <button type="button" id="' . $pcfln->hn . '" class="btn btn-warning home-visiting-information zoom-card" data-bs-toggle="modal" data-bs-target="#home_visiting_information">
                         ' . $pcfln->dayc . '
                     </button>
                 </td>
@@ -702,72 +738,14 @@ class PalliativeCareController extends Controller
     }
 
     public function getNumberOfNewPatients() {
-        $result_1 = "MONTH(v.vstdate) = MONTH(CURRENT_DATE())";
-        $result_2 = "LAST_DAY(CURRENT_DATE() - INTERVAL 1 MONTH)";
+        $request_1 = "MONTH(v.vstdate) = MONTH(CURRENT_DATE())";
+        $request_2 = "LAST_DAY(CURRENT_DATE() - INTERVAL 1 MONTH)";
 
-        // $number_of_new_patients_count = DB::connection('mysql')->select(
-        //     "
-        //         SELECT
-        //             COUNT(*) AS result
-        //         FROM (
-        //             SELECT DISTINCT
-        //                 o.hn AS 'hn', pp.name AS pttype_name,
-        //                 (YEAR(NOW()) - YEAR(pt.birthday)) AS age,
-        //                 v.pdx, o.vstdate AS day1,
-        //                 CONCAT(pt.pname, '', pt.fname, ' ', pt.lname) AS fullname,
-        //                 pt.informaddr AS fulladdress
-        //             FROM ovstdiag o
-        //             LEFT OUTER JOIN vn_stat v ON v.vn = o.vn
-        //             LEFT JOIN patient pt ON pt.hn = o.hn
-        //             LEFT JOIN vn_stat vn ON vn.vn = o.vn
-        //             LEFT JOIN pttype pp ON pp.pttype = vn.pttype
-        //             LEFT JOIN ipt i ON i.vn = v.vn
-        //             WHERE o.icd10 IN ('Z515')
-        //             AND MONTH(v.vstdate) = MONTH(CURRENT_DATE())
-        //             AND o.hn NOT IN (
-        //                 SELECT DISTINCT o.hn
-        //                 FROM ovstdiag o
-        //                 LEFT OUTER JOIN vn_stat v ON v.vn = o.vn
-        //                 WHERE o.icd10 IN ('Z515')
-        //                 AND v.vstdate <= LAST_DAY(CURRENT_DATE() - INTERVAL 1 MONTH)
-        //             )
-        //             GROUP BY o.hn
-        //             ORDER BY o.vn DESC
-        //         ) AS t1
-        //     "
-        // );
-
-        $number_of_new_patients = DB::connection('mysql')->select(
-            "
-                SELECT DISTINCT
-                    o.hn AS 'hn', pp.name AS pttype_name,
-                    (YEAR(NOW()) - YEAR(pt.birthday)) AS age,
-                    v.pdx, o.vstdate AS day1,
-                    CONCAT(pt.pname, '', pt.fname, ' ', pt.lname) AS fullname,
-                    pt.informaddr AS fulladdress
-                FROM ovstdiag o
-                LEFT OUTER JOIN vn_stat v ON v.vn = o.vn
-                LEFT JOIN patient pt ON pt.hn = o.hn
-                LEFT JOIN vn_stat vn ON vn.vn = o.vn
-                LEFT JOIN pttype pp ON pp.pttype = vn.pttype
-                LEFT JOIN ipt i ON i.vn = v.vn
-                WHERE o.icd10 IN ('Z515')
-                AND {$result_1}
-                AND o.hn NOT IN (
-                    SELECT DISTINCT o.hn
-                    FROM ovstdiag o
-                    LEFT OUTER JOIN vn_stat v ON v.vn = o.vn
-                    WHERE o.icd10 IN ('Z515')
-                    AND v.vstdate <= {$result_2}
-                )
-                GROUP BY o.hn
-                ORDER BY o.vn DESC
-            "
-        );
+        $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2);
 
         $output = '';
 
-        if (count($number_of_new_patients) > 0) {
+        if (count($number_of_new_patients) != false) {
             $output .= '
             <table id="table-number-of-new-patients" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
             <thead>
@@ -785,6 +763,7 @@ class PalliativeCareController extends Controller
             <tbody>';
             $i = 0;
             foreach ($number_of_new_patients as $nonp) {
+                $changeDate = $this->DateThai($nonp->day1);
                 $output .= '<tr>
                 <td>' . ++$i . '</td>
                 <td>' . $nonp->hn . '</td>
@@ -792,7 +771,52 @@ class PalliativeCareController extends Controller
                 <td>' . $nonp->pdx . '</td>
                 <td>' . $nonp->pttype_name . '</td>
                 <td>' . $nonp->age . '</td>
-                <td>' . $nonp->day1 . '</td>
+                <td>' . $changeDate . '</td>
+                <td>' . $nonp->fulladdress . '</td>
+              </tr>';
+            }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
+        }
+    }
+
+    public function getNumberOfNewPatientsSelect(Request $request) {
+        $request_1 = "v.vstdate BETWEEN '{$request->min_date}' AND '{$request->max_date}'";
+        $request_2 = "'{$request->min_date}'";
+
+        $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2);
+
+        $output = '';
+
+        if (count($number_of_new_patients) != false) {
+            $output .= '
+            <table id="table-number-of-new-patients-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th>hn</th>
+                    <th>ชื่อ - สกุล</th>
+                    <th>pdx</th>
+                    <th>สิทธิ์</th>
+                    <th>อายุ</th>
+                    <th>วันที่</th>
+                    <th>ที่อยู่</th>
+                </tr>
+            </thead>
+            <tbody>';
+            $i = 0;
+            foreach ($number_of_new_patients as $nonp) {
+                $changeDate = $this->DateThai($nonp->day1);
+                $output .= '<tr>
+                <td>' . ++$i . '</td>
+                <td>' . $nonp->hn . '</td>
+                <td>' . $nonp->fullname . '</td>
+                <td>' . $nonp->pdx . '</td>
+                <td>' . $nonp->pttype_name . '</td>
+                <td>' . $nonp->age . '</td>
+                <td>' . $changeDate . '</td>
                 <td>' . $nonp->fulladdress . '</td>
               </tr>';
             }

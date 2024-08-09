@@ -83,6 +83,7 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('getHomeVisitingInformationZ718', [PalliativeCareController::class, 'getHomeVisitingInformationZ718'])->name('getHomeVisitingInformationZ718');
             Route::get('getEclaimReceivedMoney', [PalliativeCareController::class, 'getEclaimReceivedMoney'])->name('getEclaimReceivedMoney');
             Route::get('getNumberOfNewPatients', [PalliativeCareController::class, 'getNumberOfNewPatients'])->name('getNumberOfNewPatients');
+            Route::get('getNumberOfNewPatientsSelect', [PalliativeCareController::class, 'getNumberOfNewPatientsSelect'])->name('getNumberOfNewPatientsSelect');
         // Palliative Care End
     // Pages End
 

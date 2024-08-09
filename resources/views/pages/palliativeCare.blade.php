@@ -81,56 +81,42 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="number-of-new-patients-modal_title">รายงานจำนวนคนไข้รายใหม่</h5>
-                            <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close zoom-card action-button" mode="reset_form_number_of_new_patients_select" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="text-center">
-                                <div class="spinner-border loadingIcon" style="" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
+                            <div class="container mb-4">
+                                <form id="number_of_new_patients_select_form">
+                                    @csrf
+                                    <div class="mb-3 d-flex align-items-center row">
+                                        <div class="col-2 d-flex align-items-center me-5">
+                                            <div class="" style="min-width: 80px;">
+                                                <span class="" style="width: 100%;">วันที่เริ่มต้น</span>
+                                            </div>
+                                            <div>
+                                                <input type="date" class="form-control" id="min_date" name="min_date" placeholder="min_date" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-2 d-flex align-items-center">
+                                            <div class="" style="min-width: 70px;">
+                                                <span class="" style="width: 100%;">ถึงวันที่</span>
+                                            </div>
+                                            <div>
+                                                <input type="date" class="form-control" id="max_date" name="max_date" placeholder="max_date" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-1 d-flex align-items-center">
+                                            <button type="submit" id="number_of_new_patients_select_submit" class="btn btn-primary ms-3 zoom-card">ยืนยัน</button>
+                                        </div>
+                                        <div class="spinner-border loadingIcon " style="" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                            {{-- <div class="container mb-4 row">
-                                <div class="card shadow-lg rounded-2 col-3">
-                                    <p href="" class="text-decoration-none text-dark">
-                                        <div class="card-body d-flex justify-content-center align-items-center">
-                                            <h4 class="card-title"><i class="bi bi-person-fill fw-bold me-2"></i>จำนวนคนไข้รายใหม่</h3>
-                                        </div>
-                                    </p>
-                                </div>
-                                <div class="col-9">
-                                    <form id="number_of_new_patients_form">
-                                        @csrf
-                                        <div class="mb-3 d-flex align-items-center row">
-                                            <div class="col d-flex align-items-center">
-                                                <div class="" style="min-width: 80px;">
-                                                    <span class="" style="width: 100%;">วันที่เริ่มต้น</span>
-                                                </div>
-                                                <div>
-                                                    <input type="date" class="form-control" id="min_date" name="min_date" placeholder="min_date" required>
-                                                </div>
-                                            </div>
-                                            <div class="col d-flex align-items-center">
-                                                <div class="" style="min-width: 70px;">
-                                                    <span class="" style="width: 100%;">ถึงวันที่</span>
-                                                </div>
-                                                <div>
-                                                    <input type="date" class="form-control" id="max_date" name="max_date" placeholder="max_date" required>
-                                                </div>
-                                            </div>
-                                            <div class="col d-flex align-items-center">
-                                                <button type="button" id="number_of_new_patients_submit" class="btn btn-primary ms-3">ยืนยัน</button>
-                                            </div>
-                                            <div class="spinner-border loadingIcon " style="" role="status">
-                                                <span class="visually-hidden">Loading...</span>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div> --}}
                             <div class="container" id="show-number-of-new-patients"></div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger zoom-card" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-danger zoom-card action-button" mode="reset_form_number_of_new_patients_select" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
@@ -170,14 +156,14 @@
                 {{-- Form Select สำหรับเลือกรายการ End --}}
                 <div class="px-2">
                     {{-- Button แสดงทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว Start --}}
-                        <button type="button" class="btn btn-warning eclaim-received-money mb-3 d-flex align-items-center zoom-card" data-bs-toggle="modal" data-bs-target="#eclaim-received-money-modal">
+                        <button type="button" class="btn btn-warning eclaim-received-money mb-3 d-flex align-items-center zoom-card action-button" data-bs-toggle="modal" data-bs-target="#eclaim-received-money-modal">
                             ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว
                         </button>
                     {{-- Button แสดงทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว End --}}
                 </div>
                 <div class="px-2">
                     {{-- Button แสดงผู้ปู่วย Palliative Care รายใหม่ Start --}}
-                        <button type="button" class="btn btn-warning number-of-new-patients mb-3 d-flex align-items-center zoom-card" data-bs-toggle="modal" data-bs-target="#number-of-new-patients-modal">
+                        <button type="button" class="btn btn-warning number-of-new-patients mb-3 d-flex align-items-center zoom-card action-button" data-bs-toggle="modal" data-bs-target="#number-of-new-patients-modal">
                             ผู้ป่วย Palliative Care รายใหม่
                         </button>
                     {{-- Button แสดงผู้ปู่วย Palliative Care รายใหม่ End --}}
@@ -212,7 +198,7 @@
                                 </div>
                             </div>
                             <div class="col d-flex align-items-center">
-                                <button type="button" id="palliative_count_death_submit" class="btn btn-primary ms-3">ยืนยัน</button>
+                                <button type="button" id="palliative_count_death_submit" class="btn btn-primary ms-3 zoom-card">ยืนยัน</button>
                             </div>
                             <div class="spinner-border loadingIcon " style="" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -267,7 +253,7 @@
                                 </select>
                             </div>
                             <div class="col d-flex align-items-center">
-                                <button type="button" id="palliative_list_name_submit" class="btn btn-primary ms-1">ยืนยัน</button>
+                                <button type="button" id="palliative_list_name_submit" class="btn btn-primary ms-1 zoom-card">ยืนยัน</button>
                             </div>
                             <div class="spinner-border loadingIcon " style="" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -379,6 +365,23 @@
                     $('#select').val('0');
                 }
             // Hide Form && Chart && Table End
+
+            // Reset Form Start
+                $('.action-button').click(function() {
+                    var mode = $(this).attr('mode');
+
+                    if(mode === 'reset_form_number_of_new_patients_select') {
+                        // Palliative Care รายใหม่ ตามค่าที่ส่งไป
+                        $("#number_of_new_patients_select_form")[0].reset();
+                    } else {
+                        // Reset Form บนหน้าเว็บทุกตัว
+                        $("#number_of_new_patients_select_form")[0].reset();
+                        $("#palliative_count_death_form")[0].reset();
+                        $("#palliative_list_name_form")[0].reset();
+                        $("#selectForm")[0].reset();
+                    }
+                });
+            // Reset Form End
 
             // ตัวแปรเก็บ Chart Start
                 var chart;
@@ -590,7 +593,7 @@
                 });
             // ดึงข้อมูลทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้วแสดงบน Modal End
 
-            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ Start
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ ค่าเริ่มต้น Start
                 $(document).on('click', '.number-of-new-patients', function (e) {
                     e.preventDefault();
                     $('#show-number-of-new-patients').hide();
@@ -618,7 +621,37 @@
                         }
                     });
                 });
-            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ End
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ ค่าเริ่มต้น End
+
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ ตามค่าที่ส่งไป Start
+                $('#number_of_new_patients_select_submit').on('click', function(e) {
+                    e.preventDefault();
+                    var formData = $('#number_of_new_patients_select_form').serialize();
+                    $('#show-number-of-new-patients').hide();
+                    showLoadingIcon();
+                    $.ajax({
+                        url: '{{ route('getNumberOfNewPatientsSelect') }}',
+                        method: 'get',
+                        data: formData,
+                        success: function(response) {
+                            hideLoadingIcon();
+                            $('#show-number-of-new-patients').show();
+                            $("#show-number-of-new-patients").html(response);
+                            $("#table-number-of-new-patients-select").DataTable({
+                                responsive: true,
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ]
+                            });
+                        }
+                    });
+                });
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ ตามค่าที่ส่งไป End
 
         });
     </script>
