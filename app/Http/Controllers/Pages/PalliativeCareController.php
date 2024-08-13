@@ -54,6 +54,80 @@ class PalliativeCareController extends Controller
     }
     // ดึงข้อมูล คนไข้ Palliative Care รายใหม่จาก จาก Request ที่ถูกส่งเข้ามา End
 
+    // ดึงข้อมูล คนไข้ Palliative Care รายเก่าจาก จาก Request ที่ถูกส่งเข้ามา Start
+    private function queryNumberOfOldPatients($firstDayOfMonth, $lastDayOfMonth) {
+        // ตรวจสอบว่ามีการส่ง Request มาหรือไม่ ถ้าไม่ก็ให้ส่ง False กลับไปยัง Function ที่เรียกใช้งาน Function นี้ Start
+        if($firstDayOfMonth == 0 && $lastDayOfMonth == 0) {
+            return false;
+        }
+        // ตรวจสอบว่ามีการส่ง Request มาหรือไม่ ถ้าไม่ก็ให้ส่ง False กลับไปยัง Function ที่เรียกใช้งาน Function นี้ End
+
+        // Query ข้อมูลจาก Table และนำ Request ที่ถูกส่งเข้ามาไปแทนค่าในตัวแปร ({$firstDayOfMonth, $lastDayOfMonth}) ของคำสั่ง Query บน Mysql Start
+        $number_of_old_patients = DB::connection('mysql')->select(
+            "
+                SELECT DISTINCT
+                    o.hn,
+                    CONCAT(pt.pname, pt.fname, ' ', pt.lname) AS fullname,
+                    pt.informaddr AS fulladdress
+                FROM ovstdiag o
+                LEFT OUTER JOIN vn_stat v ON v.vn = o.vn
+                LEFT JOIN patient pt ON pt.hn = o.hn
+                LEFT JOIN vn_stat vn ON vn.vn = o.vn
+                LEFT JOIN pttype pp ON pp.pttype = vn.pttype
+                LEFT JOIN ipt i ON i.vn = v.vn
+                WHERE o.icd10 IN ('Z515')
+                AND v.vstdate BETWEEN '{$firstDayOfMonth}' AND '{$lastDayOfMonth}'
+                AND o.hn IN (
+                    SELECT DISTINCT o.hn
+                    FROM ovstdiag o
+                    LEFT OUTER JOIN vn_stat v ON v.vn = o.vn
+                    WHERE o.icd10 IN ('Z515')
+                    AND v.vstdate BETWEEN '{$firstDayOfMonth}' AND '{$lastDayOfMonth}'
+                )
+                GROUP BY o.hn
+                ORDER BY o.vn DESC
+            "
+        );
+        // Query ข้อมูลจาก Table และนำ Request ที่ถูกส่งเข้ามาไปแทนค่าในตัวแปร ({$firstDayOfMonth, $request_2}) ของคำสั่ง Query บน Mysql End
+
+        // ส่งค่า Query คืนกลับไปให้ Function ที่เรียกใช้งาน Function  นี้ ส่งกลับไปในรูปแบบของ Array Start
+        return (array) $number_of_old_patients;
+        // ส่งค่า Query คืนกลับไปให้ Function ที่เรียกใช้งาน Function  นี้ ส่งกลับไปในรูปแบบของ Array End
+    }
+    // ดึงข้อมูล คนไข้ Palliative Care รายเก่าจาก จาก Request ที่ถูกส่งเข้ามา End
+
+    // ดึงข้อมูล คนไข้ Palliative Care ที่มีอาการปวด( Pain ) จาก Request ที่ถูกส่งเข้ามา Start
+    private function queryPalliativeCarePatientsPain($firstDayOfMonth, $lastDayOfMonth) {
+        // ตรวจสอบว่ามีการส่ง Request มาหรือไม่ ถ้าไม่ก็ให้ส่ง False กลับไปยัง Function ที่เรียกใช้งาน Function นี้ Start
+        if($firstDayOfMonth == 0 && $lastDayOfMonth == 0) {
+            return false;
+        }
+        // ตรวจสอบว่ามีการส่ง Request มาหรือไม่ ถ้าไม่ก็ให้ส่ง False กลับไปยัง Function ที่เรียกใช้งาน Function นี้ End
+
+        // Query ข้อมูลจาก Table และนำ Request ที่ถูกส่งเข้ามาไปแทนค่าในตัวแปร ({$firstDayOfMonth, $lastDayOfMonth}) ของคำสั่ง Query บน Mysql Start
+        $palliative_care_patients_pain = DB::connection('mysql')->select(
+            "
+                SELECT DISTINCT
+                    op.hn,
+                    CONCAT(pt.pname,'',pt.fname,' ',pt.lname) as fullname,
+                    pt.informaddr as fulladdress
+                FROM opitemrece op
+                LEFT JOIN drugitems nd ON nd.icode=op.icode
+                LEFT OUTER JOIN an_stat an ON an.an=op.an
+                LEFT OUTER JOIN vn_stat vn ON vn.vn=op.vn
+                LEFT JOIN patient pt ON pt.hn=op.hn
+                WHERE op.icode in (1580001,1590005,1000156,1000406,1000412,1000413,1000430,1550025)
+                    AND op.vstdate  BETWEEN '{$firstDayOfMonth}' AND '{$lastDayOfMonth}'
+            "
+        );
+        // Query ข้อมูลจาก Table และนำ Request ที่ถูกส่งเข้ามาไปแทนค่าในตัวแปร ({$firstDayOfMonth, $request_2}) ของคำสั่ง Query บน Mysql End
+
+        // ส่งค่า Query คืนกลับไปให้ Function ที่เรียกใช้งาน Function  นี้ ส่งกลับไปในรูปแบบของ Array Start
+        return (array) $palliative_care_patients_pain;
+        // ส่งค่า Query คืนกลับไปให้ Function ที่เรียกใช้งาน Function  นี้ ส่งกลับไปในรูปแบบของ Array End
+    }
+    // ดึงข้อมูล คนไข้ Palliative Care ที่มีอาการปวด( Pain ) จาก Request ที่ถูกส่งเข้ามา End
+
     // ดึงข้อมูล ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว Start
     private function queryEclaimReceivedMoney() {
         // Query ข้อมูลจาก Table Start
@@ -864,7 +938,7 @@ class PalliativeCareController extends Controller
 
     // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตาม วัน-เดือน-ปี ของ Request ที่ส่งเข้ามา Start
     public function getNumberOfNewPatientsSelect(Request $request) {
-        if($request->min_date == 0 || $request->max_date == 0) {
+        if($request->nonpsl_years == 0 || $request->nonpsl_month == 0) {
             return response()->json([
                 'status' => 400,
                 'title' => 'Error',
@@ -872,8 +946,14 @@ class PalliativeCareController extends Controller
                 'icon' => 'error'
             ]);
         } else {
-            $request_1 = "v.vstdate BETWEEN '{$request->min_date}' AND '{$request->max_date}'";
-            $request_2 = "'{$request->min_date}'";
+            $years = $request->nonpsl_years - 543;
+            $month = $request->nonpsl_month;
+
+            $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, $month, 1, $years));
+            $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, $month, 1, $years));
+
+            $request_1 = "v.vstdate BETWEEN '{$firstDayOfMonth}' AND '{$lastDayOfMonth}'";
+            $request_2 = "'{$firstDayOfMonth}'";
 
             $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2);
 
@@ -917,4 +997,188 @@ class PalliativeCareController extends Controller
         }
     }
     // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตาม วัน-เดือน-ปี ของ Request ที่ส่งเข้ามา End
+
+    // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตามเดือนและปีปัจจุบัน Start
+    public function getNumberOfOldPatients() {
+        $currentYear = date('Y');
+        $currentMonth = date('m');
+
+        $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, $currentMonth, 1, $currentYear));
+        $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, $currentMonth, 1, $currentYear));
+
+        $number_of_old_patients = $this->queryNumberOfOldPatients($firstDayOfMonth, $lastDayOfMonth);
+
+        $output = '';
+
+        if (count($number_of_old_patients) != false) {
+            $output .= '
+            <table id="table-number-of-old-patients" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th>hn</th>
+                    <th>ชื่อ - สกุล</th>
+                    <th>ที่อยู่</th>
+                </tr>
+            </thead>
+            <tbody>';
+            $i = 0;
+            foreach ($number_of_old_patients as $noop) {
+                $output .= '<tr>
+                <td>' . ++$i . '</td>
+                <td>' . $noop->hn . '</td>
+                <td>' . $noop->fullname . '</td>
+                <td>' . $noop->fulladdress . '</td>
+              </tr>';
+            }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
+        }
+    }
+    // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตามเดือนและปีปัจจุบัน End
+
+    // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตาม เดือน-ปี ของ Request ที่ส่งเข้ามา Start
+    public function getNumberOfOldPatientsSelect(Request $request) {
+        if($request->noopsl_years == 0 || $request->noopsl_month == 0) {
+            return response()->json([
+                'status' => 400,
+                'title' => 'Error',
+                'message' => 'กรุณาเลือกวันที่รับบริการ',
+                'icon' => 'error'
+            ]);
+        } else {
+
+            $years = $request->noopsl_years - 543;
+            $month = $request->noopsl_month;
+
+            $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, $month, 1, $years));
+            $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, $month, 1, $years));
+
+            $number_of_old_patients = $this->queryNumberOfOldPatients($firstDayOfMonth, $lastDayOfMonth);
+
+            $output = '';
+
+            if (count($number_of_old_patients) != false) {
+                $output .= '
+                <table id="table-number-of-old-patients-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>hn</th>
+                        <th>ชื่อ - สกุล</th>
+                        <th>ที่อยู่</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $i = 0;
+                foreach ($number_of_old_patients as $noop) {
+                    $output .= '<tr>
+                    <td>' . ++$i . '</td>
+                    <td>' . $noop->hn . '</td>
+                    <td>' . $noop->fullname . '</td>
+                    <td>' . $noop->fulladdress . '</td>
+                </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
+            }
+        }
+    }
+    // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตาม เดือน-ปี ของ Request ที่ส่งเข้ามา End
+
+    // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) Start
+    public function getPalliativeCarePatientsPain() {
+        $currentYear = date('Y');
+        $currentMonth = date('m');
+
+        $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, $currentMonth, 1, $currentYear));
+        $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, $currentMonth, 1, $currentYear));
+
+        $palliative_care_patients_pain = $this->queryPalliativeCarePatientsPain($firstDayOfMonth, $lastDayOfMonth);
+
+        $output = '';
+
+        if (count($palliative_care_patients_pain) != false) {
+            $output .= '
+            <table id="table-number-of-old-patients" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th>hn</th>
+                    <th>ชื่อ - สกุล</th>
+                    <th>ที่อยู่</th>
+                </tr>
+            </thead>
+            <tbody>';
+            $i = 0;
+            foreach ($palliative_care_patients_pain as $pcpp) {
+                $output .= '<tr>
+                <td>' . ++$i . '</td>
+                <td>' . $pcpp->hn . '</td>
+                <td>' . $pcpp->fullname . '</td>
+                <td>' . $pcpp->fulladdress . '</td>
+              </tr>';
+            }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้ที่มีอาการปวด( Pain )</h1>';
+        }
+    }
+    // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) End
+
+    // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) เดือน-ปี ของ Request ที่ส่งเข้ามา Start
+    public function getPalliativeCarePatientsPainSelect(Request $request) {
+        if($request->pcpwp_years == 0 || $request->pcpwp_month == 0) {
+            return response()->json([
+                'status' => 400,
+                'title' => 'Error',
+                'message' => 'กรุณาเลือกวันที่รับบริการ',
+                'icon' => 'error'
+            ]);
+        } else {
+
+            $years = $request->pcpwp_years - 543;
+            $month = $request->pcpwp_month;
+
+            $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, $month, 1, $years));
+            $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, $month, 1, $years));
+
+            $palliative_care_patients_pain = $this->queryPalliativeCarePatientsPain($firstDayOfMonth, $lastDayOfMonth);
+
+            $output = '';
+
+            if (count($palliative_care_patients_pain) != false) {
+                $output .= '
+                <table id="table-palliative-care-patients-with-pain-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>hn</th>
+                        <th>ชื่อ - สกุล</th>
+                        <th>ที่อยู่</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $i = 0;
+                foreach ($palliative_care_patients_pain as $pcpp) {
+                    $output .= '<tr>
+                    <td>' . ++$i . '</td>
+                    <td>' . $pcpp->hn . '</td>
+                    <td>' . $pcpp->fullname . '</td>
+                    <td>' . $pcpp->fulladdress . '</td>
+                </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
+            }
+        }
+    }
+    // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) เดือน-ปี ของ Request ที่ส่งเข้ามา End
 }

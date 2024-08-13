@@ -80,31 +80,44 @@
                 <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="number-of-new-patients-modal_title">รายงานจำนวนคนไข้รายใหม่</h5>
+                            <h5 class="modal-title" id="number-of-new-patients-modal_title">ผู้ป่วย Palliative Care รายใหม่</h5>
                             <button type="button" class="btn-close zoom-card action-button" mode="reset_form_number_of_new_patients_select" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="container mb-4">
-                                <form id="number_of_new_patients_select_form">
+                                <form id="number_of_new_patients_select_form" class="me-3">
                                     @csrf
                                     <div class="mb-3 d-flex align-items-center row">
-                                        <div class="col-2 d-flex align-items-center me-5">
-                                            <div class="" style="min-width: 80px;">
-                                                <span class="" style="width: 100%;">วันที่เริ่มต้น</span>
-                                            </div>
-                                            <div>
-                                                <input type="date" class="form-control" id="min_date" name="min_date" placeholder="min_date" required>
-                                            </div>
+                                        <div class="col-1 d-flex align-items-center me-5">
+                                            <span class="me-3">ปี</span>
+                                            <select class="form-select" id="nonpsl_years" name="nonpsl_years" aria-label="Default select example"
+                                                style="min-width: 100px;">
+                                                <option selected value="0">-----</option>
+                                                <option value="2565">2565</option>
+                                                <option value="2566">2566</option>
+                                                <option value="2567">2567</option>
+                                            </select>
                                         </div>
-                                        <div class="col-2 d-flex align-items-center">
-                                            <div class="" style="min-width: 70px;">
-                                                <span class="" style="width: 100%;">ถึงวันที่</span>
-                                            </div>
-                                            <div>
-                                                <input type="date" class="form-control" id="max_date" name="max_date" placeholder="max_date" required>
-                                            </div>
+                                        <div class="col-2 d-flex align-items-center me-2">
+                                            <span class="me-3">เดือน</span>
+                                            <select class="form-select ms-2 me-2" id="nonpsl_month" name="nonpsl_month" aria-label="Default select example"
+                                                style="min-width: 210px;">
+                                                <option selected value="0">-------------------------</option>
+                                                <option value="01">มกราคม</option>
+                                                <option value="02">กุมภาพันธ์</option>
+                                                <option value="03">มีนายน</option>
+                                                <option value="04">เมษายน</option>
+                                                <option value="05">พฤษภาคม</option>
+                                                <option value="06">มิถุนายน</option>
+                                                <option value="07">กรกฏาคม</option>
+                                                <option value="08">สิงหาคม</option>
+                                                <option value="09">กันยายน</option>
+                                                <option value="10">ตุลาคม</option>
+                                                <option value="11">พฤศจิกายน</option>
+                                                <option value="12">ธันวาคม</option>
+                                            </select>
                                         </div>
-                                        <div class="col-1 d-flex align-items-center">
+                                        <div class="col-1 d-flex align-items-center ms-5">
                                             <button type="submit" id="number_of_new_patients_select_submit" class="btn btn-primary ms-3 zoom-card">ยืนยัน</button>
                                         </div>
                                         <div class="spinner-border loadingIcon " style="" role="status">
@@ -122,6 +135,126 @@
                 </div>
             </div>
         {{-- จำนวนผู้ป่วยรายใหม่ End --}}
+        {{-- จำนวนผู้ป่วยรายเก่า Start --}}
+            <div class="modal fade " id="number-of-old-patients-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="number-of-old-patients-modal_title">ผู้ป่วย Palliative Care รายเก่า</h5>
+                            <button type="button" class="btn-close zoom-card action-button" mode="reset_form_number_of_old_patients_select" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container mb-4">
+                                <form id="number_of_old_patients_select_form" class="me-3">
+                                    @csrf
+                                    <div class="mb-3 d-flex align-items-center row">
+                                        <div class="col-1 d-flex align-items-center me-5">
+                                            <span class="me-3">ปี</span>
+                                            <select class="form-select" id="noopsl_years" name="noopsl_years" aria-label="Default select example"
+                                                style="min-width: 100px;">
+                                                <option selected value="0">-----</option>
+                                                <option value="2565">2565</option>
+                                                <option value="2566">2566</option>
+                                                <option value="2567">2567</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-2 d-flex align-items-center me-2">
+                                            <span class="me-3">เดือน</span>
+                                            <select class="form-select ms-2 me-2" id="noopsl_month" name="noopsl_month" aria-label="Default select example"
+                                                style="min-width: 210px;">
+                                                <option selected value="0">-------------------------</option>
+                                                <option value="01">มกราคม</option>
+                                                <option value="02">กุมภาพันธ์</option>
+                                                <option value="03">มีนายน</option>
+                                                <option value="04">เมษายน</option>
+                                                <option value="05">พฤษภาคม</option>
+                                                <option value="06">มิถุนายน</option>
+                                                <option value="07">กรกฏาคม</option>
+                                                <option value="08">สิงหาคม</option>
+                                                <option value="09">กันยายน</option>
+                                                <option value="10">ตุลาคม</option>
+                                                <option value="11">พฤศจิกายน</option>
+                                                <option value="12">ธันวาคม</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-1 d-flex align-items-center ms-5">
+                                            <button type="submit" id="number_of_old_patients_select_submit" class="btn btn-primary ms-3 zoom-card">ยืนยัน</button>
+                                        </div>
+                                        <div class="spinner-border loadingIcon " style="" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="container" id="show-number-of-old-patients"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger zoom-card action-button" mode="reset_form_number_of_old_patients_select" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{-- จำนวนผู้ป่วยรายใหม่ End --}}
+        {{-- จำนวนผู้ป่วย Palliative Care ที่มีอาการปวด ( Pain ) Start --}}
+            <div class="modal fade " id="palliative-care-patients-with-pain-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="palliative-care-patients-with-pain-title">ผู้ป่วย Palliative Care ที่มีอาการปวด ( Pain )</h5>
+                            <button type="button" class="btn-close zoom-card action-button" mode="reset_form_palliative_care_patients_with_pain" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container mb-4">
+                                <form id="palliative_care_patients_with_pain_form" class="me-3">
+                                    @csrf
+                                    <div class="mb-3 d-flex align-items-center row">
+                                        <div class="col-1 d-flex align-items-center me-5">
+                                            <span class="me-3">ปี</span>
+                                            <select class="form-select" id="pcpwp_years" name="pcpwp_years" aria-label="Default select example"
+                                                style="min-width: 100px;">
+                                                <option selected value="0">-----</option>
+                                                <option value="2565">2565</option>
+                                                <option value="2566">2566</option>
+                                                <option value="2567">2567</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-2 d-flex align-items-center me-2">
+                                            <span class="me-3">เดือน</span>
+                                            <select class="form-select ms-2 me-2" id="pcpwp_month" name="pcpwp_month" aria-label="Default select example"
+                                                style="min-width: 210px;">
+                                                <option selected value="0">-------------------------</option>
+                                                <option value="01">มกราคม</option>
+                                                <option value="02">กุมภาพันธ์</option>
+                                                <option value="03">มีนายน</option>
+                                                <option value="04">เมษายน</option>
+                                                <option value="05">พฤษภาคม</option>
+                                                <option value="06">มิถุนายน</option>
+                                                <option value="07">กรกฏาคม</option>
+                                                <option value="08">สิงหาคม</option>
+                                                <option value="09">กันยายน</option>
+                                                <option value="10">ตุลาคม</option>
+                                                <option value="11">พฤศจิกายน</option>
+                                                <option value="12">ธันวาคม</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-1 d-flex align-items-center ms-5">
+                                            <button type="submit" id="palliative_care_patients_with_pain_submit" class="btn btn-primary ms-3 zoom-card">ยืนยัน</button>
+                                        </div>
+                                        <div class="spinner-border loadingIcon " style="" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="container" id="show-palliative-care-patients-with-pain"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger zoom-card action-button" mode="reset_form_palliative_care_patients_with_pain" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{-- จำนวนผู้ป่วย Palliative Care ที่มีอาการปวด ( Pain ) End --}}
     <!-- Modal เยี่ยมบ้าน รพ.ครั้ง End -->
     <main class="main-content" id="main">
         {{-- Title แสดงข้อมูล ชื่อผู้ใช้งาน และ แผนก Start --}}
@@ -167,6 +300,20 @@
                             ผู้ป่วย Palliative Care รายใหม่
                         </button>
                     {{-- Button แสดงผู้ปู่วย Palliative Care รายใหม่ End --}}
+                </div>
+                <div class="px-2">
+                    {{-- Button แสดงผู้ปู่วย Palliative Care รายเก่า Start --}}
+                        <button type="button" class="btn btn-warning number-of-old-patients mb-3 d-flex align-items-center zoom-card action-button" data-bs-toggle="modal" data-bs-target="#number-of-old-patients-modal">
+                            ผู้ป่วย Palliative Care รายเก่า
+                        </button>
+                    {{-- Button แสดงผู้ปู่วย Palliative Care รายเก่า End --}}
+                </div>
+                <div class="px-2">
+                    {{-- Button แสดงผู้ปู่วย Palliative Care ที่มีอาการปวด ( Pain ) Start --}}
+                        <button type="button" class="btn btn-warning palliative-care-patients-with-pain mb-3 d-flex align-items-center zoom-card action-button" data-bs-toggle="modal" data-bs-target="#palliative-care-patients-with-pain-modal">
+                            ผู้ป่วย Palliative Care ที่มีอาการปวด( Pain )
+                        </button>
+                    {{-- Button แสดงผู้ปู่วย Palliative Care ที่มีอาการปวด ( Pain ) End --}}
                 </div>
             </div>
             <div class="">
@@ -373,6 +520,10 @@
                     if(mode === 'reset_form_number_of_new_patients_select') {
                         // Palliative Care รายใหม่ ตามค่าที่ส่งไป
                         $("#number_of_new_patients_select_form")[0].reset();
+                    } else if(mode === 'reset_form_number_of_old_patients_select') {
+                        $("#number_of_old_patients_select_form")[0].reset();
+                    } else if(mode === 'reset_form_palliative_care_patients_with_pain') {
+                        $("#palliative_care_patients_with_pain_form")[0].reset();
                     } else {
                         // Reset Form บนหน้าเว็บทุกตัว
                         $("#number_of_new_patients_select_form")[0].reset();
@@ -661,6 +812,140 @@
                 });
             // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ ตามค่าที่ส่งไป End
 
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายเก่า ค่าเริ่มต้น Start
+                $(document).on('click', '.number-of-old-patients', function (e) {
+                    e.preventDefault();
+                    $('#show-number-of-old-patients').hide();
+                    hideForm();
+                    showLoadingIcon();
+                    $.ajax({
+                        url: '{{ route('getNumberOfOldPatients') }}',
+                        method: 'get',
+                        success: function(response) {
+                            hideLoadingIcon();
+                            // console.log(response.message);
+                            $('#show-number-of-old-patients').show();
+                            $("#show-number-of-old-patients").html(response);
+                            $("#table-number-of-old-patients").DataTable({
+                                responsive: true,
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ]
+                            });
+                        }
+                    });
+                });
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายเก่า ค่าเริ่มต้น End
+
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายเก่า ตามค่าที่ส่งไป Start
+                $('#number_of_old_patients_select_submit').on('click', function(e) {
+                    e.preventDefault();
+                    var formData = $('#number_of_old_patients_select_form').serialize();
+                    $('#show-number-of-old-patients').hide();
+                    showLoadingIcon();
+                    $.ajax({
+                        url: '{{ route('getNumberOfOldPatientsSelect') }}',
+                        method: 'get',
+                        data: formData,
+                        success: function(response) {
+                            hideLoadingIcon();
+                            if(response.status === 400) {
+                                swal.fire(
+                                    response.title,
+                                    response.message,
+                                    response.icon
+                                );
+                            } else {
+                                $('#show-number-of-old-patients').show();
+                                $("#show-number-of-old-patients").html(response);
+                                $("#table-number-of-old-patients-select").DataTable({
+                                    responsive: true,
+                                    order: [0, 'asc'],
+                                    autoWidth: false,
+                                    columnDefs: [
+                                        {
+                                            targets: "_all",
+                                            className: "dt-head-center dt-body-center"
+                                        }
+                                    ]
+                                });
+                            }
+                        }
+                    });
+                });
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายเก่า ตามค่าที่ส่งไป End
+
+            // ดึงข้อมูลผู้ป่วย Palliative Care ที่มีอาการปวด( Pain ) ค่าเริ่มต้น Start
+                $(document).on('click', '.palliative-care-patients-with-pain', function (e) {
+                    e.preventDefault();
+                    $('#show-palliative-care-patients-with-pain').hide();
+                    hideForm();
+                    showLoadingIcon();
+                    $.ajax({
+                        url: '{{ route('getPalliativeCarePatientsPain') }}',
+                        method: 'get',
+                        success: function(response) {
+                            hideLoadingIcon();
+                            $('#show-palliative-care-patients-with-pain').show();
+                            $("#show-palliative-care-patients-with-pain").html(response);
+                            $("#table-palliative-care-patients-with-pain").DataTable({
+                                responsive: true,
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ]
+                            });
+                        }
+                    });
+                });
+            // ดึงข้อมูลผู้ป่วย Palliative Care ที่มีอาการปวด( Pain ) ค่าเริ่มต้น End
+
+            // ดึงข้อมูลผู้ป่วย Palliative Care ที่มีอาการปวด( Pain ) ตามค่าที่ส่งไป Start
+                $('#palliative_care_patients_with_pain_submit').on('click', function(e) {
+                    e.preventDefault();
+                    var formData = $('#palliative_care_patients_with_pain_form').serialize();
+                    $('#show-palliative-care-patients-with-pain').hide();
+                    showLoadingIcon();
+                    $.ajax({
+                        url: '{{ route('getPalliativeCarePatientsPainSelect') }}',
+                        method: 'get',
+                        data: formData,
+                        success: function(response) {
+                            hideLoadingIcon();
+                            if(response.status === 400) {
+                                swal.fire(
+                                    response.title,
+                                    response.message,
+                                    response.icon
+                                );
+                            } else {
+                                $('#show-palliative-care-patients-with-pain').show();
+                                $("#show-palliative-care-patients-with-pain").html(response);
+                                $("#table-palliative-care-patients-with-pain-select").DataTable({
+                                    responsive: true,
+                                    order: [0, 'asc'],
+                                    autoWidth: false,
+                                    columnDefs: [
+                                        {
+                                            targets: "_all",
+                                            className: "dt-head-center dt-body-center"
+                                        }
+                                    ]
+                                });
+                            }
+                        }
+                    });
+                });
+            // ดึงข้อมูลผู้ป่วย Palliative Care ที่มีอาการปวด( Pain ) ตามค่าที่ส่งไป End
         });
     </script>
 @endsection
