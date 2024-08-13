@@ -26,7 +26,7 @@
                 @endif
             </div>
         </div>
-        <div class="mt-2 d-flex justify-content-between align-items-center border-bottom full-width-bar">
+        <div class="mt-2 d-flex justify-content-between align-items-center full-width-bar">
             <div class="d-flex align-items-center">
                 <form id="selectForm" class="me-3">
                     @csrf
@@ -73,7 +73,7 @@
                 </form>
             </div>
         </div>
-        <div class="row mt-1">
+        <div class="row mt-1 card">
             <div class="spinner-border" style="position: absolute; top: 50%; left: 55%;" id="loadingIcon" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>

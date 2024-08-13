@@ -538,7 +538,7 @@
                 var chart;
             // ตัวแปรเก็บ Chart End
 
-            // ดึงข้อมูลเสียชีวิต Palliative Care ตาม Diag Start
+            // ดึงข้อมูลเสียชีวิต Palliative Care ตาม Diag แสดงแบบ Chart Start
                 $('#palliative_count_death_submit').click(function(e) {
                     // ป้องกันการ Reload ของหน้าเว็บใหม่
                     e.preventDefault();
@@ -615,7 +615,7 @@
                         }
                     });
                 });
-            // ดึงข้อมูลเสียชีวิต Palliative Care ตาม Diag End
+            // ดึงข้อมูลเสียชีวิต Palliative Care ตาม Diag แสดงแบบ Chart End
 
             // ดึงข้อมูลรายชื่อคนไข้ Palliative Care ตาม วันที่, เวลา, สถานบริการ, สถานะการมีชีวิตหรือเสียชีวิต Start
                 $('#palliative_list_name_submit').click(function(e) {
