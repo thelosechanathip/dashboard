@@ -30,7 +30,7 @@
         {{-- Title End --}}
         <div class="mt-5 card shadow-lg">
             <div class="row p-5">
-                <div class="col-5">
+                <div class="col-xl-5 col-12 col-sm-6 col-md-12">
                     <div class="container px-5">
                         <div class="d-flex align-items-center justify-content-center">
                             <h3 class="fw-bold p-2">กราฟแสดงการขอเลข Authen Code</h3>
@@ -47,12 +47,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-7">
-                    <div class="container px-5">
+                <div class="col-xl-7 col-12 col-sm-6 col-md-12">
+                    <div class="container px-md-5">
                         <div class="d-flex align-items-center justify-content-center">
                             <h3 class="fw-bold p-2">สรุปรายการขอ Authen Code ภายในวัน</h3>
                         </div>
-                        <table class="table table-hover table-bordered">
+                        <table class="table table-hover table-bordered" style="overflow-x: auto; max-width: 100%;" id="summarize_count">
                             <thead>
                                 <tr>
                                     <th class="text-center">รายการ</th>
@@ -192,7 +192,7 @@
                         $("#table-not-authen-code").html(response);
                         $("#table-list-authen-code").DataTable({
                             responsive: true,
-                            order: [0, 'desc']
+                            order: [0, 'desc'],
                         });
                     }
                 });
@@ -214,6 +214,33 @@
                         }
                     }
                 })
+            });
+
+            $("#summarize_count").DataTable({
+                responsive: true,
+                order: [0, 'desc'],
+                autoWidth: false,
+                columnDefs: [
+                    {
+                        targets: "_all",
+                        className: "dt-head-center dt-body-center"
+                    }
+                ],
+                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        text: 'Copy'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: 'CSV'
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel'
+                    }
+                ]
             });
 
         });

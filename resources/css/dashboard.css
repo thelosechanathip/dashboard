@@ -35,6 +35,69 @@ table tbody tr .death-unknown {
     background-color: yellow !important;
     color: black !important;
 }
+
+/* จำกัดขนาดของ modal และบังคับให้ตารางเลื่อน */
+.modal-dialog {
+    max-width: 90%; /* ปรับขนาดความกว้างของ modal */
+    max-height: 90vh; /* ปรับขนาดความสูงของ modal */
+    overflow-y: auto; /* เพิ่มการเลื่อนแนวตั้งเมื่อเนื้อหาล้น */
+}
+
+.modal-body {
+    overflow-x: auto; /* เพิ่มการเลื่อนแนวนอนเมื่อเนื้อหาล้น */
+    max-width: 100%; /* ทำให้ตารางปรับขนาดให้พอดีกับ modal */
+}
+
+/* บังคับให้ตารางมีการเลื่อนเมื่อเนื้อหาล้น */
+.dataTables_wrapper {
+    width: 100%; /* ทำให้ตารางปรับขนาดให้พอดีกับ modal */
+    overflow-x: auto; /* เพิ่มการเลื่อนแนวนอนในตาราง */
+}
+
+
+/* จัดช่องค้นหาให้อยู่มุมขวา */
+.dataTables_filter {
+    float: right;
+    text-align: right;
+}
+
+/* ปรับขนาดของ lengthMenu และ search ให้เท่ากัน */
+.dataTables_length select,
+.dataTables_filter input {
+    width: 200px;
+}
+
+/* จัดระยะห่างระหว่างปุ่มและ lengthMenu ให้เหมาะสม */
+.dataTables_wrapper .dt-buttons {
+    margin-bottom: 10px;
+}
+
+div.dataTables_wrapper div.dataTables_filter {
+    margin-top: 5px;
+}
+
+.dataTables_length {
+    float: left;
+    margin-top: 5px;
+}
+
+.dataTables_wrapper .dt-buttons {
+    margin-left: 30px;
+}
+
+/* จัดการการวางตำแหน่งของ pagination และข้อมูลการแสดงผล */
+.dataTables_info {
+    float: left;
+    padding-top: 0.85em; /* ปรับตำแหน่งให้ตรงกับปุ่ม pagination */
+    margin-bottom: 30px;
+}
+
+.dataTables_paginate {
+    float: right;
+    margin-top: -2px; /* ปรับตำแหน่งให้ตรงกับข้อความ "Showing X to Y of Z entries" */
+    margin-bottom: 30px;
+}
+
 /* Table End */
 
 /* Modal Start */
@@ -150,6 +213,19 @@ table tbody tr .death-unknown {
 #sidebar.collapsed {
     transform: translateX(-250px);
 }
+
+main {
+    transition: all 0.3s ease-in-out;
+    opacity: 1;
+}
+
+main.hidden {
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+}
+
 
 .main-content {
     margin-left: 250px;

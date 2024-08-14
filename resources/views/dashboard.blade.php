@@ -19,8 +19,8 @@
             </div>
         </div>
         {{-- Title End --}}
-        <div class="row mt-5">
-            <div class="col-3">
+        <div class="row gy-5 mt-2">
+            <div class="col-12 col-sm-6 col-md-4">
                 <div class="card shadow-lg rounded-2 zoom-card">
                     <a href="{{ route('indexOvst') }}" class="text-decoration-none text-dark">
                         <div class="card-body d-flex justify-content-center align-items-center">
@@ -32,7 +32,7 @@
                     </a>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col-12 col-sm-6 col-md-4">
                 <div class="card shadow-lg rounded-2 zoom-card">
                     <a href="{{ route('indexErRegist') }}" class="text-decoration-none text-dark">
                         <div class="card-body d-flex justify-content-center align-items-center">
@@ -44,7 +44,7 @@
                     </a>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col-12 col-sm-6 col-md-4">
                 <div class="card shadow-lg rounded-2 zoom-card">
                     <a href="{{ route('indexReferOut') }}" class="text-decoration-none text-dark">
                         <div class="card-body d-flex justify-content-center align-items-center">
@@ -56,7 +56,7 @@
                     </a>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col-12 col-sm-6 col-md-4">
                 <div class="card shadow-lg rounded-2 zoom-card">
                     <a href="{{ route('indexReferIn') }}" class="text-decoration-none text-dark">
                         <div class="card-body d-flex justify-content-center align-items-center">
@@ -68,9 +68,7 @@
                     </a>
                 </div>
             </div>
-        </div>
-        <div class="row mt-5">
-            <div class="col-3">
+            <div class="col-12 col-sm-6 col-md-4">
                 <div class="card shadow-lg rounded-2 zoom-card">
                     <a href="{{ route('indexIpt') }}" class="text-decoration-none text-dark">
                         <div class="card-body d-flex justify-content-center align-items-center">
@@ -83,6 +81,9 @@
                 </div>
             </div>
         </div>
+        {{-- <div class="row mt-5">
+
+        </div> --}}
     </main>
 @endsection
 

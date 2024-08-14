@@ -53,14 +53,14 @@
             </div>
         {{-- ทะเบียนเยี่ยมบ้าน  Z718 End --}}
         {{-- ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว Start --}}
-            <div class="modal fade " id="eclaim-received-money-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="eclaim-received-money-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-custom modal-dialog-centered mt-5">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="eclaim-received-money-modal_title">ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว</h5>
                             <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body w-auto">
                             <div class="text-center">
                                 <div class="spinner-border loadingIcon" style="" role="status">
                                     <span class="visually-hidden">Loading...</span>
@@ -657,6 +657,21 @@
                                             targets: "_all",
                                             className: "dt-head-center dt-body-center"
                                         }
+                                    ],
+                                    dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                    buttons: [
+                                        {
+                                            extend: 'copyHtml5',
+                                            text: 'Copy'
+                                        },
+                                        {
+                                            extend: 'csvHtml5',
+                                            text: 'CSV'
+                                        },
+                                        {
+                                            extend: 'excelHtml5',
+                                            text: 'Excel'
+                                        }
                                     ]
                                 });
                             }
@@ -737,6 +752,21 @@
                                         targets: "_all",
                                         className: "dt-head-center dt-body-center"
                                     }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
                                 ]
                             });
                         }
@@ -766,6 +796,21 @@
                                     {
                                         targets: "_all",
                                         className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
                                     }
                                 ]
                             });
@@ -804,6 +849,21 @@
                                             targets: "_all",
                                             className: "dt-head-center dt-body-center"
                                         }
+                                    ],
+                                    dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                    buttons: [
+                                        {
+                                            extend: 'copyHtml5',
+                                            text: 'Copy'
+                                        },
+                                        {
+                                            extend: 'csvHtml5',
+                                            text: 'CSV'
+                                        },
+                                        {
+                                            extend: 'excelHtml5',
+                                            text: 'Excel'
+                                        }
                                     ]
                                 });
                             }
@@ -834,6 +894,21 @@
                                     {
                                         targets: "_all",
                                         className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
                                     }
                                 ]
                             });
@@ -872,6 +947,21 @@
                                             targets: "_all",
                                             className: "dt-head-center dt-body-center"
                                         }
+                                    ],
+                                    dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                    buttons: [
+                                        {
+                                            extend: 'copyHtml5',
+                                            text: 'Copy'
+                                        },
+                                        {
+                                            extend: 'csvHtml5',
+                                            text: 'CSV'
+                                        },
+                                        {
+                                            extend: 'excelHtml5',
+                                            text: 'Excel'
+                                        }
                                     ]
                                 });
                             }
@@ -901,6 +991,21 @@
                                     {
                                         targets: "_all",
                                         className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
                                     }
                                 ]
                             });
@@ -938,6 +1043,21 @@
                                         {
                                             targets: "_all",
                                             className: "dt-head-center dt-body-center"
+                                        }
+                                    ],
+                                    dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                    buttons: [
+                                        {
+                                            extend: 'copyHtml5',
+                                            text: 'Copy'
+                                        },
+                                        {
+                                            extend: 'csvHtml5',
+                                            text: 'CSV'
+                                        },
+                                        {
+                                            extend: 'excelHtml5',
+                                            text: 'Excel'
                                         }
                                     ]
                                 });

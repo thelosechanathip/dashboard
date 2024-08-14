@@ -147,16 +147,30 @@
                                 scales: { y: { beginAtZero: true } },
                                 onClick: function(evt, elements) {
                                     if (elements.length > 0) {
-                                        var index = elements[0].index;
-                                        var datasetIndex = elements[0].datasetIndex;
+                                        var index = elements[0]._index;
+                                        var datasetIndex = elements[0]._datasetIndex;
                                         var month_count = chartDataYear.datasets[datasetIndex].data[index].toLocaleString();
                                         var month = chartDataYear.labels[index];
                                         var year = $('#yearSelect').val();
 
                                         if(parseInt(year) == 0) {
                                             var defaultYear = '{{ $year }}';
+                                            if(parseInt(month_count) == 0) {
+                                                $('#budgetYear').show();
+                                                setText(month_count);
+                                            } else {
+                                                $('#budgetYear').show();
+                                                setText(month_count);
+                                            }
                                             fetch_daily_data(defaultYear, month);
                                         } else {
+                                            if(parseInt(month_count) == 0) {
+                                                $('#budgetYear').show();
+                                                setText(month_count);
+                                            } else {
+                                                $('#budgetYear').show();
+                                                setText(month_count);
+                                            }
                                             fetch_daily_data(year, month);
                                         }
                                     }

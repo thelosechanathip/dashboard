@@ -34,10 +34,19 @@ document.getElementById('sidebarToggle').addEventListener('click', function () {
 
     sidebar.classList.toggle('collapsed');
 
-    if (sidebar.classList.contains('collapsed')) {
-        mainContent.classList.add('full-width');
+    if (window.innerWidth <= 500) {
+        if (mainContent.style.display === 'none') {
+            mainContent.style.display = 'block';
+        } else {
+            mainContent.style.display = 'none';
+        }
     } else {
-        mainContent.classList.remove('full-width');
+        // สำหรับหน้าจอที่กว้างกว่า 400px
+        if (sidebar.classList.contains('collapsed')) {
+            mainContent.classList.add('full-width');
+        } else {
+            mainContent.classList.remove('full-width');
+        }
     }
 });
 
@@ -49,6 +58,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.innerWidth <= 1400) {
         sidebar.classList.add('collapsed');
         mainContent.classList.add('full-width');
+    }
+
+    // Handle for initial load if the screen width is below 400px
+    if (window.innerWidth <= 500) {
+        mainContent.style.display = 'block';
     }
 });
 
@@ -63,5 +77,10 @@ window.addEventListener('resize', function() {
     } else {
         sidebar.classList.remove('collapsed');
         mainContent.classList.remove('full-width');
+    }
+
+    // Handle visibility for screen width below 400px
+    if (window.innerWidth > 500) {
+        mainContent.style.display = 'block'; // Ensure main content is shown when resizing back to a larger screen
     }
 });
