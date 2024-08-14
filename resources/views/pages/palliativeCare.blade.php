@@ -81,50 +81,81 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="number-of-new-patients-modal_title">ผู้ป่วย Palliative Care รายใหม่</h5>
+                            <div class="spinner-border loadingIcon ms-3" style="" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
                             <button type="button" class="btn-close zoom-card action-button" mode="reset_form_number_of_new_patients_select" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="container mb-4">
-                                <form id="number_of_new_patients_select_form" class="me-3">
-                                    @csrf
-                                    <div class="mb-3 d-flex align-items-center row">
-                                        <div class="col-1 d-flex align-items-center me-5">
-                                            <span class="me-3">ปี</span>
-                                            <select class="form-select" id="nonpsl_years" name="nonpsl_years" aria-label="Default select example"
-                                                style="min-width: 100px;">
-                                                <option selected value="0">-----</option>
-                                                <option value="2565">2565</option>
-                                                <option value="2566">2566</option>
-                                                <option value="2567">2567</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-2 d-flex align-items-center me-2">
-                                            <span class="me-3">เดือน</span>
-                                            <select class="form-select ms-2 me-2" id="nonpsl_month" name="nonpsl_month" aria-label="Default select example"
-                                                style="min-width: 210px;">
+                            <div class="">
+                                <div class="container mb-4 border-bottom row gx-1">
+                                    <form id="selectFormNewPalliativeCare" class="col-auto">
+                                        @csrf
+                                        <div class="mb-3 d-flex align-items-center row gx-1">
+                                            <div class="col-auto me-3">
+                                                <span class="w-auto">รายการ</span>
+                                            </div>
+                                            <select class="form-select w-auto" id="selectNewPalliativeCare" aria-label="Default select example" >
                                                 <option selected value="0">-------------------------</option>
-                                                <option value="01">มกราคม</option>
-                                                <option value="02">กุมภาพันธ์</option>
-                                                <option value="03">มีนายน</option>
-                                                <option value="04">เมษายน</option>
-                                                <option value="05">พฤษภาคม</option>
-                                                <option value="06">มิถุนายน</option>
-                                                <option value="07">กรกฏาคม</option>
-                                                <option value="08">สิงหาคม</option>
-                                                <option value="09">กันยายน</option>
-                                                <option value="10">ตุลาคม</option>
-                                                <option value="11">พฤศจิกายน</option>
-                                                <option value="12">ธันวาคม</option>
+                                                <option value="1">ปีงบประมาณ</option>
+                                                <option value="2">กำหนดเอง</option>
                                             </select>
                                         </div>
-                                        <div class="col-1 d-flex align-items-center ms-5">
-                                            <button type="submit" id="number_of_new_patients_select_submit" class="btn btn-primary ms-3 zoom-card">ยืนยัน</button>
+                                    </form>
+                                    <form id="number_of_new_patients_select_fiscal_years_form" class="col ms-3">
+                                        @csrf
+                                        <div class="mb-3 d-flex aling-items-center justify-content-start row gx-5">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <div class="col-auto">
+                                                    <span class="me-2">ปี</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <select class="form-select w-auto" id="nonpsfy_years" name="nonpsfy_years" aria-label="Default select example">
+                                                        <option selected value="0">-----</option>
+                                                        <option value="2565">2565</option>
+                                                        <option value="2566">2566</option>
+                                                        <option value="2567">2567</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-auto ms-3">
+                                                    <button type="submit" id="number_of_new_patients_select_fiscal_years_submit" class="btn btn-primary w-auto">ยืนยัน</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="spinner-border loadingIcon " style="" role="status">
-                                            <span class="visually-hidden">Loading...</span>
+                                    </form>
+                                    <form id="patient_date_range_select_form" class="col ms-3">
+                                        @csrf
+                                        <div class="mb-3 d-flex align-items-center row gx-3">
+                                            <div class="col-md-8 d-flex align-items-center">
+                                                {{-- <div class="d-flex align-items-center me-3">
+                                                    <span class="me-2" style="white-space: nowrap; font-size: 1rem;">เลือกปี</span>
+                                                    <select class="form-select w-auto" id="pdrs_years" name="pdrs_years" aria-label="Default select example">
+                                                        <option selected value="0">-----</option>
+                                                        <option value="2565">2565</option>
+                                                        <option value="2566">2566</option>
+                                                        <option value="2567">2567</option>
+                                                    </select>
+                                                </div> --}}
+                                                <!-- เลือกเดือน ตั้งแต่ -->
+                                                <div class="d-flex align-items-center me-3">
+                                                    <span class="me-2" style="white-space: nowrap; font-size: 1rem;">เลือกเดือน ตั้งแต่</span>
+                                                    <input type="date" class="form-control" id="pdrs_1" name="pdrs_1" placeholder="pdrs_1" required>
+                                                </div>
+
+                                                <!-- ถึง -->
+                                                <div class="d-flex align-items-center me-3">
+                                                    <span class="me-2" style="font-size: 1rem;">ถึง</span>
+                                                    <input type="date" class="form-control" id="pdrs_2" name="pdrs_2" placeholder="pdrs_2" required>
+                                                </div>
+
+                                                <!-- ยืนยัน -->
+                                                <div class="ms-3">
+                                                    <button type="submit" id="patient_date_range_select_submit" class="btn btn-primary btn-sm">ยืนยัน</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                             <div class="container" id="show-number-of-new-patients"></div>
                         </div>
@@ -455,6 +486,9 @@
                 $('#palliative_list_name_form').hide();
                 $('#palliative_list_name_table').hide();
                 $('.loadingIcon').hide();
+
+                $('#number_of_new_patients_select_fiscal_years_form').hide();
+                $('#patient_date_range_select_form').hide();
             // เริ่มต้น Hide End
 
             // จาก form ID "select" เลือกแบบ Realtime Start
@@ -469,6 +503,22 @@
                     } else {
                         $('#palliative_list_name_form').hide();
                         $('#palliative_count_death_form').hide();
+                    }
+                });
+
+                $('#selectFormNewPalliativeCare').change(function() {
+                    var selectForm = $('#selectNewPalliativeCare').val();
+                    if(selectForm != '0' && selectForm == '1') {
+                        $('#number_of_new_patients_select_fiscal_years_form').show();
+                        $('#patient_date_range_select_form').hide();
+                    } else if(selectForm != '0' && selectForm == '2') {
+                        $('#patient_date_range_select_form').show();
+                        $('#number_of_new_patients_select_fiscal_years_form').hide();
+                    } else {
+                        $('#number_of_new_patients_select_fiscal_years_form').hide();
+                        $('#number_of_new_patients_select_fiscal_years_form')[0].reset();
+                        $('#patient_date_range_select_form').hide();
+                        $('#patient_date_range_select_form')[0].reset();
                     }
                 });
             // จาก form ID "select" เลือกแบบ Realtime End
@@ -519,14 +569,19 @@
 
                     if(mode === 'reset_form_number_of_new_patients_select') {
                         // Palliative Care รายใหม่ ตามค่าที่ส่งไป
-                        $("#number_of_new_patients_select_form")[0].reset();
+                        $('#number_of_new_patients_select_fiscal_years_form').hide();
+                        $('#number_of_new_patients_select_fiscal_years_form')[0].reset();
+                        $('#patient_date_range_select_form').hide();
+                        $('#patient_date_range_select_form')[0].reset();
+                        $('#selectFormNewPalliativeCare')[0].reset();
                     } else if(mode === 'reset_form_number_of_old_patients_select') {
                         $("#number_of_old_patients_select_form")[0].reset();
                     } else if(mode === 'reset_form_palliative_care_patients_with_pain') {
                         $("#palliative_care_patients_with_pain_form")[0].reset();
                     } else {
                         // Reset Form บนหน้าเว็บทุกตัว
-                        $("#number_of_new_patients_select_form")[0].reset();
+                        $("#number_of_new_patients_select_fiscal_years_form")[0].reset();
+                        $("#patient_date_range_select_form")[0].reset();
                         $("#palliative_count_death_form")[0].reset();
                         $("#palliative_list_name_form")[0].reset();
                         $("#selectForm")[0].reset();
@@ -819,14 +874,14 @@
                 });
             // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ ค่าเริ่มต้น End
 
-            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ ตามค่าที่ส่งไป Start
-                $('#number_of_new_patients_select_submit').on('click', function(e) {
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ ของปีงบประมาณ ตามค่าที่ส่งไป Start
+                $('#number_of_new_patients_select_fiscal_years_submit').on('click', function(e) {
                     e.preventDefault();
-                    var formData = $('#number_of_new_patients_select_form').serialize();
+                    var formData = $('#number_of_new_patients_select_fiscal_years_form').serialize();
                     $('#show-number-of-new-patients').hide();
                     showLoadingIcon();
                     $.ajax({
-                        url: '{{ route('getNumberOfNewPatientsSelect') }}',
+                        url: '{{ route('getNumberOfNewPatientsSelectFiscalYears') }}',
                         method: 'get',
                         data: formData,
                         success: function(response) {
@@ -840,7 +895,7 @@
                             } else {
                                 $('#show-number-of-new-patients').show();
                                 $("#show-number-of-new-patients").html(response);
-                                $("#table-number-of-new-patients-select").DataTable({
+                                $("#table-number-of-new-patients-select-fiscal-years").DataTable({
                                     responsive: true,
                                     order: [0, 'asc'],
                                     autoWidth: false,
@@ -870,7 +925,61 @@
                         }
                     });
                 });
-            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ ตามค่าที่ส่งไป End
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ ของปีงบประมาณ ตามค่าที่ส่งไป End
+
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ กำหนดเอง ตามค่าที่ส่งไป Start
+                $('#patient_date_range_select_submit').on('click', function(e) {
+                    e.preventDefault();
+                    var formData = $('#patient_date_range_select_form').serialize();
+                    $('#show-patient-date-range-select').hide();
+                    showLoadingIcon();
+                    $.ajax({
+                        url: '{{ route('getPatientDateRangeSelect') }}',
+                        method: 'get',
+                        data: formData,
+                        success: function(response) {
+                            hideLoadingIcon();
+                            if(response.status === 400) {
+                                swal.fire(
+                                    response.title,
+                                    response.message,
+                                    response.icon
+                                );
+                            } else {
+                                // $('#show-patient-date-range-select').show();
+                                // $("#show-patient-date-range-select").html(response);
+                                // $("#table-patient-date-range-select").DataTable({
+                                //     responsive: true,
+                                //     order: [0, 'asc'],
+                                //     autoWidth: false,
+                                //     columnDefs: [
+                                //         {
+                                //             targets: "_all",
+                                //             className: "dt-head-center dt-body-center"
+                                //         }
+                                //     ],
+                                //     dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                //     buttons: [
+                                //         {
+                                //             extend: 'copyHtml5',
+                                //             text: 'Copy'
+                                //         },
+                                //         {
+                                //             extend: 'csvHtml5',
+                                //             text: 'CSV'
+                                //         },
+                                //         {
+                                //             extend: 'excelHtml5',
+                                //             text: 'Excel'
+                                //         }
+                                //     ]
+                                // });
+                                console.log(response.message);
+                            }
+                        }
+                    });
+                });
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายใหม่ กำหนดเอง ตามค่าที่ส่งไป End
 
             // ดึงข้อมูลผู้ป่วย Palliative Care รายเก่า ค่าเริ่มต้น Start
                 $(document).on('click', '.number-of-old-patients', function (e) {

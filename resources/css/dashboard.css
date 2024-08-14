@@ -37,11 +37,11 @@ table tbody tr .death-unknown {
 }
 
 /* จำกัดขนาดของ modal และบังคับให้ตารางเลื่อน */
-.modal-dialog {
-    max-width: 90%; /* ปรับขนาดความกว้างของ modal */
-    max-height: 90vh; /* ปรับขนาดความสูงของ modal */
-    overflow-y: auto; /* เพิ่มการเลื่อนแนวตั้งเมื่อเนื้อหาล้น */
-}
+/* .modal-dialog {
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+} */
 
 .modal-body {
     overflow-x: auto; /* เพิ่มการเลื่อนแนวนอนเมื่อเนื้อหาล้น */
