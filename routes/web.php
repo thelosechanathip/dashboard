@@ -86,7 +86,8 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('getNumberOfNewPatientsSelectFiscalYears', [PalliativeCareController::class, 'getNumberOfNewPatientsSelectFiscalYears'])->name('getNumberOfNewPatientsSelectFiscalYears');
             Route::get('getPatientDateRangeSelect', [PalliativeCareController::class, 'getPatientDateRangeSelect'])->name('getPatientDateRangeSelect');
             Route::get('getNumberOfOldPatients', [PalliativeCareController::class, 'getNumberOfOldPatients'])->name('getNumberOfOldPatients');
-            Route::get('getNumberOfOldPatientsSelect', [PalliativeCareController::class, 'getNumberOfOldPatientsSelect'])->name('getNumberOfOldPatientsSelect');
+            Route::get('getNumberOfOldPatientsSelectFiscalYears', [PalliativeCareController::class, 'getNumberOfOldPatientsSelectFiscalYears'])->name('getNumberOfOldPatientsSelectFiscalYears');
+            Route::get('getPatientDateRangeSelectOld', [PalliativeCareController::class, 'getPatientDateRangeSelectOld'])->name('getPatientDateRangeSelectOld');
             Route::get('getPalliativeCarePatientsPain', [PalliativeCareController::class, 'getPalliativeCarePatientsPain'])->name('getPalliativeCarePatientsPain');
             Route::get('getPalliativeCarePatientsPainSelect', [PalliativeCareController::class, 'getPalliativeCarePatientsPainSelect'])->name('getPalliativeCarePatientsPainSelect');
         // Palliative Care End

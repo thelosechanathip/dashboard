@@ -974,7 +974,7 @@ class PalliativeCareController extends Controller
             return response()->json([
                 'status' => 400,
                 'title' => 'Error',
-                'message' => 'กรุณาเลือกปีงบประมาณหรือเลือกงบเดือนก่อนครับ',
+                'message' => 'กรุณาเลือกปีงบประมาณก่อนครับ',
                 'icon' => 'error'
             ]);
         }
@@ -1033,6 +1033,15 @@ class PalliativeCareController extends Controller
     public function getPatientDateRangeSelect(Request $request) {
         $date_1 = $request->pdrs_1;
         $date_2 = $request->pdrs_2;
+
+        if($date_1 == 0 || $date_2 == 0) {
+            return response()->json([
+                'status' => 400,
+                'title' => 'Error',
+                'message' => 'กรุณาเลือกเดือนที่ต้องการก่อนครับ',
+                'icon' => 'error'
+            ]);
+        }
 
         $date_all = $this->isThaiYear($date_1, $date_2);
 
@@ -1132,55 +1141,113 @@ class PalliativeCareController extends Controller
     // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตามเดือนและปีปัจจุบัน End
 
     // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตาม เดือน-ปี ของ Request ที่ส่งเข้ามา Start
-    public function getNumberOfOldPatientsSelect(Request $request) {
-        if($request->noopsl_years == 0 || $request->noopsl_month == 0) {
+    public function getNumberOfOldPatientsSelectFiscalYears(Request $request) {
+        $years = $request->noopsfy_years;
+
+        if($years == 0) {
             return response()->json([
                 'status' => 400,
                 'title' => 'Error',
-                'message' => 'กรุณาเลือกวันที่รับบริการ',
+                'message' => 'กรุณาเลือกปีงบประมาณก่อนครับ',
                 'icon' => 'error'
             ]);
-        } else {
+        }
 
-            $years = $request->noopsl_years - 543;
-            $month = $request->noopsl_month;
+        $years = $years - 543;
 
-            $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, $month, 1, $years));
-            $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, $month, 1, $years));
+        $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, 10, 1, $years - 1));
+        $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, 9, 1, $years));
 
-            $number_of_old_patients = $this->queryNumberOfOldPatients($firstDayOfMonth, $lastDayOfMonth);
+        $number_of_old_patients = $this->queryNumberOfOldPatients($firstDayOfMonth, $lastDayOfMonth);
 
-            $output = '';
+        $output = '';
 
-            if (count($number_of_old_patients) != false) {
-                $output .= '
-                <table id="table-number-of-old-patients-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-                <thead>
-                    <tr>
-                        <th>ลำดับ</th>
-                        <th>hn</th>
-                        <th>ชื่อ - สกุล</th>
-                        <th>ที่อยู่</th>
-                    </tr>
-                </thead>
-                <tbody>';
-                $i = 0;
-                foreach ($number_of_old_patients as $noop) {
-                    $output .= '<tr>
-                    <td>' . ++$i . '</td>
-                    <td>' . $noop->hn . '</td>
-                    <td>' . $noop->fullname . '</td>
-                    <td>' . $noop->fulladdress . '</td>
-                </tr>';
-                }
-                $output .= '</tbody></table>';
-                echo $output;
-            } else {
-                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
+        if (count($number_of_old_patients) != false) {
+            $output .= '
+            <table id="table-number-of-old-patients-select-fiscal-years" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th>hn</th>
+                    <th>ชื่อ - สกุล</th>
+                    <th>ที่อยู่</th>
+                </tr>
+            </thead>
+            <tbody>';
+            $i = 0;
+            foreach ($number_of_old_patients as $noop) {
+                $output .= '<tr>
+                <td>' . ++$i . '</td>
+                <td>' . $noop->hn . '</td>
+                <td>' . $noop->fullname . '</td>
+                <td>' . $noop->fulladdress . '</td>
+              </tr>';
             }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
         }
     }
     // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตาม เดือน-ปี ของ Request ที่ส่งเข้ามา End
+
+    // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตาม กำหนดเอง ของ Request ที่ส่งเข้ามา Start
+    public function getPatientDateRangeSelectOld(Request $request) {
+        $date_1 = $request->pdrso_1;
+        $date_2 = $request->pdrso_2;
+
+        if($date_1 == 0 || $date_2 == 0) {
+            return response()->json([
+                'status' => 400,
+                'title' => 'Error',
+                'message' => 'กรุณาเลือกเดือนที่ต้องการก่อนครับ',
+                'icon' => 'error'
+            ]);
+        }
+
+        $date_all = $this->isThaiYear($date_1, $date_2);
+
+        if($date_all == false) {
+            return response()->json([
+                'message' => 'ไม่มีข้อมูลถูกส่งไป'
+            ]);
+        } else {
+            $date_1 = $date_all['date_1'];
+            $date_2 = $date_all['date_2'];
+        }
+
+        $number_of_old_patients = $this->queryNumberOfOldPatients($date_1, $date_2);
+
+        $output = '';
+
+        if (count($number_of_old_patients) != false) {
+            $output .= '
+            <table id="table-patient-date-range-select-old" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th>hn</th>
+                    <th>ชื่อ - สกุล</th>
+                    <th>ที่อยู่</th>
+                </tr>
+            </thead>
+            <tbody>';
+            $i = 0;
+            foreach ($number_of_old_patients as $noop) {
+                $output .= '<tr>
+                <td>' . ++$i . '</td>
+                <td>' . $noop->hn . '</td>
+                <td>' . $noop->fullname . '</td>
+                <td>' . $noop->fulladdress . '</td>
+              </tr>';
+            }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
+        }
+    }
+    // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตาม กำหนดเอง ของ Request ที่ส่งเข้ามา End
 
     // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) Start
     public function getPalliativeCarePatientsPain() {
