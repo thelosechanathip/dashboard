@@ -127,15 +127,6 @@
                                         @csrf
                                         <div class="mb-3 d-flex align-items-center row gx-3">
                                             <div class="col-md-8 d-flex align-items-center">
-                                                {{-- <div class="d-flex align-items-center me-3">
-                                                    <span class="me-2" style="white-space: nowrap; font-size: 1rem;">เลือกปี</span>
-                                                    <select class="form-select w-auto" id="pdrs_years" name="pdrs_years" aria-label="Default select example">
-                                                        <option selected value="0">-----</option>
-                                                        <option value="2565">2565</option>
-                                                        <option value="2566">2566</option>
-                                                        <option value="2567">2567</option>
-                                                    </select>
-                                                </div> --}}
                                                 <!-- เลือกเดือน ตั้งแต่ -->
                                                 <div class="d-flex align-items-center me-3">
                                                     <span class="me-2" style="white-space: nowrap; font-size: 1rem;">เลือกเดือน ตั้งแต่</span>
@@ -931,7 +922,7 @@
                 $('#patient_date_range_select_submit').on('click', function(e) {
                     e.preventDefault();
                     var formData = $('#patient_date_range_select_form').serialize();
-                    $('#show-patient-date-range-select').hide();
+                    $('#show-number-of-new-patients').hide();
                     showLoadingIcon();
                     $.ajax({
                         url: '{{ route('getPatientDateRangeSelect') }}',
@@ -946,35 +937,34 @@
                                     response.icon
                                 );
                             } else {
-                                // $('#show-patient-date-range-select').show();
-                                // $("#show-patient-date-range-select").html(response);
-                                // $("#table-patient-date-range-select").DataTable({
-                                //     responsive: true,
-                                //     order: [0, 'asc'],
-                                //     autoWidth: false,
-                                //     columnDefs: [
-                                //         {
-                                //             targets: "_all",
-                                //             className: "dt-head-center dt-body-center"
-                                //         }
-                                //     ],
-                                //     dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
-                                //     buttons: [
-                                //         {
-                                //             extend: 'copyHtml5',
-                                //             text: 'Copy'
-                                //         },
-                                //         {
-                                //             extend: 'csvHtml5',
-                                //             text: 'CSV'
-                                //         },
-                                //         {
-                                //             extend: 'excelHtml5',
-                                //             text: 'Excel'
-                                //         }
-                                //     ]
-                                // });
-                                console.log(response.message);
+                                $('#show-number-of-new-patients').show();
+                                $("#show-number-of-new-patients").html(response);
+                                $("#table-patient-date-range-select").DataTable({
+                                    responsive: true,
+                                    order: [0, 'asc'],
+                                    autoWidth: false,
+                                    columnDefs: [
+                                        {
+                                            targets: "_all",
+                                            className: "dt-head-center dt-body-center"
+                                        }
+                                    ],
+                                    dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                    buttons: [
+                                        {
+                                            extend: 'copyHtml5',
+                                            text: 'Copy'
+                                        },
+                                        {
+                                            extend: 'csvHtml5',
+                                            text: 'CSV'
+                                        },
+                                        {
+                                            extend: 'excelHtml5',
+                                            text: 'Excel'
+                                        }
+                                    ]
+                                });
                             }
                         }
                     });

@@ -10,21 +10,34 @@ use Illuminate\Support\Facades\DB;
 
 class PalliativeCareController extends Controller
 {
-    private function isThaiYear($date) {
-        if (preg_match('/^\d{2}[-\/]\d{2}[-\/]\d{4}$/', $date)) {
-            // แยกส่วนปีออกจากวันที่
-            $parts = preg_split('/[-\/]/', $date);
-            $year = intval($parts[2]); // ส่วนที่สามคือปี
+    private function isThaiYear($request_1, $request_2) {
+        if($request_1 != 0 && $request_2 != 0) {
+            $date_parts_1 = explode('-', $request_1);
+            $date_parts_2 = explode('-', $request_2);
 
-            // ตรวจสอบว่าปีอยู่ในช่วงของปี พ.ศ. ที่เป็นไปได้
-            if ($year >= 2400 && $year <= 2600) {
-                // แปลงปี พ.ศ. เป็นปี ค.ศ. โดยการลบ 543
-                $gregorianYear = $year - 543;
-                // คืนค่าวันที่ในรูปแบบ dd-mm-yyyy หรือ dd/mm/yyyy แต่ใช้ปี ค.ศ.
-                return $day . '-' . $month . '-' . $gregorianYear;
+            $year_1 = $date_parts_1[0];
+            $year_2 = $date_parts_2[0];
+
+            if($year_1 >= 2400 && $year_1 <= 2600 || $year_2 >= 2400 && $year_2 <= 2600) {
+                $year_1 = $year_1 - 543;
+                $year_2 = $year_2 - 543;
+                $date_1 = $year_1 . '-' . $date_parts_1[1] . '-' . $date_parts_1[2];
+                $date_2 = $year_2 . '-' . $date_parts_2[1] . '-' . $date_parts_2[2];
+                $date_all = array(
+                    'date_1' => $date_1,
+                    'date_2' => $date_2
+                );
+                return $date_all;
+            } else {
+                $date_all = array(
+                    'date_1' => $request_1,
+                    'date_2' => $request_2
+                );
+                return $date_all;
             }
+        } else {
+            return false;
         }
-        return false; // ไม่เป็นปี พ.ศ.
     }
 
     // ดึงข้อมูล คนไข้ Palliative Care รายใหม่จาก จาก Request ที่ถูกส่งเข้ามา Start
@@ -1021,79 +1034,59 @@ class PalliativeCareController extends Controller
         $date_1 = $request->pdrs_1;
         $date_2 = $request->pdrs_2;
 
-        $result_1 = $this->isThaiYear($date_1);
-        $result_2 = $this->isThaiYear($date_2);
+        $date_all = $this->isThaiYear($date_1, $date_2);
 
-        if($result_1 === false && $result_2 === false) {
+        if($date_all == false) {
             return response()->json([
-                'message' => $date_1 . ' ' . $date_2
-            ]);
-        } else if($result_1 != false && $result_2 != false) {
-            return response()->json([
-                'message' => $result_1 . ' ' . $result_2
+                'message' => 'ไม่มีข้อมูลถูกส่งไป'
             ]);
         } else {
-            return response()->json([
-                'message' => 'Error อย่างรุนแรง'
-            ]);
+            $date_1 = $date_all['date_1'];
+            $date_2 = $date_all['date_2'];
         }
 
-        // if($years == 0) {
-        //     return response()->json([
-        //         'status' => 400,
-        //         'title' => 'Error',
-        //         'message' => 'กรุณาเลือกปีงบประมาณหรือเลือกงบเดือนก่อนครับ',
-        //         'icon' => 'error'
-        //     ]);
-        // }
+        $request_1 = "v.vstdate BETWEEN '{$date_1}' AND '{$date_2}'";
+        $request_2 = "'{$date_1}'";
 
-        // $years = $years - 543;
+        $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2);
 
-        // $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, 10, 1, $years - 1));
-        // $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, 9, 1, $years));
+        $output = '';
 
-        // $request_1 = "v.vstdate BETWEEN '{$firstDayOfMonth}' AND '{$lastDayOfMonth}'";
-        // $request_2 = "'{$firstDayOfMonth}'";
-
-        // $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2);
-
-        // $output = '';
-
-        // if (count($number_of_new_patients) != false) {
-        //     $output .= '
-        //     <table id="table-number-of-new-patients-select-fiscal-years" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-        //     <thead>
-        //         <tr>
-        //             <th>ลำดับ</th>
-        //             <th>hn</th>
-        //             <th>ชื่อ - สกุล</th>
-        //             <th>pdx</th>
-        //             <th>สิทธิ์</th>
-        //             <th>อายุ</th>
-        //             <th>วันที่</th>
-        //             <th>ที่อยู่</th>
-        //         </tr>
-        //     </thead>
-        //     <tbody>';
-        //     $i = 0;
-        //     foreach ($number_of_new_patients as $nonp) {
-        //         $changeDate = $this->DateThai($nonp->day1);
-        //         $output .= '<tr>
-        //         <td>' . ++$i . '</td>
-        //         <td>' . $nonp->hn . '</td>
-        //         <td>' . $nonp->fullname . '</td>
-        //         <td>' . $nonp->pdx . '</td>
-        //         <td>' . $nonp->pttype_name . '</td>
-        //         <td>' . $nonp->age . '</td>
-        //         <td>' . $changeDate . '</td>
-        //         <td>' . $nonp->fulladdress . '</td>
-        //     </tr>';
-        //     }
-        //     $output .= '</tbody></table>';
-        //     echo $output;
-        // } else {
-        //     echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
-        // }
+        if (count($number_of_new_patients) != false) {
+            $output .= '
+            <table id="table-patient-date-range-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th>hn</th>
+                    <th>ชื่อ - สกุล</th>
+                    <th>pdx</th>
+                    <th>สิทธิ์</th>
+                    <th>อายุ</th>
+                    <th>วันที่</th>
+                    <th>ที่อยู่</th>
+                </tr>
+            </thead>
+            <tbody>';
+            $i = 0;
+            foreach ($number_of_new_patients as $nonp) {
+                $changeDate = $this->DateThai($nonp->day1);
+                $output .= '<tr>
+                <td>' . ++$i . '</td>
+                <td>' . $nonp->hn . '</td>
+                <td>' . $nonp->fullname . '</td>
+                <td>' . $nonp->pdx . '</td>
+                <td>' . $nonp->pttype_name . '</td>
+                <td>' . $nonp->age . '</td>
+                <td>' . $changeDate . '</td>
+                <td>' . $nonp->fulladdress . '</td>
+            </tr>';
+            }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
+        }
     }
     // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตาม กำหนดเอง ของ Request ที่ส่งเข้ามา End
 
