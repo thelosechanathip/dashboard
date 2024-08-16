@@ -6,21 +6,37 @@
                     <span><i class="bi bi-house-door-fill me-3 text-success"></i>Dashboard</span>
                 </a>
             </li>
-            <li class="nav-item menu-custom">
-                <a class="nav-link {{ request()->routeIs('palliative_care') ? 'active text-success fw-bold' : 'text-dark' }}" aria-current="page" href="{{ route('palliative_care') }}">
-                    <span><i class="bi bi-person-hearts me-3 text-success"></i>Palliative Care</span>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('palliative_care') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#pcu" aria-expanded="{{ request()->routeIs('palliative_care') ? 'true' : 'false' }}" aria-controls="pcu">
+                    <span>PCU</span>
+                    <i class="bi bi-chevron-down rotate-icon text-success"></i>
                 </a>
+                <div class="collapse ms-5 {{ request()->routeIs('palliative_care') ? 'show' : '' }}" id="pcu">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                        <li class="mb-1 sub-menu-custom"><a href="{{ route('palliative_care') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('palliative_care') ? 'active text-success fw-bold' : 'text-dark' }}">Palliative Care</a></li>
+                    </ul>
+                </div>
             </li>
             <li class="nav-item">
                 <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('report_index_authen_code') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#menu2" aria-expanded="{{ request()->routeIs('report_index_authen_code') ? 'true' : 'false' }}" aria-controls="menu2">
-                    <span>รายงาน</span>
+                    <span>ห้องบัตร</span>
                     <i class="bi bi-chevron-down rotate-icon text-success"></i>
                 </a>
                 <div class="collapse ms-5 {{ request()->routeIs('report_index_authen_code') ? 'show' : '' }}" id="menu2">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                        <li class="mb-1 sub-menu-custom"><a href="{{ route('report_index_authen_code') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('report_index_authen_code') ? 'active text-success fw-bold' : 'text-dark' }}">การขอเลข Authen Code</a></li>
+                        <li class="mb-1 sub-menu-custom"><a href="{{ route('report_index_authen_code') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('report_index_authen_code') ? 'active text-success fw-bold' : 'text-dark' }}">Authen Code</a></li>
                     </ul>
                 </div>
+            </li>
+            <li class="nav-item menu-custom">
+                <a class="nav-link {{ request()->routeIs('test') ? 'active text-success fw-bold' : 'text-dark' }}" aria-current="page" href="{{ route('test') }}">
+                    <span><i class="bi bi-person-hearts me-3 text-success"></i>Testing</span>
+                </a>
+            </li>
+            <li class="nav-item menu-custom">
+                <a class="nav-link {{ request()->routeIs('setting') ? 'active text-success fw-bold' : 'text-dark' }}" aria-current="page" href="{{ route('setting') }}">
+                    <span><i class="bi bi-person-hearts me-3 text-success"></i>Setting</span>
+                </a>
             </li>
         </ul>
     </div>

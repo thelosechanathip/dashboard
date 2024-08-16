@@ -245,50 +245,72 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="palliative-care-patients-with-pain-title">ผู้ป่วย Palliative Care ที่มีอาการปวด ( Pain )</h5>
+                            <div class="spinner-border loadingIcon ms-3" style="" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
                             <button type="button" class="btn-close zoom-card action-button" mode="reset_form_palliative_care_patients_with_pain" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="container mb-4">
-                                <form id="palliative_care_patients_with_pain_form" class="me-3">
-                                    @csrf
-                                    <div class="mb-3 d-flex align-items-center row">
-                                        <div class="col-1 d-flex align-items-center me-5">
-                                            <span class="me-3">ปี</span>
-                                            <select class="form-select" id="pcpwp_years" name="pcpwp_years" aria-label="Default select example"
-                                                style="min-width: 100px;">
-                                                <option selected value="0">-----</option>
-                                                <option value="2565">2565</option>
-                                                <option value="2566">2566</option>
-                                                <option value="2567">2567</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-2 d-flex align-items-center me-2">
-                                            <span class="me-3">เดือน</span>
-                                            <select class="form-select ms-2 me-2" id="pcpwp_month" name="pcpwp_month" aria-label="Default select example"
-                                                style="min-width: 210px;">
+                            <div class="">
+                                <div class="container mb-4 border-bottom row gx-1">
+                                    <form id="selectFormPalliativeCarePatientsWithPain" class="col-auto">
+                                        @csrf
+                                        <div class="mb-3 d-flex align-items-center row gx-1">
+                                            <div class="col-auto me-3">
+                                                <span class="w-auto">รายการ</span>
+                                            </div>
+                                            <select class="form-select w-auto" id="selectPalliativeCarePatientsWithPain" aria-label="Default select example" >
                                                 <option selected value="0">-------------------------</option>
-                                                <option value="01">มกราคม</option>
-                                                <option value="02">กุมภาพันธ์</option>
-                                                <option value="03">มีนายน</option>
-                                                <option value="04">เมษายน</option>
-                                                <option value="05">พฤษภาคม</option>
-                                                <option value="06">มิถุนายน</option>
-                                                <option value="07">กรกฏาคม</option>
-                                                <option value="08">สิงหาคม</option>
-                                                <option value="09">กันยายน</option>
-                                                <option value="10">ตุลาคม</option>
-                                                <option value="11">พฤศจิกายน</option>
-                                                <option value="12">ธันวาคม</option>
+                                                <option value="1">ปีงบประมาณ</option>
+                                                <option value="2">กำหนดเอง</option>
                                             </select>
                                         </div>
-                                        <div class="col-1 d-flex align-items-center ms-5">
-                                            <button type="submit" id="palliative_care_patients_with_pain_submit" class="btn btn-primary ms-3 zoom-card">ยืนยัน</button>
+                                    </form>
+                                    <form id="palliative_care_patients_with_pain_fiscal_years_form" class="col ms-3">
+                                        @csrf
+                                        <div class="mb-3 d-flex aling-items-center justify-content-start row gx-5">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <div class="col-auto">
+                                                    <span class="me-2">ปี</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <select class="form-select w-auto" id="pcpwpf_years" name="pcpwpf_years" aria-label="Default select example">
+                                                        <option selected value="0">-----</option>
+                                                        <option value="2565">2565</option>
+                                                        <option value="2566">2566</option>
+                                                        <option value="2567">2567</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-auto ms-3">
+                                                    <button type="submit" id="palliative_care_patients_with_pain_fiscal_years_submit" class="btn btn-primary w-auto">ยืนยัน</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="spinner-border loadingIcon " style="" role="status">
-                                            <span class="visually-hidden">Loading...</span>
+                                    </form>
+                                    <form id="palliative_care_patients_with_pain_date_range_select_form" class="col ms-3">
+                                        @csrf
+                                        <div class="mb-3 d-flex align-items-center row gx-3">
+                                            <div class="col-md-8 d-flex align-items-center">
+                                                <!-- เลือกเดือน ตั้งแต่ -->
+                                                <div class="d-flex align-items-center me-3">
+                                                    <span class="me-2" style="white-space: nowrap; font-size: 1rem;">เลือกเดือน ตั้งแต่</span>
+                                                    <input type="date" class="form-control" id="pcpwpdrs_1" name="pcpwpdrs_1" placeholder="pcpwpdrs_1" required>
+                                                </div>
+
+                                                <!-- ถึง -->
+                                                <div class="d-flex align-items-center me-3">
+                                                    <span class="me-2" style="font-size: 1rem;">ถึง</span>
+                                                    <input type="date" class="form-control" id="pcpwpdrs_2" name="pcpwpdrs_2" placeholder="pcpwpdrs_2" required>
+                                                </div>
+
+                                                <!-- ยืนยัน -->
+                                                <div class="ms-3">
+                                                    <button type="submit" id="palliative_care_patients_with_pain_date_range_select_submit" class="btn btn-primary btn-sm">ยืนยัน</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                             <div class="container" id="show-palliative-care-patients-with-pain"></div>
                         </div>
@@ -502,6 +524,12 @@
 
                 $('#number_of_new_patients_select_fiscal_years_form').hide();
                 $('#patient_date_range_select_form').hide();
+
+                $('#number_of_old_patients_select_fiscal_years_form').hide();
+                $('#patient_date_range_select_old_form').hide();
+
+                $('#palliative_care_patients_with_pain_fiscal_years_form').hide();
+                $('#palliative_care_patients_with_pain_date_range_select_form').hide();
             // เริ่มต้น Hide End
 
             // จาก form ID "select" เลือกแบบ Realtime Start
@@ -548,6 +576,22 @@
                         $('#number_of_old_patients_select_fiscal_years_form')[0].reset();
                         $('#patient_date_range_select_old_form').hide();
                         $('#patient_date_range_select_old_form')[0].reset();
+                    }
+                });
+
+                $('#selectFormPalliativeCarePatientsWithPain').change(function() {
+                    var selectForm = $('#selectPalliativeCarePatientsWithPain').val();
+                    if(selectForm != '0' && selectForm == '1') {
+                        $('#palliative_care_patients_with_pain_fiscal_years_form').show();
+                        $('#palliative_care_patients_with_pain_date_range_select_form').hide();
+                    } else if(selectForm != '0' && selectForm == '2') {
+                        $('#palliative_care_patients_with_pain_date_range_select_form').show();
+                        $('#palliative_care_patients_with_pain_fiscal_years_form').hide();
+                    } else {
+                        $('#palliative_care_patients_with_pain_fiscal_years_form').hide();
+                        $('#palliative_care_patients_with_pain_fiscal_years_form')[0].reset();
+                        $('#palliative_care_patients_with_pain_date_range_select_form').hide();
+                        $('#palliative_care_patients_with_pain_date_range_select_form')[0].reset();
                     }
                 });
             // จาก form ID "select" เลือกแบบ Realtime End
@@ -604,13 +648,17 @@
                         $('#patient_date_range_select_form')[0].reset();
                         $('#selectFormNewPalliativeCare')[0].reset();
                     } else if(mode === 'reset_form_number_of_old_patients_select') {
-                        $('#number_of_old_patients_select_form').hide();
-                        $("#number_of_old_patients_select_form")[0].reset();
+                        $('#number_of_old_patients_select_fiscal_years_form').hide();
+                        $("#number_of_old_patients_select_fiscal_years_form")[0].reset();
                         $('#patient_date_range_select_old_form').hide();
                         $('#patient_date_range_select_old_form')[0].reset();
                         $('#selectFormOldPalliativeCare')[0].reset();
                     } else if(mode === 'reset_form_palliative_care_patients_with_pain') {
-                        $("#palliative_care_patients_with_pain_form")[0].reset();
+                        $('#palliative_care_patients_with_pain_fiscal_years_form').hide();
+                        $("#palliative_care_patients_with_pain_fiscal_years_form")[0].reset();
+                        $('#palliative_care_patients_with_pain_date_range_select_form').hide();
+                        $('#palliative_care_patients_with_pain_date_range_select_form')[0].reset();
+                        $('#selectFormPalliativeCarePatientsWithPain')[0].reset();
                     } else {
                         // Reset Form บนหน้าเว็บทุกตัว
                         $("#number_of_new_patients_select_fiscal_years_form")[0].reset();
@@ -624,6 +672,9 @@
                         $('#selectFormOldPalliativeCare')[0].reset();
                         $('#patient_date_range_select_old_form').hide();
                         $('#number_of_old_patients_select_fiscal_years_form').hide();
+                        $('#selectFormPalliativeCarePatientsWithPain')[0].reset();
+                        $('#palliative_care_patients_with_pain_fiscal_years_form').hide();
+                        $('#palliative_care_patients_with_pain_date_range_select_form').hide();
                     }
                 });
             // Reset Form End
@@ -1116,8 +1167,8 @@
                 });
             // ดึงข้อมูลผู้ป่วย Palliative Care รายเก่า ของปีงบประมาณ ตามค่าที่ส่งไป End
 
-            // ดึงข้อมูลผู้ป่วย Palliative Care รายเก่า ของปีงบประมาณ ตามค่าที่ส่งไป Start
-            $('#patient_date_range_select_old_submit').on('click', function(e) {
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายเก่า กำหนดเอง ตามค่าที่ส่งไป Start
+                $('#patient_date_range_select_old_submit').on('click', function(e) {
                     e.preventDefault();
                     var formData = $('#patient_date_range_select_old_form').serialize();
                     $('#show-number-of-old-patients').hide();
@@ -1167,7 +1218,7 @@
                         }
                     });
                 });
-            // ดึงข้อมูลผู้ป่วย Palliative Care รายเก่า ของปีงบประมาณ ตามค่าที่ส่งไป End
+            // ดึงข้อมูลผู้ป่วย Palliative Care รายเก่า กำหนดเอง ตามค่าที่ส่งไป End
 
             // ดึงข้อมูลผู้ป่วย Palliative Care ที่มีอาการปวด( Pain ) ค่าเริ่มต้น Start
                 $(document).on('click', '.palliative-care-patients-with-pain', function (e) {
@@ -1213,14 +1264,14 @@
                 });
             // ดึงข้อมูลผู้ป่วย Palliative Care ที่มีอาการปวด( Pain ) ค่าเริ่มต้น End
 
-            // ดึงข้อมูลผู้ป่วย Palliative Care ที่มีอาการปวด( Pain ) ตามค่าที่ส่งไป Start
-                $('#palliative_care_patients_with_pain_submit').on('click', function(e) {
+            // ดึงข้อมูลผู้ป่วย Palliative Care ที่มีอาการปวด( Pain ) ของปีงบประมาณ ตามค่าที่ส่งไป Start
+                $('#palliative_care_patients_with_pain_fiscal_years_submit').on('click', function(e) {
                     e.preventDefault();
-                    var formData = $('#palliative_care_patients_with_pain_form').serialize();
+                    var formData = $('#palliative_care_patients_with_pain_fiscal_years_form').serialize();
                     $('#show-palliative-care-patients-with-pain').hide();
                     showLoadingIcon();
                     $.ajax({
-                        url: '{{ route('getPalliativeCarePatientsPainSelect') }}',
+                        url: '{{ route('getPalliativeCarePatientsWithPainFiscalYears') }}',
                         method: 'get',
                         data: formData,
                         success: function(response) {
@@ -1264,7 +1315,60 @@
                         }
                     });
                 });
-            // ดึงข้อมูลผู้ป่วย Palliative Care ที่มีอาการปวด( Pain ) ตามค่าที่ส่งไป End
+            // ดึงข้อมูลผู้ป่วย Palliative Care ที่มีอาการปวด( Pain ) ของปีงบประมาณ ตามค่าที่ส่งไป End
+
+            // ดึงข้อมูลผู้ป่วย Palliative Care ที่มีอาการปวด( Pain ) กำหนดเอง ตามค่าที่ส่งไป Start
+                $('#palliative_care_patients_with_pain_date_range_select_submit').on('click', function(e) {
+                    e.preventDefault();
+                    var formData = $('#palliative_care_patients_with_pain_date_range_select_form').serialize();
+                    $('#show-palliative-care-patients-with-pain').hide();
+                    showLoadingIcon();
+                    $.ajax({
+                        url: '{{ route('getPalliativeCarePatientsWithPainDateRangeSelect') }}',
+                        method: 'get',
+                        data: formData,
+                        success: function(response) {
+                            hideLoadingIcon();
+                            if(response.status === 400) {
+                                swal.fire(
+                                    response.title,
+                                    response.message,
+                                    response.icon
+                                );
+                            } else {
+                                $('#show-palliative-care-patients-with-pain').show();
+                                $("#show-palliative-care-patients-with-pain").html(response);
+                                $("#table-palliative-care-patients-with-pain-select").DataTable({
+                                    responsive: true,
+                                    order: [0, 'asc'],
+                                    autoWidth: false,
+                                    columnDefs: [
+                                        {
+                                            targets: "_all",
+                                            className: "dt-head-center dt-body-center"
+                                        }
+                                    ],
+                                    dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                    buttons: [
+                                        {
+                                            extend: 'copyHtml5',
+                                            text: 'Copy'
+                                        },
+                                        {
+                                            extend: 'csvHtml5',
+                                            text: 'CSV'
+                                        },
+                                        {
+                                            extend: 'excelHtml5',
+                                            text: 'Excel'
+                                        }
+                                    ]
+                                });
+                            }
+                        }
+                    });
+                });
+            // ดึงข้อมูลผู้ป่วย Palliative Care ที่มีอาการปวด( Pain ) กำหนดเอง ตามค่าที่ส่งไป End
         });
     </script>
 @endsection

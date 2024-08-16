@@ -1291,53 +1291,111 @@ class PalliativeCareController extends Controller
     // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) End
 
     // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) เดือน-ปี ของ Request ที่ส่งเข้ามา Start
-    public function getPalliativeCarePatientsPainSelect(Request $request) {
-        if($request->pcpwp_years == 0 || $request->pcpwp_month == 0) {
+    public function getPalliativeCarePatientsWithPainFiscalYears(Request $request) {
+        $years = $request->pcpwpf_years;
+
+        if($years == 0) {
             return response()->json([
                 'status' => 400,
                 'title' => 'Error',
-                'message' => 'กรุณาเลือกวันที่รับบริการ',
+                'message' => 'กรุณาเลือกปีงบประมาณก่อนครับ',
                 'icon' => 'error'
             ]);
-        } else {
+        }
 
-            $years = $request->pcpwp_years - 543;
-            $month = $request->pcpwp_month;
+        $years = $years - 543;
 
-            $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, $month, 1, $years));
-            $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, $month, 1, $years));
+        $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, 10, 1, $years - 1));
+        $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, 9, 1, $years));
 
-            $palliative_care_patients_pain = $this->queryPalliativeCarePatientsPain($firstDayOfMonth, $lastDayOfMonth);
+        $palliative_care_patients_pain = $this->queryPalliativeCarePatientsPain($firstDayOfMonth, $lastDayOfMonth);
 
-            $output = '';
+        $output = '';
 
-            if (count($palliative_care_patients_pain) != false) {
-                $output .= '
-                <table id="table-palliative-care-patients-with-pain-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-                <thead>
-                    <tr>
-                        <th>ลำดับ</th>
-                        <th>hn</th>
-                        <th>ชื่อ - สกุล</th>
-                        <th>ที่อยู่</th>
-                    </tr>
-                </thead>
-                <tbody>';
-                $i = 0;
-                foreach ($palliative_care_patients_pain as $pcpp) {
-                    $output .= '<tr>
-                    <td>' . ++$i . '</td>
-                    <td>' . $pcpp->hn . '</td>
-                    <td>' . $pcpp->fullname . '</td>
-                    <td>' . $pcpp->fulladdress . '</td>
-                </tr>';
-                }
-                $output .= '</tbody></table>';
-                echo $output;
-            } else {
-                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
+        if (count($palliative_care_patients_pain) != false) {
+            $output .= '
+            <table id="table-palliative-care-patients-with-pain-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th>hn</th>
+                    <th>ชื่อ - สกุล</th>
+                    <th>ที่อยู่</th>
+                </tr>
+            </thead>
+            <tbody>';
+            $i = 0;
+            foreach ($palliative_care_patients_pain as $pcpp) {
+                $output .= '<tr>
+                <td>' . ++$i . '</td>
+                <td>' . $pcpp->hn . '</td>
+                <td>' . $pcpp->fullname . '</td>
+                <td>' . $pcpp->fulladdress . '</td>
+            </tr>';
             }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้ที่มีอาการปวด( Pain )</h1>';
         }
     }
     // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) เดือน-ปี ของ Request ที่ส่งเข้ามา End
+
+    // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) กำหนดเอง ของ Request ที่ส่งเข้ามา Start
+    public function getPalliativeCarePatientsWithPainDateRangeSelect(Request $request) {
+        $date_1 = $request->pcpwpdrs_1;
+        $date_2 = $request->pcpwpdrs_2;
+
+        if($date_1 == 0 || $date_2 == 0) {
+            return response()->json([
+                'status' => 400,
+                'title' => 'Error',
+                'message' => 'กรุณาเลือกเดือนที่ต้องการก่อนครับ',
+                'icon' => 'error'
+            ]);
+        }
+
+        $date_all = $this->isThaiYear($date_1, $date_2);
+
+        if($date_all == false) {
+            return response()->json([
+                'message' => 'ไม่มีข้อมูลถูกส่งไป'
+            ]);
+        } else {
+            $date_1 = $date_all['date_1'];
+            $date_2 = $date_all['date_2'];
+        }
+
+        $palliative_care_patients_pain = $this->queryPalliativeCarePatientsPain($date_1, $date_2);
+
+        $output = '';
+
+        if (count($palliative_care_patients_pain) != false) {
+            $output .= '
+            <table id="table-palliative-care-patients-with-pain-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th>hn</th>
+                    <th>ชื่อ - สกุล</th>
+                    <th>ที่อยู่</th>
+                </tr>
+            </thead>
+            <tbody>';
+            $i = 0;
+            foreach ($palliative_care_patients_pain as $pcpp) {
+                $output .= '<tr>
+                <td>' . ++$i . '</td>
+                <td>' . $pcpp->hn . '</td>
+                <td>' . $pcpp->fullname . '</td>
+                <td>' . $pcpp->fulladdress . '</td>
+            </tr>';
+            }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้ที่มีอาการปวด( Pain )</h1>';
+        }
+    }
+    // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) กำหนดเอง ของ Request ที่ส่งเข้ามา End
 }
