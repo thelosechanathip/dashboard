@@ -108,6 +108,7 @@ Route::middleware(['check.something'])->group(function() {
     // Setting Start
         // Module Access Rights Start
             Route::get('mcarc_index', [ModuleAccessRightsController::class, 'index'])->name('mcarc_index');
+            Route::post('insertDataType', [ModuleAccessRightsController::class, 'insertDataType'])->name('insertDataType');
         // Module Access Rights End
     // Setting End
 });
