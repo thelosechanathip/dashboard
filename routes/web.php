@@ -11,6 +11,7 @@ use App\Http\Controllers\Pages\ReferInController;
 use App\Http\Controllers\Pages\IptController;
 use App\Http\Controllers\Pages\PalliativeCareController;
 use App\Http\Controllers\Reportes\AuthenCodeController;
+use App\Http\Controllers\Setting\ModuleAccessRightsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -105,7 +106,9 @@ Route::middleware(['check.something'])->group(function() {
     // Reportes End
 
     // Setting Start
-
+        // Module Access Rights Start
+            Route::get('mcarc_index', [ModuleAccessRightsController::class, 'index'])->name('mcarc_index');
+        // Module Access Rights End
     // Setting End
 });
 
