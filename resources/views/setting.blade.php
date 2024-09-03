@@ -21,12 +21,9 @@
 @endsection
 
 @section('script')
-    {{-- <script>
+    <script>
         $(document).ready(function() {
-            $('#tags').select2({
-                placeholder: "Select tags", // ข้อความแสดงในฟิลด์เมื่อยังไม่ได้เลือกค่า
-                allowClear: true // เพิ่มปุ่ม clear เพื่อลบค่าที่เลือกทั้งหมด
-            });
+
         });
-    </script> --}}
+    </script>
 @endsection

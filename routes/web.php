@@ -32,8 +32,6 @@ Route::middleware(['check.session.login'])->group(function() {
 
 Route::middleware(['check.something'])->group(function() {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('test', [DashboardController::class, 'test'])->name('test');
-    Route::get('setting', [DashboardController::class, 'setting'])->name('setting');
 
     // Pages Start
         // Ovst Start
@@ -105,5 +103,9 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('downloadAuthenCode', [AuthenCodeController::class, 'downloadAuthenCode'])->name('downloadAuthenCode');
         // Authen Code End
     // Reportes End
+
+    // Setting Start
+
+    // Setting End
 });
 

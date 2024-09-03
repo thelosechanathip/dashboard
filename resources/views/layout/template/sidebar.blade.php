@@ -28,16 +28,22 @@
                     </ul>
                 </div>
             </li>
-            <li class="nav-item menu-custom">
-                <a class="nav-link {{ request()->routeIs('test') ? 'active text-success fw-bold' : 'text-dark' }}" aria-current="page" href="{{ route('test') }}">
-                    <span><i class="bi bi-person-hearts me-3 text-success"></i>Testing</span>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('report_index_authen_code') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#menu_setting" aria-expanded="{{ request()->routeIs('report_index_authen_code') ? 'true' : 'false' }}" aria-controls="menu_setting">
+                    <span>Setting</span>
+                    <i class="bi bi-chevron-down rotate-icon text-success"></i>
                 </a>
+                <div class="collapse ms-5 {{ request()->routeIs('report_index_authen_code') ? 'show' : '' }}" id="menu_setting">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                        <li class="mb-1 sub-menu-custom"><a href="{{ route('report_index_authen_code') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('report_index_authen_code') ? 'active text-success fw-bold' : 'text-dark' }}">Authen Code</a></li>
+                    </ul>
+                </div>
             </li>
-            <li class="nav-item menu-custom">
+            {{-- <li class="nav-item menu-custom">
                 <a class="nav-link {{ request()->routeIs('setting') ? 'active text-success fw-bold' : 'text-dark' }}" aria-current="page" href="{{ route('setting') }}">
-                    <span><i class="bi bi-person-hearts me-3 text-success"></i>Setting</span>
+                    <span><i class="bi bi-gear-fill me-3 text-success"></i>Setting</span>
                 </a>
-            </li>
+            </li> --}}
         </ul>
     </div>
 </nav>
