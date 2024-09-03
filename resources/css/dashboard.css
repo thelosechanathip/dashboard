@@ -13,6 +13,10 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+#module-access-rights-page::-webkit-scrollbar {
+    display: none;
+}
+
 /* Table Start */
 table.dataTable th {
     max-width: 150px !important;
@@ -278,6 +282,14 @@ main.hidden {
 
 .zoom-card:hover {
     transform: scale(1.05);
+}
+
+.zoom-text {
+    transition: transform 0.1s ease;
+}
+
+.zoom-text:hover {
+    transform: scale(1.15);
 }
 
 @media (max-width: 1400px) {
