@@ -108,7 +108,21 @@ Route::middleware(['check.something'])->group(function() {
     // Setting Start
         // Module Access Rights Start
             Route::get('mcarc_index', [ModuleAccessRightsController::class, 'index'])->name('mcarc_index');
+            Route::get('fetchAllDataType', [ModuleAccessRightsController::class, 'fetchAllDataType'])->name('fetchAllDataType');
             Route::post('insertDataType', [ModuleAccessRightsController::class, 'insertDataType'])->name('insertDataType');
+            Route::get('findOneDataType', [ModuleAccessRightsController::class, 'findOneDataType'])->name('findOneDataType');
+            Route::post('updateDataType', [ModuleAccessRightsController::class, 'updateDataType'])->name('updateDataType');
+            Route::delete('deleteDataType', [ModuleAccessRightsController::class, 'deleteDataType'])->name('deleteDataType');
+            Route::get('fetchAllDataStatus', [ModuleAccessRightsController::class, 'fetchAllDataStatus'])->name('fetchAllDataStatus');
+            Route::post('insertDataStatus', [ModuleAccessRightsController::class, 'insertDataStatus'])->name('insertDataStatus');
+            Route::get('findOneDataStatus', [ModuleAccessRightsController::class, 'findOneDataStatus'])->name('findOneDataStatus');
+            Route::post('updateDataStatus', [ModuleAccessRightsController::class, 'updateDataStatus'])->name('updateDataStatus');
+            Route::delete('deleteDataStatus', [ModuleAccessRightsController::class, 'deleteDataStatus'])->name('deleteDataStatus');
+            Route::get('fetchAllDataModule', [ModuleAccessRightsController::class, 'fetchAllDataModule'])->name('fetchAllDataModule');
+            Route::post('insertDataModule', [ModuleAccessRightsController::class, 'insertDataModule'])->name('insertDataModule');
+            Route::get('findOneDataModule', [ModuleAccessRightsController::class, 'findOneDataModule'])->name('findOneDataModule');
+            Route::post('updateDataModule', [ModuleAccessRightsController::class, 'updateDataModule'])->name('updateDataModule');
+            Route::delete('deleteDataModule', [ModuleAccessRightsController::class, 'deleteDataModule'])->name('deleteDataModule');
         // Module Access Rights End
     // Setting End
 });
