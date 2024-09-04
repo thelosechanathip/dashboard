@@ -158,7 +158,7 @@ class ModuleAccessRightsController extends Controller
                 <thead>
                     <tr>
                     <th>ID</th>
-                    <th>Type Name</th>
+                    <th>Status Name</th>
                     <th>วันที่เพิ่มข้อมูล</th>
                     <th>วันที่แก้ไขข้อมูล</th>
                     <th>Action</th>
@@ -259,11 +259,12 @@ class ModuleAccessRightsController extends Controller
                 $output .= '<table class="table table-striped table-sm text-center align-middle">
                 <thead>
                     <tr>
-                    <th>ID</th>
-                    <th>Type Name</th>
-                    <th>วันที่เพิ่มข้อมูล</th>
-                    <th>วันที่แก้ไขข้อมูล</th>
-                    <th>Action</th>
+                        <th style="width: 5%;">ID</th>
+                        <th style="width: 20%;">Module Name</th>
+                        <th style="width: 15%;">วันที่เพิ่มข้อมูล</th>
+                        <th style="width: 15%;">วันที่แก้ไขข้อมูล</th>
+                        <th style="width: 10%;">สถานะการใช้งาน</th>
+                        <th style="width: 10%;">Action</th>
                     </tr>
                 </thead>
                 <tbody>';
@@ -271,21 +272,108 @@ class ModuleAccessRightsController extends Controller
                     $output .= '<tr>
                     <td>' . $mm->id . '</td>
                     <td>' . $mm->module_name . '</td>
-                    <td>' . $mm->status->status_name . '</td>
                     <td>' . $mm->created_at . '</td>
                     <td>' . $mm->updated_at . '</td>
                     <td>
-                        <a href="#" id="' . $mm->id . '" class="text-success mx-1 status_modal_find" data-bs-toggle="modal" data-bs-target="#status_modal"><i class="bi-pencil-square h4"></i></a>
+                        <form id="change_status_form" method="POST">
+                            ' . csrf_field() . '
+                            <input class="visually-hidden" id="module_id" value="' . $mm->id . '">
+                            <div class="form-check form-switch d-flex justify-content-center">
+                                <input class="form-check-input status_checked_in_module" type="checkbox" id="status_id_in_module" name="status_id_in_module" value="' . $mm->status_id . '"' . ($mm->status_id == 1 ? ' checked' : '') . '>
+                            </div>
+                        </form>
+                    </td>
+                    <td>
+                        <a href="#" id="' . $mm->id . '" class="text-success mx-1 module_modal_find" data-bs-toggle="modal" data-bs-target="#module_modal"><i class="bi-pencil-square h4"></i></a>
 
-                        <a href="#" id="' . $mm->id . '" class="text-danger mx-1 status_delete"><i class="bi-trash h4"></i></a>
+                        <a href="#" id="' . $mm->id . '" class="text-danger mx-1 module_delete"><i class="bi-trash h4"></i></a>
                     </td>
                     </tr>';
                 }
                 $output .= '</tbody></table>';
                 echo $output;
             } else {
-                echo '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูล Status บน Database!</h1>';
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูล Module บน Database!</h1>';
             }
         }
     // Fetch All Data Module End
+
+    // Insert Data Module Start
+        public function insertDataModule(Request $request) {
+            if($request->status_id == '0') {
+                $error = $this->messageError("กรุณาเลือกสถานะด้วยครับ");
+                return $error;
+            } else {
+                if($request->module_name) {
+                    $data_module = [
+                        'module_name' => $request->module_name,
+                        'status_id' => $request->status_id
+                    ];
+
+                    if($data_module) {
+                        ModuleModel::create($data_module);
+                        $success = $this->messageSuccess("บันทึกข้อมูลเสร็จสิ้น");
+                        return $success;
+                    } else {
+                        $error = $this->messageError("ไม่สามารถบันทึกข้อมูลได้");
+                        return $error;
+                    }
+                } else {
+                    $error = $this->messageError("ไม่มีข้อมูลถูกส่งมา");
+                    return $error;
+                }
+            }
+        }
+    // Insert Data Module End
+
+    // Find One Data Module Start
+        public function findOneDataModule(Request $request) {
+            $oneModule = ModuleModel::find($request->id);
+            return response()->json($oneModule);
+        }
+    // Find One Data Module End
+
+    // Update Data Module Start
+        public function updateDataModule(Request $request) {
+            $module_model = ModuleModel::find($request->module_id_find_one);
+            if($request->module_name) {
+                $data_module = [
+                    'module_name' => $request->module_name
+                ];
+
+                if($module_model->update($data_module)) {
+                    $success = $this->messageSuccess("แก้ไขข้อมูลเสร็จสิ้น");
+                    return $success;
+                } else {
+                    $error = $this->messageError("ไม่สามารถแก้ไขข้อมูลได้");
+                    return $error;
+                }
+            } else {
+                $error = $this->messageError("ไม่มีข้อมูลถูกส่งมา");
+                return $error;
+            }
+        }
+    // Update Data Module End
+
+    // Change Status Id In Module Realtime Start
+        public function ChangeStatusIdInModuleRealtime(Request $request) {
+            $module_model = ModuleModel::find($request->id);
+            if($request->status_id && $request->id) {
+                $module_data = [
+                    'status_id' => $request->status_id
+                ];
+
+                if($module_model->update($module_data)) {
+                    $success = $this->messageSuccess("Update สถานะการใช้งานเสร็จสิ้น");
+                    return $success;
+                } else {
+                    $error = $this->messageError("ไม่สามารถ Update สถานะการใช้งานได้!");
+                    return $error;
+                }
+            } else {
+                $error = $this->messageError("กรุณาเลือกรายการสถานะ!");
+                return $error;
+            }
+        }
+    // Change Status Id In Module Realtime End
 }

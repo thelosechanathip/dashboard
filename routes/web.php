@@ -123,6 +123,7 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('findOneDataModule', [ModuleAccessRightsController::class, 'findOneDataModule'])->name('findOneDataModule');
             Route::post('updateDataModule', [ModuleAccessRightsController::class, 'updateDataModule'])->name('updateDataModule');
             Route::delete('deleteDataModule', [ModuleAccessRightsController::class, 'deleteDataModule'])->name('deleteDataModule');
+            Route::post('ChangeStatusIdInModuleRealtime', [ModuleAccessRightsController::class, 'ChangeStatusIdInModuleRealtime'])->name('ChangeStatusIdInModuleRealtime');
         // Module Access Rights End
     // Setting End
 });

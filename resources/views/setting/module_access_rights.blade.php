@@ -70,15 +70,15 @@
                             <form id="module_form" method="POST">
                                 @csrf
                                 <input type="hidden" id="mode" mode="">
-                                <input type="hidden" id="module_id" name="module_id">
+                                <input type="hidden" id="module_id_find_one" name="module_id_find_one">
                                 <div class="mb-3">
                                     <label for="module_name" class="form-label">ชื่อ Module</label>
                                     <input type="text" class="form-control" id="module_name" name="module_name">
                                 </div>
-                                <div class="mb-3">
-                                    <label for="module_name" class="form-label">ชื่อ Module</label>
+                                <div class="mb-3" id="hide_status_id">
+                                    <label for="status_id" class="form-label">ชื่อ Status</label>
                                     <select class="form-select" aria-label="Default select example" name="status_id" id="status_id">
-                                        <option selected value="0"></option>
+                                        <option selected value="0">--------------</option>
                                         @foreach($status_model AS $sm)
                                             <option value="{{ $sm->id }}">{{ $sm->status_name }}</option>
                                         @endforeach
@@ -195,12 +195,14 @@
                         $('#module_title').text('เพิ่มข้อมูล');
                         $('#module_submit').text('Add Data');
                         $("#module_form")[0].reset();
+                        $("#hide_status_id").show();
                     });
 
                     $(document).on('click', '.module_modal_find', function() {
                         $('#mode').attr('mode', 'update');
                         $('#module_title').text('แก้ไขข้อมูล');
                         $('#module_submit').text('Update Data');
+                        $("#hide_status_id").hide();
                     });
                 // Module End
             // Change Mode add || update End
@@ -529,6 +531,193 @@
                     });
                 }
             // Fetch All Data Module End
+
+            // Insert && Update Data Module Start
+                $("#module_form").submit(function(e) {
+                    const mode = $('#mode').attr('mode');
+                    if(mode === 'add') {
+                        e.preventDefault();
+                        const fd = new FormData(this);
+                        $.ajax({
+                            url: '{{ route('insertDataModule') }}',
+                            method: 'post',
+                            data: fd,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            success: function(response) {
+                                if(response.status === 400) {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                } else {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                    fetchAllDataModule();
+                                    $("#module_form")[0].reset();
+                                    $("#module_modal").modal('hide');
+                                }
+                            }
+                        });
+                    } else if(mode === 'update') {
+                        e.preventDefault();
+                        const fd = new FormData(this);
+                        $.ajax({
+                            url: '{{ route('updateDataModule') }}',
+                            method: 'post',
+                            data: fd,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            success: function(response) {
+                                if(response.status === 400) {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                } else {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                    fetchAllDataModule();
+                                    $("#module_form")[0].reset();
+                                    $("#module_modal").modal('hide');
+                                }
+                            }
+                        });
+                    } else {
+                        console.log('Mode ไม่ถูกต้อง');
+                    }
+                });
+            // Insert && Update Data Module End
+
+            // Find One Data Module Start
+                $(document).on('click', '.module_modal_find', function(e) {
+                    e.preventDefault();
+                    let id = $(this).attr('id');
+                    $.ajax({
+                        url: '{{ route('findOneDataModule') }}',
+                        method: 'get',
+                        data: {
+                            id: id,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            $("#module_name").val(response.module_name);
+                            $("#module_id_find_one").val(response.id);
+                        }
+                    });
+                });
+            // Find One Data Module End
+
+            // Delete Data Module Start
+                $(document).on('click', '.module_delete', function(e) {
+                    e.preventDefault();
+                    let id = $(this).attr('id');
+                    console.log(id);
+                    let csrf = '{{ csrf_token() }}';
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: '{{ route('deleteDataModule') }}',
+                                method: 'delete',
+                                data: {
+                                    id: id,
+                                    _token: csrf
+                                },
+                                success: function(response) {
+                                    if(response.status === 400) {
+                                        swal.fire(
+                                            response.title,
+                                            response.message,
+                                            response.icon
+                                        )
+                                    } else {
+                                        swal.fire(
+                                            response.title,
+                                            response.message,
+                                            response.icon
+                                        )
+                                        fetchAllDataModule();
+                                    }
+                                    console.log(response);
+                                }
+                            });
+                        }
+                    })
+                });
+            // Delete Data Module End
+
+            // Change Status_id In Module Start
+                $(document).ready(function() {
+                    $('.status_checked_in_module').each(function() {
+                        var status = $(this).val();
+                        if (status == 1) {
+                            $(this).prop('checked', true);
+                        } else if (status == 2) {
+                            $(this).prop('checked', false);
+                        }
+                    });
+
+                    $(document).on('change', '.status_checked_in_module', function(e) {
+                        e.preventDefault();
+
+                        const status_id = $(this).is(':checked') ? 1 : 2;
+                        const form = $(this).closest('form'); // Get the closest form
+                        const id = form.find('#module_id').val(); // Get the ID from the hidden input
+
+                        // Create a data object to hold the status_id and id
+                        let data = {
+                            status_id: status_id,
+                            id: id,
+                            _token: form.find('input[name="_token"]').val()
+                        };
+
+                        $.ajax({
+                            url: '{{ route('ChangeStatusIdInModuleRealtime') }}',
+                            method: 'POST',
+                            data: data, // Send the data object containing the status_id and id
+                            success: function(response) {
+                                if(response.status === 400) {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                } else {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                    fetchAllDataModule();
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error:', error);
+                            }
+                        });
+                    });
+                });
+            // Change Status_id In Module End
         });
     </script>
 @endsection
