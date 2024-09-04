@@ -52,21 +52,22 @@ class ModuleAccessRightsController extends Controller
             $type_model = TypeModel::orderBy('id', 'desc')->get();
             $output = '';
             if ($type_model->count() > 0) {
-                $output .= '<table class="table table-striped table-sm text-center align-middle">
+                $output .= '<table class="table table-striped table-bordered table-sm text-center align-middle" id="type_table">
                 <thead>
                     <tr>
-                    <th>ID</th>
-                    <th>Type Name</th>
-                    <th>วันที่เพิ่มข้อมูล</th>
-                    <th>วันที่แก้ไขข้อมูล</th>
-                    <th>Action</th>
+                        <th style="width: 5%;">ลำดับ</th>
+                        <th style="width: 30%;">Type Name</th>
+                        <th style="width: 10%;">วันที่เพิ่มข้อมูล</th>
+                        <th style="width: 10%;">วันที่แก้ไขข้อมูล</th>
+                        <th style="width: 10%;">Action</th>
                     </tr>
                 </thead>
                 <tbody>';
+                $id = 0;
                 foreach ($type_model as $tm) {
                     $output .= '<tr>
-                    <td>' . $tm->id . '</td>
-                    <td>' . $tm->type_name . '</td>
+                    <td>' . ++$id . '</td>
+                    <td class="text-start">' . $tm->type_name . '</td>
                     <td>' . $tm->created_at . '</td>
                     <td>' . $tm->updated_at . '</td>
                     <td>
@@ -154,21 +155,22 @@ class ModuleAccessRightsController extends Controller
             $status_model = StatusModel::orderBy('id', 'desc')->get();
             $output = '';
             if ($status_model->count() > 0) {
-                $output .= '<table class="table table-striped table-sm text-center align-middle">
+                $output .= '<table class="table table-striped table-bordered table-sm text-center align-middle" id="status_table">
                 <thead>
                     <tr>
-                    <th>ID</th>
-                    <th>Status Name</th>
-                    <th>วันที่เพิ่มข้อมูล</th>
-                    <th>วันที่แก้ไขข้อมูล</th>
-                    <th>Action</th>
+                        <th style="width: 5%;">ลำดับ</th>
+                        <th style="width: 30%;">Status Name</th>
+                        <th style="width: 10%;">วันที่เพิ่มข้อมูล</th>
+                        <th style="width: 10%;">วันที่แก้ไขข้อมูล</th>
+                        <th style="width: 10%;">Action</th>
                     </tr>
                 </thead>
                 <tbody>';
+                $id = 0;
                 foreach ($status_model as $sm) {
                     $output .= '<tr>
-                    <td>' . $sm->id . '</td>
-                    <td>' . $sm->status_name . '</td>
+                    <td>' . ++$id . '</td>
+                    <td class="text-start">' . $sm->status_name . '</td>
                     <td>' . $sm->created_at . '</td>
                     <td>' . $sm->updated_at . '</td>
                     <td>
@@ -256,10 +258,10 @@ class ModuleAccessRightsController extends Controller
             $module_model = ModuleModel::orderBy('id', 'desc')->get();
             $output = '';
             if ($module_model->count() > 0) {
-                $output .= '<table class="table table-striped table-sm text-center align-middle">
+                $output .= '<table class="table table-striped table-bordered table-sm text-center align-middle" id="module_table">
                 <thead>
                     <tr>
-                        <th style="width: 5%;">ID</th>
+                        <th style="width: 5%;">ลำดับ</th>
                         <th style="width: 20%;">Module Name</th>
                         <th style="width: 15%;">วันที่เพิ่มข้อมูล</th>
                         <th style="width: 15%;">วันที่แก้ไขข้อมูล</th>
@@ -268,20 +270,23 @@ class ModuleAccessRightsController extends Controller
                     </tr>
                 </thead>
                 <tbody>';
+                $id = 0;
                 foreach ($module_model as $mm) {
                     $output .= '<tr>
-                    <td>' . $mm->id . '</td>
-                    <td>' . $mm->module_name . '</td>
-                    <td>' . $mm->created_at . '</td>
-                    <td>' . $mm->updated_at . '</td>
+                    <td>' . ++$id . '</td>
+                    <td class="text-start">' . $mm->module_name . '</td>
+                    <td>' . date('d/m/Y H:i', strtotime($mm->created_at)) . '</td>
+                    <td>' . date('d/m/Y H:i', strtotime($mm->updated_at)) . '</td>
                     <td>
-                        <form id="change_status_form" method="POST">
-                            ' . csrf_field() . '
-                            <input class="visually-hidden" id="module_id" value="' . $mm->id . '">
-                            <div class="form-check form-switch d-flex justify-content-center">
-                                <input class="form-check-input status_checked_in_module" type="checkbox" id="status_id_in_module" name="status_id_in_module" value="' . $mm->status_id . '"' . ($mm->status_id == 1 ? ' checked' : '') . '>
-                            </div>
-                        </form>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <form id="change_status_form" method="POST">
+                                ' . csrf_field() . '
+                                <input class="visually-hidden" id="module_id" value="' . $mm->id . '">
+                                <div class="form-check form-switch d-flex justify-content-center">
+                                    <input class="form-check-input status_checked_in_module" type="checkbox" id="status_id_in_module" name="status_id_in_module" value="' . $mm->status_id . '"' . ($mm->status_id == 1 ? ' checked' : '') . '>
+                                </div>
+                            </form>
+                        </div>
                     </td>
                     <td>
                         <a href="#" id="' . $mm->id . '" class="text-success mx-1 module_modal_find" data-bs-toggle="modal" data-bs-target="#module_modal"><i class="bi-pencil-square h4"></i></a>
@@ -355,6 +360,20 @@ class ModuleAccessRightsController extends Controller
         }
     // Update Data Module End
 
+    // Delete Data Module Start
+        public function deleteDataModule(Request $request) {
+            $module_model = ModuleModel::find($request->id);
+            if($module_model) {
+                ModuleModel::destroy($request->id);
+                $success = $this->messageSuccess("ลบข้อมูลเสร็จสิ้น");
+                return $success;
+            } else {
+                $error = $this->messageError("ไม่สามารถลบข้อมูลได้");
+                return $error;
+            }
+        }
+    // Delete Data Module End
+
     // Change Status Id In Module Realtime Start
         public function ChangeStatusIdInModuleRealtime(Request $request) {
             $module_model = ModuleModel::find($request->id);
@@ -364,8 +383,13 @@ class ModuleAccessRightsController extends Controller
                 ];
 
                 if($module_model->update($module_data)) {
-                    $success = $this->messageSuccess("Update สถานะการใช้งานเสร็จสิ้น");
-                    return $success;
+                    if($request->status_id === '1') {
+                        $success = $this->messageSuccess($module_model->status->status_name);
+                        return $success;
+                    } else {
+                        $error = $this->messageError($module_model->status->status_name);
+                        return $error;
+                    }
                 } else {
                     $error = $this->messageError("ไม่สามารถ Update สถานะการใช้งานได้!");
                     return $error;

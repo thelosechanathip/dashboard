@@ -8,6 +8,46 @@ body {
     flex-direction: column;
 }
 
+/* Switch Start */
+   /* จัดการให้ switch อยู่ตรงกลางในแนวนอนและแนวตั้ง */
+    td {
+        vertical-align: middle; /* จัดแนวให้ตรงกลางแนวตั้ง */
+    }
+
+    /* ทำให้ฟอร์มภายในเซลล์ใช้ flexbox เพื่อจัดให้อยู่ตรงกลาง */
+    .form-check.form-switch {
+        display: flex;
+        justify-content: center; /* จัดให้อยู่ตรงกลางแนวนอน */
+        align-items: center; /* จัดให้อยู่ตรงกลางแนวตั้ง */
+        height: 100%; /* ใช้ความสูงทั้งหมดของคอลัมน์ */
+    }
+
+    /* ปรับขนาดของ switch */
+    .status_checked_in_module {
+        transform: scale(1.2); /* ปรับขนาดให้ใหญ่ขึ้นเล็กน้อย */
+        margin: 0 auto; /* จัดให้อยู่ตรงกลาง */
+    }
+
+    /* เปลี่ยนสีเมื่อเปิด */
+    .status_checked_in_module:checked {
+        background-color: #4caf50; /* สีเขียวเมื่อเปิด */
+        border-color: #4caf50;
+    }
+
+    /* ปรับขนาดของปุ่มกลม (toggle) */
+    .status_checked_in_module::before {
+        width: 18px;
+        height: 18px;
+        top: 1px;
+        left: 1px;
+    }
+
+    /* การเคลื่อนไหวของปุ่มกลมเมื่อเปิด */
+    .status_checked_in_module:checked::before {
+        transform: translateX(20px);
+    }
+/* Switch End */
+
 /* SCROLL BAR START */
 body::-webkit-scrollbar {
     display: none;
