@@ -10,9 +10,7 @@ use App\Models\Dashboard_Setting\ModuleModel;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request) {
-        $data = $request->session()->all();
-
+    public function query_all_count_data(){
         $ovst_count = DB::table('ovst')
             ->select(DB::raw('COUNT(*) as count'))
             ->whereDate('vstdate', '=', DB::raw('CURRENT_DATE()'))
@@ -43,7 +41,19 @@ class DashboardController extends Controller
             ->whereNull('dchdate')
             ->value('count');
 
-        return view('dashboard', compact('data', 'ovst_count', 'er_regist_count', 'refer_out_count', 'refer_in_count', 'ipt_count'));
+        return response()->json([
+            'ovst_count' => $ovst_count,
+            'er_regist_count' => $er_regist_count,
+            'refer_out_count' => $refer_out_count,
+            'refer_in_count' => $refer_in_count,
+            'ipt_count' => $ipt_count,
+        ]);
+    }
+
+    public function index(Request $request) {
+        $data = $request->session()->all();
+
+        return view('dashboard', compact('data'));
     }
 
     public function check_status(Request $request) {
