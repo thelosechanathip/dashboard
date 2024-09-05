@@ -16,8 +16,6 @@
                 <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
                 <p>&nbsp;&nbsp;&nbsp;</p>
                 <p> <span class="fw-bold">Group :</span> {{ $data['groupname'] }}</p>
-                <p>&nbsp;&nbsp;&nbsp;</p>
-                <p> <span class="fw-bold">แผนก :</span> {{ $data['department'] }}</p>
             </div>
         </div>
         {{-- Title End --}}
