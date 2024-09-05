@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 // เรียกใช้งาน Database
 use Illuminate\Support\Facades\DB;
 
+use App\Models\Dashboard_Setting\ModuleModel;
+
 class PalliativeCareController extends Controller
 {
     private function isThaiYear($request_1, $request_2) {
@@ -323,25 +325,33 @@ class PalliativeCareController extends Controller
 
     // หน้าแรกของ Palliative Care Start
     public function index(Request $request) {
+        $palliativeCareId = ModuleModel::where('module_name', 'Palliative Care')->first();
+
         // ดึงข้อมูล Session ที่มีการ Login เข้ามาภายในระบบ
         $data = $request->session()->all();
 
-        // Query สถานบริการ Start
-        $zbm_rpst_name = DB::connection('mysql')->select(
-            "
-                SELECT
-                    rpst_id,
-                    rpst_name
-                FROM zbm_rpst_name
-                WHERE
-                    rpst_id IN('11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976', '00000')
-            "
-        );
-        // Query สถานบริการ End
+        if($palliativeCareId->status_id === 1) {
 
-        // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data Start
-        return view('pages.palliativeCare', compact('data', 'zbm_rpst_name'));
-        // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data End
+            // Query สถานบริการ Start
+            $zbm_rpst_name = DB::connection('mysql')->select(
+                "
+                    SELECT
+                        rpst_id,
+                        rpst_name
+                    FROM zbm_rpst_name
+                    WHERE
+                        rpst_id IN('11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976', '00000')
+                "
+            );
+            // Query สถานบริการ End
+
+            // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data Start
+            return view('pages.palliativeCare', compact('data', 'zbm_rpst_name'));
+            // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data End
+        } else {
+            // return view('dashboard', compact('data'));
+            return redirect()->route('dashboard');
+        }
     }
     // หน้าแรกของ Palliative Care End
 

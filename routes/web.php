@@ -33,6 +33,8 @@ Route::middleware(['check.session.login'])->group(function() {
 
 Route::middleware(['check.something'])->group(function() {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('check_status', [DashboardController::class, 'check_status'])->name('check_status');
+    Route::get('check_group_and_user', [DashboardController::class, 'check_group_and_user'])->name('check_group_and_user');
 
     // Pages Start
         // Ovst Start

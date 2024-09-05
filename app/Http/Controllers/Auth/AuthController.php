@@ -31,6 +31,7 @@ class AuthController extends Controller
                 $request->session()->put('loginname', $user->loginname);
                 $request->session()->put('name', $user->name);
                 $request->session()->put('groupname', $user->groupname);
+                $request->session()->put('department', $user->department);
                 return redirect()->intended('/dashboard');
             } else {
                 $request->session()->put('error', 'Username หรือ Password ไม่ถูกต้องกรุณากรอกใหม่!');

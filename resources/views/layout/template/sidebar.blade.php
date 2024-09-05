@@ -2,7 +2,7 @@
     <div class="position-sticky py-3">
         <ul class="nav flex-column">
             <li class="nav-item menu-custom">
-                <a class="nav-link {{ request()->routeIs('dashboard') ? 'active text-success fw-bold' : 'text-dark' }}" aria-current="page" href="{{ route('dashboard') }}">
+                <a class="nav-link {{ request()->routeIs($dashboard) ? 'active text-success fw-bold' : 'text-dark' }}" aria-current="page" href="{{ route($dashboard) }}">
                     <span><i class="bi bi-house-door-fill me-3 text-success"></i>Dashboard</span>
                 </a>
             </li>
@@ -13,7 +13,7 @@
                 </a>
                 <div class="collapse ms-5 {{ request()->routeIs('palliative_care') ? 'show' : '' }}" id="pcu">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                        <li class="mb-1 sub-menu-custom"><a href="{{ route('palliative_care') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('palliative_care') ? 'active text-success fw-bold' : 'text-dark' }}">Palliative Care</a></li>
+                        <li class="mb-1 sub-menu-custom"><a href="{{ route('palliative_care') }}" id="palliative_care" data-value="{{ $palliativeCareId->module_name }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('palliative_care') ? 'active text-success fw-bold' : 'text-dark' }}">Palliative Care</a></li>
                     </ul>
                 </div>
             </li>
@@ -28,7 +28,7 @@
                     </ul>
                 </div>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" id="menu_setting_admin">
                 <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('mcarc_index') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#menu_setting" aria-expanded="{{ request()->routeIs('mcarc_index') ? 'true' : 'false' }}" aria-controls="menu_setting">
                     <span>Setting</span>
                     <i class="bi bi-chevron-down rotate-icon text-success"></i>
@@ -39,11 +39,6 @@
                     </ul>
                 </div>
             </li>
-            {{-- <li class="nav-item menu-custom">
-                <a class="nav-link {{ request()->routeIs('setting') ? 'active text-success fw-bold' : 'text-dark' }}" aria-current="page" href="{{ route('setting') }}">
-                    <span><i class="bi bi-gear-fill me-3 text-success"></i>Setting</span>
-                </a>
-            </li> --}}
         </ul>
     </div>
 </nav>
