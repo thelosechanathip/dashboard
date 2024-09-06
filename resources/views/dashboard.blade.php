@@ -94,8 +94,6 @@
     <script>
         $(document).ready(function() {
 
-            // $('#loadingIcon').hide();
-
             $('#all_dashboard').ready(function() {
                 showLoadingIcon();
                 $.ajax({

@@ -13,7 +13,7 @@
                 </a>
                 <div class="collapse ms-5 {{ request()->routeIs('palliative_care') ? 'show' : '' }}" id="pcu">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                        <li class="mb-1 sub-menu-custom"><a href="{{ route('palliative_care') }}" id="palliative_care" data-value="{{ $palliativeCareId->module_name }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('palliative_care') ? 'active text-success fw-bold' : 'text-dark' }}">Palliative Care</a></li>
+                        <li class="mb-1 sub-menu-custom"><a href="{{ route('palliative_care') }}" id="palliative_care" data-value="{{ $palliativeCareStatusId->status_id }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('palliative_care') ? 'active text-success fw-bold' : 'text-dark' }}">Palliative Care</a></li>
                     </ul>
                 </div>
             </li>
@@ -28,17 +28,19 @@
                     </ul>
                 </div>
             </li>
-            <li class="nav-item" id="menu_setting_admin">
-                <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('mcarc_index') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#menu_setting" aria-expanded="{{ request()->routeIs('mcarc_index') ? 'true' : 'false' }}" aria-controls="menu_setting">
-                    <span>Setting</span>
-                    <i class="bi bi-chevron-down rotate-icon text-success"></i>
-                </a>
-                <div class="collapse ms-5 {{ request()->routeIs('mcarc_index') ? 'show' : '' }}" id="menu_setting">
-                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                        <li class="mb-1 sub-menu-custom"><a href="{{ route('mcarc_index') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('mcarc_index') ? 'active text-success fw-bold' : 'text-dark' }}">Module access rights</a></li>
-                    </ul>
-                </div>
-            </li>
+            @if($data['groupname'] == 'ผู้ดูแลระบบ')
+                <li class="nav-item" id="menu_setting_admin">
+                    <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('mcarc_index') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#menu_setting" aria-expanded="{{ request()->routeIs('mcarc_index') ? 'true' : 'false' }}" aria-controls="menu_setting">
+                        <span>Setting</span>
+                        <i class="bi bi-chevron-down rotate-icon text-success"></i>
+                    </a>
+                    <div class="collapse ms-5 {{ request()->routeIs('mcarc_index') ? 'show' : '' }}" id="menu_setting">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li class="mb-1 sub-menu-custom"><a href="{{ route('mcarc_index') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('mcarc_index') ? 'active text-success fw-bold' : 'text-dark' }}">Module access rights</a></li>
+                        </ul>
+                    </div>
+                </li>
+            @endif
         </ul>
     </div>
 </nav>

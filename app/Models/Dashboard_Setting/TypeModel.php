@@ -18,4 +18,8 @@ class TypeModel extends Model
     protected $fillable = [
         'type_name'
     ];
+
+    public function accessibilities() {
+        return $this->hasMany(AccessibilityModel::class, 'type_id', 'id');
+    }
 }

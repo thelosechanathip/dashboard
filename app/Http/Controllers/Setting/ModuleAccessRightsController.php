@@ -40,10 +40,16 @@ class ModuleAccessRightsController extends Controller
             // Retrieve session data
             $data = $request->session()->all();
 
-            $status_model = StatusModel::orderBy('id', 'desc')->get();
+            if($data['groupname'] == 'ผู้ดูแลระบบ'){
+                $status_model = StatusModel::orderBy('id', 'desc')->get();
+                $type_model = TypeModel::orderBy('id', 'desc')->get();
+                $module_model = ModuleModel::orderBy('id', 'desc')->get();
 
-            // Return the view with the necessary data
-            return view('setting.module_access_rights', compact('data', 'status_model'));
+                // Return the view with the necessary data
+                return view('setting.module_access_rights', compact('data', 'status_model', 'type_model', 'module_model'));
+            } else {
+                return redirect()->route('dashboard');
+            }
         }
     // Index End
 
@@ -305,14 +311,14 @@ class ModuleAccessRightsController extends Controller
 
     // Insert Data Module Start
         public function insertDataModule(Request $request) {
-            if($request->status_id == '0') {
+            if($request->status_id_for_module == '0') {
                 $error = $this->messageError("กรุณาเลือกสถานะด้วยครับ");
                 return $error;
             } else {
                 if($request->module_name) {
                     $data_module = [
                         'module_name' => $request->module_name,
-                        'status_id' => $request->status_id
+                        'status_id' => $request->status_id_for_module
                     ];
 
                     if($data_module) {
@@ -377,13 +383,13 @@ class ModuleAccessRightsController extends Controller
     // Change Status Id In Module Realtime Start
         public function ChangeStatusIdInModuleRealtime(Request $request) {
             $module_model = ModuleModel::find($request->id);
-            if($request->status_id && $request->id) {
+            if($request->status_id_for_module && $request->id) {
                 $module_data = [
-                    'status_id' => $request->status_id
+                    'status_id' => $request->status_id_for_module
                 ];
 
                 if($module_model->update($module_data)) {
-                    if($request->status_id === '1') {
+                    if($request->status_id_for_module === '1') {
                         $success = $this->messageSuccess($module_model->status->status_name);
                         return $success;
                     } else {

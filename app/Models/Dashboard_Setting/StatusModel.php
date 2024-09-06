@@ -20,4 +20,8 @@ class StatusModel extends Model
     public function modules() {
         return $this->hasMany(ModuleModel::class, 'status_id', 'id');
     }
+
+    public function accessibilities() {
+        return $this->hasMany(AccessibilityModel::class, 'status_id', 'id');
+    }
 }
