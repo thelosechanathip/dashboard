@@ -125,8 +125,10 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="accessibility_name" class="form-label">ชื่อ Accessibility</label>
-                                    <input type="text" class="form-control" id="accessiblity_name" name="accessiblity_name">
+                                    <label for="accessibility_name" class="form-label">Accessibility Name</label>
+                                    <select class="form-select" aria-label="Default select example" name="accessibility_name" id="accessibility_name">
+                                        <option selected value="0">--------------</option>
+                                    </select>
                                 </div>
                                 <div class="mb-3" id="hide_status_id_for_accessibility">
                                     <label for="status_id_for_accessibility" class="form-label">Status</label>
@@ -812,6 +814,32 @@
                     });
                 });
             // Change Status_id In Module End
+
+            // Find User || Group Start
+            $('#type_id_for_accessibility').change(function(){
+                var type_id_for_accessibility = $(this).val();
+
+                if (type_id_for_accessibility != 0) {
+                    $.ajax({
+                        url: '{{ route('findSelectForUserOrGroup') }}', // Route to your controller
+                        method: 'GET',
+                        data: { type_id: type_id_for_accessibility },
+                        success: function(response) {
+                            $('#accessibility_name').empty();
+                            $('#accessibility_name').append('<option selected value="0">--------------</option>');
+
+                            $.each(response, function(key, value) {
+                                $('#accessibility_name').append('<option value="'+ value.groupname +'">'+ value.groupname +'</option>');
+                            });
+                            // console.log(response);
+                        }
+                    });
+                } else {
+                    $('#accessibility_name').empty();
+                    $('#accessibility_name').append('<option selected value="0">--------------</option>');
+                }
+            });
+            // Find User || Group End
         });
     </script>
 @endsection

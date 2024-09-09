@@ -21,6 +21,7 @@
     @include('layout.template.scriptes')
 
     @yield('script')
+
     <script>
         $(document).ready(function() {
             setUpStatus();

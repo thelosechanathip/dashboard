@@ -127,6 +127,7 @@ Route::middleware(['check.something'])->group(function() {
             Route::post('updateDataModule', [ModuleAccessRightsController::class, 'updateDataModule'])->name('updateDataModule');
             Route::delete('deleteDataModule', [ModuleAccessRightsController::class, 'deleteDataModule'])->name('deleteDataModule');
             Route::post('ChangeStatusIdInModuleRealtime', [ModuleAccessRightsController::class, 'ChangeStatusIdInModuleRealtime'])->name('ChangeStatusIdInModuleRealtime');
+            Route::get('findSelectForUserOrGroup', [ModuleAccessRightsController::class, 'findSelectForUserOrGroup'])->name('findSelectForUserOrGroup');
         // Module Access Rights End
     // Setting End
 });

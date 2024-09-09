@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Dashboard_Setting\TypeModel;
 use App\Models\Dashboard_Setting\StatusModel;
 use App\Models\Dashboard_Setting\ModuleModel;
+use App\Models\OpdUser;
 
 class ModuleAccessRightsController extends Controller
 {
@@ -406,4 +407,23 @@ class ModuleAccessRightsController extends Controller
             }
         }
     // Change Status Id In Module Realtime End
+
+    // Find User || Group Start
+    public function findSelectForUserOrGroup(Request $request) {
+        // 1 = group, 2 = user
+        $type_id = $request->type_id;
+
+        if($type_id === '1') {
+            $opduser = OpdUser::select('groupname')
+                ->whereNotNull('groupname')  // แทนที่การใช้ IS NOT NULL
+                ->where('groupname', '!=', '')  // แทนที่การเช็คค่าว่าง
+                ->groupBy('groupname')
+                ->get();
+
+            return response()->json($opduser);
+        }
+
+        // return response()->json($type_id);
+    }
+    // Find User || Group End
 }
