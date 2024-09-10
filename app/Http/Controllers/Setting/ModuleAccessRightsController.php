@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Dashboard_Setting\TypeModel;
 use App\Models\Dashboard_Setting\StatusModel;
 use App\Models\Dashboard_Setting\ModuleModel;
+use App\Models\Dashboard_Setting\AccessibilityModel;
 use App\Models\OpdUser;
 
 class ModuleAccessRightsController extends Controller
@@ -409,21 +410,209 @@ class ModuleAccessRightsController extends Controller
     // Change Status Id In Module Realtime End
 
     // Find User || Group Start
-    public function findSelectForUserOrGroup(Request $request) {
-        // 1 = group, 2 = user
-        $type_id = $request->type_id;
+        public function findSelectForUserOrGroup(Request $request) {
+            // รับค่าจาก request
+            $type_id = $request->type_id;
 
-        if($type_id === '1') {
-            $opduser = OpdUser::select('groupname')
-                ->whereNotNull('groupname')  // แทนที่การใช้ IS NOT NULL
-                ->where('groupname', '!=', '')  // แทนที่การเช็คค่าว่าง
-                ->groupBy('groupname')
-                ->get();
+            if ($type_id == '1') {  // ใช้การเปรียบเทียบแบบ loose หรือแปลง type_id เป็น int
+                // กรณี type = 1 คือ Group
+                $opduser = OpdUser::select('groupname')
+                    ->whereNotNull('groupname')  // เช็คว่าไม่ใช่ NULL
+                    ->where('groupname', '!=', '')  // เช็คว่ามีค่าที่ไม่ใช่ค่าว่าง
+                    ->groupBy('groupname')
+                    ->get();
 
-            return response()->json($opduser);
+                // ส่งข้อมูลกลับในรูปแบบ JSON
+                return response()->json([
+                    'type' => $type_id,  // ระบุประเภทเป็น 'group'
+                    'data' => $opduser  // ส่งข้อมูลของ groupname กลับไป
+                ]);
+
+            } elseif ($type_id == '2') {
+                // กรณี type = 2 คือ User
+                $opduser = OpdUser::select('name')
+                    ->whereNotNull('name')  // เช็คว่าไม่ใช่ NULL
+                    ->where('name', '!=', '')  // เช็คว่ามีค่าที่ไม่ใช่ค่าว่าง
+                    ->groupBy('name')
+                    ->get();
+
+                // ส่งข้อมูลกลับในรูปแบบ JSON
+                return response()->json([
+                    'type' => $type_id,  // ระบุประเภทเป็น 'user'
+                    'data' => $opduser  // ส่งข้อมูลของ name กลับไป
+                ]);
+            }
+
+            // หากไม่ใช่ type 1 หรือ 2 ส่ง response เปล่ากลับ
+            return response()->json(['message' => 'Invalid Type ID'], 400);
         }
-
-        // return response()->json($type_id);
-    }
     // Find User || Group End
+
+    // Fetch All Data Accessibility Start
+        public function fetchAllDataAccessibility() {
+            $accessibility_model = AccessibilityModel::orderBy('id', 'desc')->get();
+            $output = '';
+            if ($accessibility_model->count() > 0) {
+                $output .= '<table class="table table-striped table-bordered table-sm text-center align-middle" id="accessibility_table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">ลำดับ</th>
+                        <th style="width: 15%;">Module Name</th>
+                        <th style="width: 15%;">Type Name</th>
+                        <th style="width: 20%;">Accessibility Name</th>
+                        <th style="width: 10%;">Status Name</th>
+                        <th style="width: 10%;">วันที่บันทึก</th>
+                        <th style="width: 10%;">วันที่แก้ไข</th>
+                        <th style="width: 7%;">สถานะการใช้งาน</th>
+                        <th style="width: 8%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $id = 0;
+                foreach ($accessibility_model as $am) {
+                    $output .= '<tr>
+                    <td>' . ++$id . '</td>
+                    <td class="text-start">' . $am->module->module_name . '</td>
+                    <td class="text-start">' . $am->type->type_name . '</td>
+                    <td class="text-start">' . $am->accessibility_name . '</td>
+                    <td class="text-start">' . $am->status->status_name . '</td>
+                    <td>' . date('d/m/Y H:i', strtotime($am->created_at)) . '</td>
+                    <td>' . date('d/m/Y H:i', strtotime($am->updated_at)) . '</td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <form id="change_status_form" method="POST">
+                                ' . csrf_field() . '
+                                <input class="visually-hidden" id="accessibility_id" value="' . $am->id . '">
+                                <div class="form-check form-switch d-flex justify-content-center">
+                                    <input class="form-check-input status_checked_in_accessibility" type="checkbox" id="status_id_in_accessibility" name="status_id_in_accessibility" value="' . $am->status_id . '"' . ($am->status_id == 1 ? ' checked' : '') . '>
+                                </div>
+                            </form>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="#" id="' . $am->id . '" class="text-success mx-1 accessibility_modal_find" data-bs-toggle="modal" data-bs-target="#accessibility_modal"><i class="bi-pencil-square h4"></i></a>
+
+                        <a href="#" id="' . $am->id . '" class="text-danger mx-1 accessibility_delete"><i class="bi-trash h4"></i></a>
+                    </td>
+                    </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูล Accessibility บน Database!</h1>';
+            }
+        }
+    // Fetch All Data Accessibility End
+
+    // Insert Data Accessibility Start
+        public function insertDataAccessibility(Request $request) {
+            if($request->module_id_for_accessibility == '0') {
+                $error = $this->messageError("กรุณาเลือก Module ด้วยครับ");
+                return $error;
+            } else {
+                if($request->type_id_for_accessibility == '0') {
+                    $error = $this->messageError("กรุณาเลือก Type ด้วยครับ");
+                    return $error;
+                } else {
+                    if($request->status_id_for_accessibility == '0') {
+                        $error = $this->messageError("กรุณาเลือก Status ด้วยครับ");
+                        return $error;
+                    } else {
+                        if($request->accessibility_name) {
+                            $data_accessibility = [
+                                'module_id' => $request->module_id_for_accessibility,
+                                'type_id' => $request->type_id_for_accessibility,
+                                'accessibility_name' => $request->accessibility_name,
+                                'status_id' => $request->status_id_for_accessibility
+                            ];
+
+                            if($data_accessibility) {
+                                AccessibilityModel::create($data_accessibility);
+                                $success = $this->messageSuccess("บันทึกข้อมูลเสร็จสิ้น");
+                                return $success;
+                            } else {
+                                $error = $this->messageError("ไม่สามารถบันทึกข้อมูลได้");
+                                return $error;
+                            }
+                        } else {
+                            $error = $this->messageError("ไม่มีข้อมูลถูกส่งมา");
+                        return $error;
+                        }
+                    }
+                }
+            }
+        }
+    // Insert Data Accessibility End
+
+    // Find One Data Accessibility Start
+        public function findOneDataAccessibility(Request $request) {
+            $threeAccessibility = AccessibilityModel::find($request->id);
+            return response()->json($threeAccessibility);
+        }
+    // Find One Data Accessibility End
+
+    // Update Data Accessibility Start
+        public function updateDataAccessibility(Request $request) {
+            $accessibility_model = AccessibilityModel::find($request->accessibility_id_find_one);
+            if($request->accessibility_name) {
+                $data_accessibility = [
+                    'accessibility_name' => $request->accessibility_name,
+                    'module_id' => $request->module_id_for_accessibility,
+                    'type_id' => $request->type_id_for_accessibility
+                ];
+
+                if($accessibility_model->update($data_accessibility)) {
+                    $success = $this->messageSuccess("แก้ไขข้อมูลเสร็จสิ้น");
+                    return $success;
+                } else {
+                    $error = $this->messageError("ไม่สามารถแก้ไขข้อมูลได้");
+                    return $error;
+                }
+            } else {
+                $error = $this->messageError("ไม่มีข้อมูลถูกส่งมา");
+                return $error;
+            }
+        }
+    // Update Data Accessibility End
+
+    // Delete Data Accessibility Start
+        public function deleteDataAccessibility(Request $request) {
+            $accessibility_model = AccessibilityModel::find($request->id);
+            if($accessibility_model) {
+                AccessibilityModel::destroy($request->id);
+                $success = $this->messageSuccess("ลบข้อมูลเสร็จสิ้น");
+                return $success;
+            } else {
+                $error = $this->messageError("ไม่สามารถลบข้อมูลได้");
+                return $error;
+            }
+        }
+    // Delete Data Accessibility End
+
+    // Change Status Id In Accessibility Realtime Start
+        public function ChangeStatusIdInAccessibilityRealtime(Request $request) {
+            $accessibility_model = AccessibilityModel::find($request->id);
+            if($request->status_id_for_accessibility && $request->id) {
+                $accessibility_data = [
+                    'status_id' => $request->status_id_for_accessibility
+                ];
+
+                if($accessibility_model->update($accessibility_data)) {
+                    if($request->status_id_for_accessibility === '1') {
+                        $success = $this->messageSuccess($accessibility_model->status->status_name);
+                        return $success;
+                    } else {
+                        $error = $this->messageError($accessibility_model->status->status_name);
+                        return $error;
+                    }
+                } else {
+                    $error = $this->messageError("ไม่สามารถ Update สถานะการใช้งานได้!");
+                    return $error;
+                }
+            } else {
+                $error = $this->messageError("กรุณาเลือกรายการสถานะ!");
+                return $error;
+            }
+        }
+    // Change Status Id In Accessibility Realtime End
 }

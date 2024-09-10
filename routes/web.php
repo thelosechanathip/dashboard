@@ -128,6 +128,12 @@ Route::middleware(['check.something'])->group(function() {
             Route::delete('deleteDataModule', [ModuleAccessRightsController::class, 'deleteDataModule'])->name('deleteDataModule');
             Route::post('ChangeStatusIdInModuleRealtime', [ModuleAccessRightsController::class, 'ChangeStatusIdInModuleRealtime'])->name('ChangeStatusIdInModuleRealtime');
             Route::get('findSelectForUserOrGroup', [ModuleAccessRightsController::class, 'findSelectForUserOrGroup'])->name('findSelectForUserOrGroup');
+            Route::get('fetchAllDataAccessibility', [ModuleAccessRightsController::class, 'fetchAllDataAccessibility'])->name('fetchAllDataAccessibility');
+            Route::post('insertDataAccessibility', [ModuleAccessRightsController::class, 'insertDataAccessibility'])->name('insertDataAccessibility');
+            Route::get('findOneDataAccessibility', [ModuleAccessRightsController::class, 'findOneDataAccessibility'])->name('findOneDataAccessibility');
+            Route::post('updateDataAccessibility', [ModuleAccessRightsController::class, 'updateDataAccessibility'])->name('updateDataAccessibility');
+            Route::post('ChangeStatusIdInAccessibilityRealtime', [ModuleAccessRightsController::class, 'ChangeStatusIdInAccessibilityRealtime'])->name('ChangeStatusIdInAccessibilityRealtime');
+            Route::delete('deleteDataAccessibility', [ModuleAccessRightsController::class, 'deleteDataAccessibility'])->name('deleteDataAccessibility');
         // Module Access Rights End
     // Setting End
 });

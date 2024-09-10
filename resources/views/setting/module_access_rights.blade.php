@@ -127,7 +127,7 @@
                                 <div class="mb-3">
                                     <label for="accessibility_name" class="form-label">Accessibility Name</label>
                                     <select class="form-select" aria-label="Default select example" name="accessibility_name" id="accessibility_name">
-                                        <option selected value="0">--------------</option>
+                                        <!-- <option selected value="0">**** กรุณาเลือก Type ก่อน ****</option> -->
                                     </select>
                                 </div>
                                 <div class="mb-3" id="hide_status_id_for_accessibility">
@@ -301,6 +301,22 @@
                         $("#hide_status_id_for_module").hide();
                     });
                 // Module End
+                // Accessibility Start
+                    $('.accessibility_modal_add').on('click', function() {
+                        $('#mode').attr('mode', 'add');
+                        $('#accessibility_title').text('เพิ่มข้อมูล');
+                        $('#accessibility_submit').text('Add Data');
+                        $("#accessibility_form")[0].reset();
+                        $("#hide_status_id_for_accessibility").show();
+                    });
+
+                    $(document).on('click', '.accessibility_modal_find', function() {
+                        $('#mode').attr('mode', 'update');
+                        $('#accessibility_title').text('แก้ไขข้อมูล');
+                        $('#accessibility_submit').text('Update Data');
+                        $("#hide_status_id_for_accessibility").hide();
+                    });
+                // Accessibility End
             // Change Mode add || update End
 
             // Reset Form Start
@@ -776,13 +792,13 @@
                     $(document).on('change', '.status_checked_in_module', function(e) {
                         e.preventDefault();
 
-                        const status_id = $(this).is(':checked') ? 1 : 2;
+                        const status_id_for_module = $(this).is(':checked') ? 1 : 2;
                         const form = $(this).closest('form'); // Get the closest form
                         const id = form.find('#module_id').val(); // Get the ID from the hidden input
 
                         // Create a data object to hold the status_id and id
                         let data = {
-                            status_id: status_id,
+                            status_id_for_module: status_id_for_module,
                             id: id,
                             _token: form.find('input[name="_token"]').val()
                         };
@@ -815,31 +831,249 @@
                 });
             // Change Status_id In Module End
 
-            // Find User || Group Start
-            $('#type_id_for_accessibility').change(function(){
-                var type_id_for_accessibility = $(this).val();
+            // Find User || Group Accessibility Start
+                $('#accessibility_name').append('<option selected value="0">**** กรุณาเลือก Type ก่อน ****</option>');
+                $('#type_id_for_accessibility').change(function(){
+                    var type_id_for_accessibility = $(this).val();
 
-                if (type_id_for_accessibility != 0) {
+                    if (type_id_for_accessibility != 0) {
+                        $.ajax({
+                            url: '{{ route('findSelectForUserOrGroup') }}', // Route to your controller
+                            method: 'GET',
+                            data: { type_id: type_id_for_accessibility },
+                            success: function(response) {
+                                if(response != '') {
+                                    if(response.type === '1') {
+                                        $('#accessibility_name').empty();
+                                        $('#accessibility_name').append('<option selected value="0">**** กรุณาเลือก Menu ****</option>');
+                                        $.each(response.data, function(key, value) {
+                                            $('#accessibility_name').append('<option value="'+ value.groupname +'">'+ value.groupname +'</option>');
+                                        });
+                                    } else if(response.type === '2') {
+                                        $('#accessibility_name').empty();
+                                        $('#accessibility_name').append('<option selected value="0">**** กรุณาเลือก Menu ****</option>');
+                                        $.each(response.data, function(key, value) {
+                                            $('#accessibility_name').append('<option value="'+ value.name +'">'+ value.name +'</option>');
+                                        });
+                                    }
+                                } else {
+                                    $('#accessibility_name').empty();
+                                    $('#accessibility_name').append('<option selected value="0">**** ไม่มีข้อมูลบน Database ****</option>');
+                                }
+                            }
+                        });
+                    } else {
+                        $('#accessibility_name').empty();
+                        $('#accessibility_name').append('<option selected value="0">**** กรุณาเลือก Type ก่อน ****</option>');
+                    }
+                });
+            // Find User || Group Accessibility End
+
+            // Fetch All Data Accessibility Start
+                fetchAllDataAccessibility();
+
+                function fetchAllDataAccessibility() {
                     $.ajax({
-                        url: '{{ route('findSelectForUserOrGroup') }}', // Route to your controller
-                        method: 'GET',
-                        data: { type_id: type_id_for_accessibility },
+                        url: '{{ route('fetchAllDataAccessibility') }}',
+                        method: 'get',
                         success: function(response) {
-                            $('#accessibility_name').empty();
-                            $('#accessibility_name').append('<option selected value="0">--------------</option>');
-
-                            $.each(response, function(key, value) {
-                                $('#accessibility_name').append('<option value="'+ value.groupname +'">'+ value.groupname +'</option>');
+                            $("#accessibility_show_data_all").html(response);
+                            $("#accessibility_table").DataTable({
+                                // order: [0, 'DESC']
                             });
-                            // console.log(response);
                         }
                     });
-                } else {
-                    $('#accessibility_name').empty();
-                    $('#accessibility_name').append('<option selected value="0">--------------</option>');
                 }
-            });
-            // Find User || Group End
+            // Fetch All Data Accessibility End
+
+            // Insert && Update Data Accessibility Start
+                $("#accessibility_form").submit(function(e) {
+                    const mode = $('#mode').attr('mode');
+                    if(mode === 'add') {
+                        e.preventDefault();
+                        const fd = new FormData(this);
+                        $.ajax({
+                            url: '{{ route('insertDataAccessibility') }}',
+                            method: 'post',
+                            data: fd,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            success: function(response) {
+                                if(response.status === 400) {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                } else {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                    fetchAllDataAccessibility();
+                                    $("#accessibility_form")[0].reset();
+                                    $("#accessibility_modal").modal('hide');
+                                }
+                            }
+                        });
+                    } else if(mode === 'update') {
+                        e.preventDefault();
+                        const fd = new FormData(this);
+                        $.ajax({
+                            url: '{{ route('updateDataAccessibility') }}',
+                            method: 'post',
+                            data: fd,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            success: function(response) {
+                                if(response.status === 400) {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                } else {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                    fetchAllDataAccessibility();
+                                    $("#accessibility_form")[0].reset();
+                                    $("#accessibility_modal").modal('hide');
+                                }
+                            }
+                        });
+                    } else {
+                        console.log('Mode ไม่ถูกต้อง');
+                    }
+                });
+            // Insert && Update Data Accessibility End
+
+            // Find Three Data Accessibility Start
+                $(document).on('click', '.accessibility_modal_find', function(e) {
+                    e.preventDefault();
+                    let id = $(this).attr('id');
+                    $.ajax({
+                        url: '{{ route('findOneDataAccessibility') }}',
+                        method: 'get',
+                        data: {
+                            id: id,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            $('#accessibility_name').empty();
+                            $('#accessibility_name').append('<option value="'+ response.accessibility_name +'">'+ response.accessibility_name +'</option>');
+                            $("#module_id_for_accessibility").val(response.module_id);
+                            $("#type_id_for_accessibility").val(response.type_id);
+                            $("#accessibility_id_find_one").val(response.id);
+                        }
+                    });
+                });
+            // Find Three Data Accessibility End
+
+            // Delete Data Accessibility Start
+                $(document).on('click', '.accessibility_delete', function(e) {
+                    e.preventDefault();
+                    let id = $(this).attr('id');
+                    console.log(id);
+                    let csrf = '{{ csrf_token() }}';
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: '{{ route('deleteDataAccessibility') }}',
+                                method: 'delete',
+                                data: {
+                                    id: id,
+                                    _token: csrf
+                                },
+                                success: function(response) {
+                                    if(response.status === 400) {
+                                        swal.fire(
+                                            response.title,
+                                            response.message,
+                                            response.icon
+                                        )
+                                    } else {
+                                        swal.fire(
+                                            response.title,
+                                            response.message,
+                                            response.icon
+                                        )
+                                        fetchAllDataAccessibility();
+                                    }
+                                }
+                            });
+                        }
+                    })
+                });
+            // Delete Data Accessibility End
+
+            // Change Status_id In Accessibility Start
+                $(document).ready(function() {
+                    $('.status_checked_in_accessibility').each(function() {
+                        var status = $(this).val();
+                        if (status == 1) {
+                            $(this).prop('checked', true);
+                        } else if (status == 2) {
+                            $(this).prop('checked', false);
+                        }
+                    });
+
+                    $(document).on('change', '.status_checked_in_accessibility', function(e) {
+                        e.preventDefault();
+
+                        const status_id_for_accessibility = $(this).is(':checked') ? 1 : 2;
+                        const form = $(this).closest('form'); // Get the closest form
+                        const id = form.find('#accessibility_id').val(); // Get the ID from the hidden input
+
+                        // Create a data object to hold the status_id and id
+                        let data = {
+                            status_id_for_accessibility: status_id_for_accessibility,
+                            id: id,
+                            _token: form.find('input[name="_token"]').val()
+                        };
+
+                        $.ajax({
+                            url: '{{ route('ChangeStatusIdInAccessibilityRealtime') }}',
+                            method: 'POST',
+                            data: data, // Send the data object containing the status_id and id
+                            success: function(response) {
+                                if(response.status === 400) {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                } else {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                    fetchAllDataAccessibility();
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error:', error);
+                            }
+                        });
+                    });
+                });
+            // Change Status_id In Accessibility End
         });
     </script>
 @endsection
