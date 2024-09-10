@@ -60,10 +60,8 @@ class AuthController extends Controller
                 $request->session()->put('department', $user->department);
 
                 // ดึง IP และ Hostname
-                // $ipAddress = $request->ip();
-                // $hostname = gethostbyaddr($ipAddress);
-
-                $test = $this->getIp();
+                $ipAddress = $this->getIp();
+                $hostname = gethostbyaddr($ipAddress);
 
                 // เก็บคำสั่ง SQL และข้อมูลการเข้าสู่ระบบลงใน log
                 $login_log_data = [
@@ -71,8 +69,8 @@ class AuthController extends Controller
                     'username' => $user->loginname,
                     'command_sql' => $fullSql,  // บันทึกคำสั่ง SQL ที่ถูก generate
                     'type' => 'LOGIN',
-                    'ipaddress' => $test,
-                    'hostname' => 'test',
+                    'ipaddress' => $ipAddress,
+                    'hostname' => $hostname,
                 ];
 
                 // บันทึก log การเข้าสู่ระบบ
