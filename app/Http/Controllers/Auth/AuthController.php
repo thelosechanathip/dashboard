@@ -7,9 +7,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\OpdUser;
+use App\Models\Log\LoginLogModel;
 
 class AuthController extends Controller
 {
+    public function getIp(){
+        foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key){
+            if (array_key_exists($key, $_SERVER) === true){
+                foreach (explode(',', $_SERVER[$key]) as $ip){
+                    $ip = trim($ip); // just to be safe
+                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false){
+                        return $ip;
+                    }
+                }
+            }
+        }
+        return request()->ip(); // it will return the server IP if the client IP is not found using this method.
+    }
+
     public function index(Request $request) {
         $data = $request->session()->all();
         $request->session()->forget('error');
@@ -20,11 +35,22 @@ class AuthController extends Controller
     {
         $credentials = $request->only('loginname', 'passweb');
 
-        // ดึงข้อมูลผู้ใช้จากฐานข้อมูล
-        $user = OpdUser::where('loginname', $credentials['loginname'])->first();
+        // สร้าง query ก่อนที่จะ execute
+        $query = OpdUser::where('loginname', $credentials['loginname']);
+
+        // ดึง SQL query พร้อมกับ bindings
+        $sql = $query->toSql();
+        $bindings = $query->getBindings();
+
+        // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+        $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+        // Execute query
+        $user = $query->first();
 
         if ($user) {
             $pass_hash = md5($credentials['passweb']);
+
             // ตรวจสอบว่าผู้ใช้มีอยู่และรหัสผ่านตรงกัน
             if ($pass_hash == $user->passweb || strtoupper($pass_hash) == $user->passweb) {
                 Auth::login($user);
@@ -32,22 +58,62 @@ class AuthController extends Controller
                 $request->session()->put('name', $user->name);
                 $request->session()->put('groupname', $user->groupname);
                 $request->session()->put('department', $user->department);
-                return redirect()->intended('/dashboard');
+
+                // ดึง IP และ Hostname
+                // $ipAddress = $request->ip();
+                // $hostname = gethostbyaddr($ipAddress);
+
+                $test = $this->getIp();
+
+                // เก็บคำสั่ง SQL และข้อมูลการเข้าสู่ระบบลงใน log
+                $login_log_data = [
+                    'fullname' => $user->name,
+                    'username' => $user->loginname,
+                    'command_sql' => $fullSql,  // บันทึกคำสั่ง SQL ที่ถูก generate
+                    'type' => 'LOGIN',
+                    'ipaddress' => $test,
+                    'hostname' => 'test',
+                ];
+
+                // บันทึก log การเข้าสู่ระบบ
+                if(LoginLogModel::create($login_log_data)) {
+                    return redirect()->intended('/dashboard');
+                }
             } else {
+                // รหัสผ่านไม่ถูกต้อง
                 $request->session()->put('error', 'Username หรือ Password ไม่ถูกต้องกรุณากรอกใหม่!');
                 return redirect()->intended('/');
             }
         }
 
+        // ถ้าไม่มี user ที่ match
         return redirect()->back()->withErrors(['login' => 'Invalid credentials provided']);
     }
 
+
     public function logout(Request $request)
     {
+        $ipAddress = request()->ip();
+        $hostname = gethostbyaddr($ipAddress);
+        $data = $request->session()->all();
+
+        // เก็บคำสั่ง SQL และข้อมูลการเข้าสู่ระบบลงใน log
+        $login_log_data = [
+            'fullname' => $data['name'],
+            'username' => $data['loginname'],
+            'type' => 'LOGOUT',
+            'ipaddress' => $ipAddress,
+            'hostname' => $hostname,
+        ];
+
         Auth::logout();
+
         $request->session()->flush();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
+
+        if(LoginLogModel::create($login_log_data)) {
+            return redirect('/');
+        }
     }
 }
