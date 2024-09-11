@@ -64,6 +64,8 @@ class AuthController extends Controller
                 $ipAddress = $_SERVER['REMOTE_ADDR'];
                 $hostname = gethostbyaddr($ipAddress);
 
+                $test = "test";
+
                 // เก็บคำสั่ง SQL และข้อมูลการเข้าสู่ระบบลงใน log
                 $login_log_data = [
                     'fullname' => $user->name,
