@@ -7,17 +7,33 @@
 @section('content')
     <main class="main-content">
         {{-- Title Start --}}
-        <div
-            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
-            <div class="">
-                <h1 class="h2">Admit</h1>
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
+                <div class="">
+                    <h1 class="h2">Admit</h1>
+                </div>
+                <div class="d-flex">
+                    <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
+                    <p>&nbsp;&nbsp;&nbsp;</p>
+                    <p> <span class="fw-bold">แผนก :</span> {{ $data['groupname'] }}</p>
+                </div>
             </div>
-            <div class="d-flex">
-                <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
-                <p>&nbsp;&nbsp;&nbsp;</p>
-                <p> <span class="fw-bold">แผนก :</span> {{ $data['groupname'] }}</p>
+        {{-- Title End --}}
+        {{-- Result Count Modal Start --}}
+            <div class="modal fade" id="result_count_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- เพิ่ม modal-xl เพื่อทำให้ Modal ขนาดใหญ่ -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="result_count_title"></h5>
+                            <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="result_count_show_all"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        {{-- Result Count Modal End --}}
         <div class="mt-2 d-flex justify-content-end align-items-center">
             <div class="d-flex">
                 <p><span id="setText"></span><span id="setCount"></span></p>
@@ -27,7 +43,7 @@
             </div>
         </div>
         <div class="mt-2 d-flex justify-content-between align-items-center full-width-bar">
-            <div class="d-flex align-items-center">
+            <div class="d-flex justify-content-between">
                 <form id="selectForm" class="me-3">
                     @csrf
                     <div class="mb-3 d-flex align-items-center">
@@ -72,6 +88,10 @@
                     </div>
                 </form>
             </div>
+            <div class="d-flex align-items-center justify-content-end">
+                <!-- <button class="btn btn-success" id="result_count_btn"></button> -->
+                <button type="button" class="btn btn-success zoom-card type_modal_add" id="result_count_btn" data-bs-toggle="modal" data-bs-target="#result_count_modal"></button>
+            </div>
         </div>
         <div class="row mt-1 card">
             <div class="spinner-border" style="position: absolute; top: 50%; left: 55%;" id="loadingIcon" role="status">
@@ -89,6 +109,9 @@
         $(document).ready(function() {
             $('#yearForm').hide();
             $('#allForm').hide();
+
+            $('#result_count_btn').text("สรุป Admin ประจำปี");
+            $('#result_count_btn').attr('mode', 'years');
 
             function showLoadingIcon() {
                 $('#loadingIcon').show();
@@ -135,6 +158,7 @@
                     },
                     success: function(response) {
                         hideLoadingIcon();
+
                         var chartDataYear = response.chartDataYear;
 
                         if (chart) {
@@ -215,6 +239,12 @@
                     },
                     success: function(response) {
                         hideLoadingIcon();
+
+                        $('#result_count_btn').text("สรุป Admin ประจำเดือน");
+                        $('#result_count_btn').attr('mode', 'month');
+
+                        $('#result_count_btn').attr('data-month', month);
+
                         var chartDataDaily = response.chartDataDaily;
 
                         if (chart) {
@@ -233,10 +263,16 @@
                                 },
                                 onClick: function(evt, elements) {
                                     if (elements.length > 0) {
+
+                                        $('#result_count_btn').text("สรุป Admin ประจำวัน");
+                                        $('#result_count_btn').attr('mode', 'date');
+
                                         var index = elements[0]._index;
                                         var datasetIndex = elements[0]._datasetIndex;
                                         var date_count = chartDataDaily.datasets[datasetIndex].data[index].toLocaleString();
                                         var date = chartDataDaily.labels[index];
+
+                                        $('#result_count_btn').attr('data-date', date);
 
                                         // console.log(date);
                                         if(parseInt(date_count) == 0) {
@@ -269,6 +305,7 @@
                     },
                     success: function(response) {
                         hideLoadingIcon();
+
                         var chartNameDoctorData = response.chartNameDoctorData;
 
                         if (chart) {
@@ -374,6 +411,68 @@
                     alert('กรุณาเลือกปีงบประมาณ');
                 }
             });
+
+            $('#result_count_btn').on('click', function() {
+                let mode = $(this).attr('mode');
+                if(mode === 'years') {
+                    let years = '{{ $year }}';
+                    $('#result_count_title').text('สรุปรายงานการ Admit ของแพทย์ประจำปี: ' + years);
+                    $.ajax({
+                        url: '{{ route('getResultCountYearsDoctor') }}',
+                        data: { years: years },
+                        method: 'GET',
+                        success: function(response) {
+                            // แสดง HTML ที่ได้รับจาก response
+                            $("#result_count_show_all").html(response);
+                            // เปิดใช้งาน DataTables บนตารางที่ได้รับ
+                            $("#result_count_table").DataTable({
+                                // order: [0, 'ASC']
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX error:', status, error);
+                        }
+                    });
+                } else if(mode === 'month') {
+                    let years = '{{ $year }}';
+                    let month = $(this).attr('data-month');
+                    $('#result_count_title').text('สรุปรายงานการ Admit ของแพทย์ประจำเดือน: ' + month);
+                    $.ajax({
+                        url: '{{ route('getResultCountMonthDoctor') }}',
+                        data: {
+                            years: years,
+                            month: month
+                        },
+                        method: 'GET',
+                        success: function(response) {
+                            // แสดง HTML ที่ได้รับจาก response
+                            $("#result_count_show_all").html(response);
+                            // เปิดใช้งาน DataTables บนตารางที่ได้รับ
+                            $("#result_count_table").DataTable({
+                                // order: [0, 'ASC']
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX error:', status, error);
+                        }
+                    });
+                } else if(mode === 'date') {
+                    // สรุปรายงานประจำวัน
+                    let date = $(this).attr('data-date');  // ดึงค่า date จาก data-attribute
+                    $('#result_count_title').text('สรุปรายงานการ Admit ของแพทย์ประจำวัน: ' + date);
+                    $.ajax({
+                        url: '{{ route('getResultCountDateDoctor') }}',
+                        data: { date: date },  // ส่งค่า date ผ่าน AJAX
+                        method: 'GET',
+                        success: function(response) {
+                            $("#result_count_show_all").html(response);
+                            $("#result_count_table").DataTable();
+                            // console.log(response);
+                        }
+                    });
+                }
+            });
+
         });
     </script>
 @endsection

@@ -7,145 +7,204 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;
 
+use App\Models\Log\IptLogModel;
+
 class IptController extends Controller
 {
-    private function check_year($year) {
-        if($year) {
-            return [
-                'year_old' => $year - 1,
-                'year_new' => $year
-            ];
-        } else {
-            return false;
+    // private function getUserLogin(Request $request) {
+    //     // ดึงข้อมูลจาก session
+    //     $data = $request->session()->all();
+    
+    //     $username = $data['username'];
+    
+    //     return $username;  // เปลี่ยนจาก echo เป็น return
+    // }    
+
+    // นำปีมาแก้ไขเพื่อนำไปใช้ในปีงบประมาณ Start
+        private function check_year($year) {
+            if($year) {
+                return [
+                    'year_old' => $year - 1,
+                    'year_new' => $year
+                ];
+            } else {
+                return false;
+            }
         }
-    }
+    // นำปีมาแก้ไขเพื่อนำไปใช้ในปีงบประมาณ End
 
-    private function getYear($year_old, $year_new) {
-        $ovst_count = DB::table('ipt')
-            ->select(
-                DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_old}-10-01' AND '{$year_old}-10-31' THEN 1 END) AS october"),
-                DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_old}-11-01' AND '{$year_old}-11-30' THEN 1 END) AS november"),
-                DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_old}-12-01' AND '{$year_old}-12-31' THEN 1 END) AS december"),
-                DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-01-01' AND '{$year_new}-01-31' THEN 1 END) AS january"),
-                DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-02-01' AND '{$year_new}-02-31' THEN 1 END) AS february"),
-                DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-03-01' AND '{$year_new}-03-31' THEN 1 END) AS march"),
-                DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-04-01' AND '{$year_new}-04-30' THEN 1 END) AS april"),
-                DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-05-01' AND '{$year_new}-05-31' THEN 1 END) AS may"),
-                DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-06-01' AND '{$year_new}-06-30' THEN 1 END) AS june"),
-                DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-07-01' AND '{$year_new}-07-31' THEN 1 END) AS july"),
-                DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-08-01' AND '{$year_new}-08-31' THEN 1 END) AS august"),
-                DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-09-01' AND '{$year_new}-09-30' THEN 1 END) AS september")
-            )
-            // ->whereNull('dchdate')
-            ->first();
+    // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง Start
+        private function getYear($year_old, $year_new) {
+            // $startTime = microtime(true);
+        
+            // สร้าง Query ก่อนที่จะเรียกใช้ first()
+            $query = DB::table('ipt')
+                ->select(
+                    DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_old}-10-01' AND '{$year_old}-10-31' THEN 1 END) AS october"),
+                    DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_old}-11-01' AND '{$year_old}-11-30' THEN 1 END) AS november"),
+                    DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_old}-12-01' AND '{$year_old}-12-31' THEN 1 END) AS december"),
+                    DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-01-01' AND '{$year_new}-01-31' THEN 1 END) AS january"),
+                    DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-02-01' AND '{$year_new}-02-28' THEN 1 END) AS february"), // February มีได้สูงสุด 28 หรือ 29 วัน
+                    DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-03-01' AND '{$year_new}-03-31' THEN 1 END) AS march"),
+                    DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-04-01' AND '{$year_new}-04-30' THEN 1 END) AS april"),
+                    DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-05-01' AND '{$year_new}-05-31' THEN 1 END) AS may"),
+                    DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-06-01' AND '{$year_new}-06-30' THEN 1 END) AS june"),
+                    DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-07-01' AND '{$year_new}-07-31' THEN 1 END) AS july"),
+                    DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-08-01' AND '{$year_new}-08-31' THEN 1 END) AS august"),
+                    DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-09-01' AND '{$year_new}-09-30' THEN 1 END) AS september")
+                );
+                
+            $ovst_count = $query->first();
+        
+            // ดึง SQL ก่อนจะ execute query
+            // $sql = $query->toSql();
+            // $bindings = $query->getBindings();
+        
+            // ส่ง $request ไปให้ getUserLogin() เพื่อดึง username จาก session
+            // $username = $this->getUserLogin($request);
+        
+            // Execute query
+            // $ovst_count = $query->first();
+        
+            // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+            // $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+        
+            // $endTime = microtime(true);
+            // $executionTime = $endTime - $startTime;
+            // $formattedExecutionTime = number_format($executionTime, 3) . 's';
+        
+            // บันทึก log
+            // $ipt_log_data = [
+            //     'title' => 'getYear',
+            //     'username' => $username,
+            //     'command_sql' => $fullSql,
+            //     'query_time' => $formattedExecutionTime,
+            //     'operation' => 'SELECT'
+            // ];
+            return (array) $ovst_count;
+        
+            // if (IptLogModel::create($ipt_log_data)) {
+            //     return (array) $ovst_count;
+            // } else {
+            //     echo "Error";
+            // }
+        }
+    
+    
+    // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง End
 
-        return (array) $ovst_count;
-    }
-
-    private function getChartYear($response) {
-        $chartDataYear = [
-            'labels' => ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'],
-            'datasets' => [
-                [
-                    'label' => 'จำนวน Admit ประจำเดือน',
-                    'data' => [
-                        $response['october'],
-                        $response['november'],
-                        $response['december'],
-                        $response['january'],
-                        $response['february'],
-                        $response['march'],
-                        $response['april'],
-                        $response['may'],
-                        $response['june'],
-                        $response['july'],
-                        $response['august'],
-                        $response['september']
-                    ],
-                    'backgroundColor' => [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)'
-                    ],
-                    'borderColor' => [
-                        'rgba(255, 99, 132, 3)',
-                        'rgba(54, 162, 235, 3)',
-                        'rgba(255, 206, 86, 3)',
-                        'rgba(75, 192, 192, 3)',
-                        'rgba(153, 102, 255, 3)',
-                        'rgba(255, 159, 64, 3)',
-                        'rgba(75, 192, 192, 3)',
-                        'rgba(153, 102, 255, 3)',
-                        'rgba(255, 159, 64, 3)',
-                        'rgba(255, 99, 132, 3)',
-                        'rgba(54, 162, 235, 3)',
-                        'rgba(255, 206, 86, 3)'
-                    ],
-                    'borderWidth' => 1
+    // นำเดือนมาสร้าง Chart Start
+        private function getChartYear($response) {
+            $chartDataYear = [
+                'labels' => ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'],
+                'datasets' => [
+                    [
+                        'label' => 'จำนวน Admit ประจำเดือน',
+                        'data' => [
+                            $response['october'],
+                            $response['november'],
+                            $response['december'],
+                            $response['january'],
+                            $response['february'],
+                            $response['march'],
+                            $response['april'],
+                            $response['may'],
+                            $response['june'],
+                            $response['july'],
+                            $response['august'],
+                            $response['september']
+                        ],
+                        'backgroundColor' => [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)'
+                        ],
+                        'borderColor' => [
+                            'rgba(255, 99, 132, 3)',
+                            'rgba(54, 162, 235, 3)',
+                            'rgba(255, 206, 86, 3)',
+                            'rgba(75, 192, 192, 3)',
+                            'rgba(153, 102, 255, 3)',
+                            'rgba(255, 159, 64, 3)',
+                            'rgba(75, 192, 192, 3)',
+                            'rgba(153, 102, 255, 3)',
+                            'rgba(255, 159, 64, 3)',
+                            'rgba(255, 99, 132, 3)',
+                            'rgba(54, 162, 235, 3)',
+                            'rgba(255, 206, 86, 3)'
+                        ],
+                        'borderWidth' => 1
+                    ]
                 ]
-            ]
-        ];
-        return $chartDataYear;
-    }
-
-    private function getMonthNumber($month) {
-        $months = [
-            'ตุลาคม' => '10',
-            'พฤศจิกายน' => '11',
-            'ธันวาคม' => '12',
-            'มกราคม' => '01',
-            'กุมภาพันธ์' => '02',
-            'มีนาคม' => '03',
-            'เมษายน' => '04',
-            'พฤษภาคม' => '05',
-            'มิถุนายน' => '06',
-            'กรกฎาคม' => '07',
-            'สิงหาคม' => '08',
-            'กันยายน' => '09',
-        ];
-
-        if(!$month) {
-            return false;
-        } else {
-            $month = $months[$month];
-            return $month;
+            ];
+            return $chartDataYear;
         }
-    }
+    // นำเดือนมาสร้าง Chart End
 
-    private function getMonthName($month) {
-        $months = [
-            '01' => 'มกราคม',
-            '02' => 'กุมภาพันธ์',
-            '03' => 'มีนาคม',
-            '04' => 'เมษายน',
-            '05' => 'พฤษภาคม',
-            '06' => 'มิถุนายน',
-            '07' => 'กรกฎาคม',
-            '08' => 'สิงหาคม',
-            '09' => 'กันยายน',
-            '10' => 'ตุลาคม',
-            '11' => 'พฤศจิกายน',
-            '12' => 'ธันวาคม',
-        ];
+    // แปลงเดือนที่เป็น Text ไปเป็น Int Start
+        private function getMonthNumber($month) {
+            $months = [
+                'ตุลาคม' => '10',
+                'พฤศจิกายน' => '11',
+                'ธันวาคม' => '12',
+                'มกราคม' => '01',
+                'กุมภาพันธ์' => '02',
+                'มีนาคม' => '03',
+                'เมษายน' => '04',
+                'พฤษภาคม' => '05',
+                'มิถุนายน' => '06',
+                'กรกฎาคม' => '07',
+                'สิงหาคม' => '08',
+                'กันยายน' => '09',
+            ];
 
-        return $months[$month] ?? $month;
-    }
+            if(!$month) {
+                return false;
+            } else {
+                $month = $months[$month];
+                return $month;
+            }
+        }
+    // แปลงเดือนที่เป็น Text ไปเป็น Int End
 
-    public function index(Request $request) {
-        $data = $request->session()->all();
-        $year = date('Y');
+    // แปลงเดือนที่เป็น Int ไปเป็น Text Start
+        private function getMonthName($month) {
+            $months = [
+                '01' => 'มกราคม',
+                '02' => 'กุมภาพันธ์',
+                '03' => 'มีนาคม',
+                '04' => 'เมษายน',
+                '05' => 'พฤษภาคม',
+                '06' => 'มิถุนายน',
+                '07' => 'กรกฎาคม',
+                '08' => 'สิงหาคม',
+                '09' => 'กันยายน',
+                '10' => 'ตุลาคม',
+                '11' => 'พฤศจิกายน',
+                '12' => 'ธันวาคม',
+            ];
 
-        return view('pages.ipt', compact('data', 'year'));
-    }
+            return $months[$month] ?? $month;
+        }
+    // แปลงเดือนที่เป็น Int ไปเป็น Text End
+
+    // หน้าแรกของ IPT Start
+        public function index(Request $request) {
+            $data = $request->session()->all();
+            $year = date('Y');
+
+            return view('pages.ipt', compact('data', 'year'));
+        }
+    // หน้าแรกของ IPT End
 
     public function getIptData(Request $request) {
         $year = $request->input('year');
@@ -212,7 +271,6 @@ class IptController extends Controller
         }
     }
 
-    // ถึงตรงนี้
     public function getIptNameDoctorData(Request $request) {
         try {
             $date = $request->input('date');
@@ -262,7 +320,6 @@ class IptController extends Controller
             return response()->json(['error' => 'Server Error'], 500);
         }
     }
-    // ถึงตรงนี้
 
     public function getIptSelectData(Request $request) {
         try {
@@ -335,5 +392,149 @@ class IptController extends Controller
             ]);
         }
     }
+
+    public function getResultCountYearsDoctor(Request $request) {
+        $year = $request->years;
+        $years = $this->check_year($year);
+
+        $startTime = microtime(true);
+        
+        // Query ที่ใช้การ concatenate string แทนการใช้เครื่องหมายคำถาม `?`
+        $daily_count = DB::connection('mysql')->select(
+            "
+                SELECT
+                    dt.name AS doctor_name,
+                    COUNT(i.admdoctor) AS count_doctor_ipt
+                FROM ipt i
+                LEFT OUTER JOIN doctor dt ON i.admdoctor = dt.code
+                WHERE regdate BETWEEN '".$years['year_old']."-10-01' AND '".$years['year_new']."-09-30'
+                GROUP BY i.admdoctor
+            "
+        );
+
+        $endTime = microtime(true);
+
+        $executionTime = $endTime - $startTime;
+        $formattedExecutionTime = number_format($executionTime, 3) . 's';
+    
+        $output = '';
+        if (count($daily_count) > 0) {
+            $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">ลำดับ</th>
+                        <th style="width: 20%;">รายชื่อ</th>
+                        <th style="width: 75%;">จำนวนที่มีการ Admit</th>
+                    </tr>
+                </thead>
+                <tbody>';
+            $id = 0;
+            foreach ($daily_count as $dc) {
+                $output .= '<tr>
+                    <td>' . ++$id . '</td>
+                    <td class="text-start">' . $dc->doctor_name . '</td>
+                    <td>' . $dc->count_doctor_ipt . '</td>
+                </tr>';
+            }
+            $output .= '</tbody></table>';
+        } else {
+            $output .= '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลของแพทย์ประจำปีบน Database!</h1>';
+        }
+    
+        // ส่งข้อมูล HTML กลับ
+        return response($output);
+    }
+       
+    public function getResultCountMonthDoctor(Request $request) {
+        $year = $request->years;
+        $month = $request->month;
+
+        $month_int = $this->getMonthNumber($month);
+        
+        // Query ที่ใช้การ concatenate string เพื่อเชื่อมตัวแปร $year
+        $daily_count = DB::connection('mysql')->select(
+            "
+                SELECT
+                    dt.name AS doctor_name,
+                    COUNT(i.admdoctor) AS count_doctor_ipt
+                FROM ipt i
+                LEFT OUTER JOIN doctor dt ON i.admdoctor = dt.code
+                WHERE regdate LIKE '$year-$month_int-%'
+                GROUP BY i.admdoctor
+            "
+        );
+    
+        $output = '';
+        if (count($daily_count) > 0) {
+            $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">ลำดับ</th>
+                        <th style="width: 20%;">รายชื่อ</th>
+                        <th style="width: 75%;">จำนวนที่มีการ Admit</th>
+                    </tr>
+                </thead>
+                <tbody>';
+            $id = 0;
+            foreach ($daily_count as $dc) {
+                $output .= '<tr>
+                    <td>' . ++$id . '</td>
+                    <td class="text-start">' . $dc->doctor_name . '</td>
+                    <td>' . $dc->count_doctor_ipt . '</td>
+                </tr>';
+            }
+            $output .= '</tbody></table>';
+        } else {
+            $output .= '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลของแพทย์ประจำเดือนบน Database!</h1>';
+        }
+    
+        // ส่งข้อมูล HTML กลับ
+        return response($output);
+    }
+
+    public function getResultCountDateDoctor(Request $request) {
+        $date = $request->date;
+        
+        // Query ที่ใช้การ concatenate string เพื่อเชื่อมตัวแปร $year
+        $daily_count = DB::connection('mysql')->select(
+            "
+                SELECT
+                    dt.name AS doctor_name,
+                    COUNT(i.admdoctor) AS count_doctor_ipt
+                FROM ipt i
+                LEFT OUTER JOIN doctor dt ON i.admdoctor = dt.code
+                WHERE regdate = ' $date '
+                GROUP BY i.admdoctor
+            "
+        );
+    
+        $output = '';
+        if (count($daily_count) > 0) {
+            $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">ลำดับ</th>
+                        <th style="width: 20%;">รายชื่อ</th>
+                        <th style="width: 75%;">จำนวนที่มีการ Admit</th>
+                    </tr>
+                </thead>
+                <tbody>';
+            $id = 0;
+            foreach ($daily_count as $dc) {
+                $output .= '<tr>
+                    <td>' . ++$id . '</td>
+                    <td class="text-start">' . $dc->doctor_name . '</td>
+                    <td>' . $dc->count_doctor_ipt . '</td>
+                </tr>';
+            }
+            $output .= '</tbody></table>';
+        } else {
+            $output .= '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลของแพทย์ประจำวันบน Database!</h1>';
+        }
+    
+        // ส่งข้อมูล HTML กลับ
+        return response($output);
+    }
+    
 
 }

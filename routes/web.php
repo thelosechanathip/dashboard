@@ -39,35 +39,35 @@ Route::middleware(['check.something'])->group(function() {
 
     // Pages Start
         // Ovst Start
-        Route::get('indexOvst', [OvstController::class, 'index'])->name('indexOvst');
-        Route::get('showOvst', [OvstController::class, 'showOvst'])->name('showOvst');
-        Route::get('getOvstData', [OvstController::class, 'getOvstData'])->name('getOvstData');
-        Route::get('getOvstDailyData', [OvstController::class, 'getOvstDailyData'])->name('getOvstDailyData');
-        Route::get('getOvstSelectData', [OvstController::class, 'getOvstSelectData'])->name('getOvstSelectData');
+            Route::get('indexOvst', [OvstController::class, 'index'])->name('indexOvst');
+            Route::get('showOvst', [OvstController::class, 'showOvst'])->name('showOvst');
+            Route::get('getOvstData', [OvstController::class, 'getOvstData'])->name('getOvstData');
+            Route::get('getOvstDailyData', [OvstController::class, 'getOvstDailyData'])->name('getOvstDailyData');
+            Route::get('getOvstSelectData', [OvstController::class, 'getOvstSelectData'])->name('getOvstSelectData');
         // Ovst End
 
         // Er Regist Start
-        Route::get('indexErRegist', [ErRegistController::class, 'index'])->name('indexErRegist');
-        Route::get('showErRegist', [ErRegistController::class, 'showErRegist'])->name('showErRegist');
-        Route::get('getErRegistData', [ErRegistController::class, 'getErRegistData'])->name('getErRegistData');
-        Route::get('getErRegistDailyData', [ErRegistController::class, 'getErRegistDailyData'])->name('getErRegistDailyData');
-        Route::get('getErRegistSelectData', [ErRegistController::class, 'getErRegistSelectData'])->name('getErRegistSelectData');
+            Route::get('indexErRegist', [ErRegistController::class, 'index'])->name('indexErRegist');
+            Route::get('showErRegist', [ErRegistController::class, 'showErRegist'])->name('showErRegist');
+            Route::get('getErRegistData', [ErRegistController::class, 'getErRegistData'])->name('getErRegistData');
+            Route::get('getErRegistDailyData', [ErRegistController::class, 'getErRegistDailyData'])->name('getErRegistDailyData');
+            Route::get('getErRegistSelectData', [ErRegistController::class, 'getErRegistSelectData'])->name('getErRegistSelectData');
         // Er Regist End
 
         // Refer Out Start
-        Route::get('indexReferOut', [ReferOutController::class, 'index'])->name('indexReferOut');
-        Route::get('showReferOut', [ReferOutController::class, 'showReferOut'])->name('showReferOut');
-        Route::get('getReferOutData', [ReferOutController::class, 'getReferOutData'])->name('getReferOutData');
-        Route::get('getReferOutDailyData', [ReferOutController::class, 'getReferOutDailyData'])->name('getReferOutDailyData');
-        Route::get('getReferOutSelectData', [ReferOutController::class, 'getReferOutSelectData'])->name('getReferOutSelectData');
+            Route::get('indexReferOut', [ReferOutController::class, 'index'])->name('indexReferOut');
+            Route::get('showReferOut', [ReferOutController::class, 'showReferOut'])->name('showReferOut');
+            Route::get('getReferOutData', [ReferOutController::class, 'getReferOutData'])->name('getReferOutData');
+            Route::get('getReferOutDailyData', [ReferOutController::class, 'getReferOutDailyData'])->name('getReferOutDailyData');
+            Route::get('getReferOutSelectData', [ReferOutController::class, 'getReferOutSelectData'])->name('getReferOutSelectData');
         // Refer Out End
 
         // Refer In Start
-        Route::get('indexReferIn', [ReferInController::class, 'index'])->name('indexReferIn');
-        Route::get('showReferIn', [ReferInController::class, 'showReferIn'])->name('showReferIn');
-        Route::get('getReferInData', [ReferInController::class, 'getReferInData'])->name('getReferInData');
-        Route::get('getReferInDailyData', [ReferInController::class, 'getReferInDailyData'])->name('getReferInDailyData');
-        Route::get('getReferInSelectData', [ReferInController::class, 'getReferInSelectData'])->name('getReferInSelectData');
+            Route::get('indexReferIn', [ReferInController::class, 'index'])->name('indexReferIn');
+            Route::get('showReferIn', [ReferInController::class, 'showReferIn'])->name('showReferIn');
+            Route::get('getReferInData', [ReferInController::class, 'getReferInData'])->name('getReferInData');
+            Route::get('getReferInDailyData', [ReferInController::class, 'getReferInDailyData'])->name('getReferInDailyData');
+            Route::get('getReferInSelectData', [ReferInController::class, 'getReferInSelectData'])->name('getReferInSelectData');
         // Refer In End
 
         // Ipt Start
@@ -77,6 +77,9 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('getIptDailyData', [IptController::class, 'getIptDailyData'])->name('getIptDailyData');
             Route::get('getIptSelectData', [IptController::class, 'getIptSelectData'])->name('getIptSelectData');
             Route::get('getIptNameDoctorData', [IptController::class, 'getIptNameDoctorData'])->name('getIptNameDoctorData');
+            Route::get('getResultCountYearsDoctor', [IptController::class, 'getResultCountYearsDoctor'])->name('getResultCountYearsDoctor');
+            Route::get('getResultCountMonthDoctor', [IptController::class, 'getResultCountMonthDoctor'])->name('getResultCountMonthDoctor');
+            Route::get('getResultCountDateDoctor', [IptController::class, 'getResultCountDateDoctor'])->name('getResultCountDateDoctor');
         // Ipt End
 
         // Palliative Care Start
