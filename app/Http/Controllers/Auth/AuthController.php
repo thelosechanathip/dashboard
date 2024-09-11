@@ -59,24 +59,25 @@ class AuthController extends Controller
                 $request->session()->put('groupname', $user->groupname);
                 $request->session()->put('department', $user->department);
 
-                // // ดึง IP และ Hostname
-                // $ipAddress = $this->getIp();
-                // $hostname = gethostbyaddr($ipAddress);
+                // ดึง IP และ Hostname
+                $ipAddress = $this->getIp();
+                $ipAddress = $_SERVER['REMOTE_ADDR'];
+                $hostname = gethostbyaddr($ipAddress);
 
-                // // เก็บคำสั่ง SQL และข้อมูลการเข้าสู่ระบบลงใน log
-                // $login_log_data = [
-                //     'fullname' => $user->name,
-                //     'username' => $user->loginname,
-                //     'command_sql' => $fullSql,  // บันทึกคำสั่ง SQL ที่ถูก generate
-                //     'type' => 'LOGIN',
-                //     'ipaddress' => $ipAddress,
-                //     'hostname' => $hostname,
-                // ];
+                // เก็บคำสั่ง SQL และข้อมูลการเข้าสู่ระบบลงใน log
+                $login_log_data = [
+                    'fullname' => $user->name,
+                    'username' => $user->loginname,
+                    'command_sql' => $fullSql,  // บันทึกคำสั่ง SQL ที่ถูก generate
+                    'type' => 'LOGIN',
+                    'ipaddress' => $ipAddress,
+                    'hostname' => $hostname,
+                ];
 
-                // // บันทึก log การเข้าสู่ระบบ
-                // if(LoginLogModel::create($login_log_data)) {
+                // บันทึก log การเข้าสู่ระบบ
+                if(LoginLogModel::create($login_log_data)) {
 
-                // }
+                }
                 return redirect()->intended('/dashboard');
             } else {
                 // รหัสผ่านไม่ถูกต้อง

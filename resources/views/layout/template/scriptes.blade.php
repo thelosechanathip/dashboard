@@ -1,5 +1,3 @@
-@vite(['resources/js/app.js', 'resources/js/dashboard.js'])
-
 {{-- DataTables --}}
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.10.25/datatables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
@@ -12,5 +10,7 @@
 {{-- Sweet Alert2 --}}
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- Select2 JS -->
+{{-- Select2 JS --}}
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+@vite(['resources/js/app.js', 'resources/js/dashboard.js'])
