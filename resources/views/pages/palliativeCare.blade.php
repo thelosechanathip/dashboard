@@ -930,7 +930,7 @@
                         method: 'get',
                         success: function(response) {
                             hideLoadingIcon();
-                            // console.log(response.message);
+                            // console.log(response);
                             $('#show-number-of-new-patients').show();
                             $("#show-number-of-new-patients").html(response);
                             $("#table-number-of-new-patients").DataTable({
