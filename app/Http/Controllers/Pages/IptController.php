@@ -11,14 +11,13 @@ use App\Models\Log\IptLogModel;
 
 class IptController extends Controller
 {
-    // private function getUserLogin(Request $request) {
-    //     // ดึงข้อมูลจาก session
-    //     $data = $request->session()->all();
-    
-    //     $username = $data['username'];
-    
-    //     return $username;  // เปลี่ยนจาก echo เป็น return
-    // }    
+    private function someMethod(Request $request) {
+        $data = $request->session()->all();
+        $username = $request->session()->get('loginname');
+        
+        // ใช้งาน $username ต่อไปตามที่คุณต้องการ
+        return $username;
+    }
 
     // นำปีมาแก้ไขเพื่อนำไปใช้ในปีงบประมาณ Start
         private function check_year($year) {
@@ -36,7 +35,7 @@ class IptController extends Controller
     // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง Start
         private function getYear($year_old, $year_new) {
             // $startTime = microtime(true);
-        
+
             // สร้าง Query ก่อนที่จะเรียกใช้ first()
             $query = DB::table('ipt')
                 ->select(
@@ -53,26 +52,26 @@ class IptController extends Controller
                     DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-08-01' AND '{$year_new}-08-31' THEN 1 END) AS august"),
                     DB::raw("COUNT(CASE WHEN regdate BETWEEN '{$year_new}-09-01' AND '{$year_new}-09-30' THEN 1 END) AS september")
                 );
-                
+
             $ovst_count = $query->first();
-        
+
             // ดึง SQL ก่อนจะ execute query
             // $sql = $query->toSql();
             // $bindings = $query->getBindings();
-        
+
             // ส่ง $request ไปให้ getUserLogin() เพื่อดึง username จาก session
             // $username = $this->getUserLogin($request);
-        
+
             // Execute query
             // $ovst_count = $query->first();
-        
+
             // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
             // $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
-        
+
             // $endTime = microtime(true);
             // $executionTime = $endTime - $startTime;
             // $formattedExecutionTime = number_format($executionTime, 3) . 's';
-        
+
             // บันทึก log
             // $ipt_log_data = [
             //     'title' => 'getYear',
@@ -82,15 +81,15 @@ class IptController extends Controller
             //     'operation' => 'SELECT'
             // ];
             return (array) $ovst_count;
-        
+
             // if (IptLogModel::create($ipt_log_data)) {
             //     return (array) $ovst_count;
             // } else {
             //     echo "Error";
             // }
         }
-    
-    
+
+
     // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง End
 
     // นำเดือนมาสร้าง Chart Start
@@ -398,59 +397,73 @@ class IptController extends Controller
         $years = $this->check_year($year);
 
         $startTime = microtime(true);
-        
-        // Query ที่ใช้การ concatenate string แทนการใช้เครื่องหมายคำถาม `?`
-        $daily_count = DB::connection('mysql')->select(
-            "
-                SELECT
-                    dt.name AS doctor_name,
-                    COUNT(i.admdoctor) AS count_doctor_ipt
-                FROM ipt i
-                LEFT OUTER JOIN doctor dt ON i.admdoctor = dt.code
-                WHERE regdate BETWEEN '".$years['year_old']."-10-01' AND '".$years['year_new']."-09-30'
-                GROUP BY i.admdoctor
-            "
-        );
+
+        $daily_count_query = DB::connection('mysql')->table('ipt as i')
+            ->leftJoin('doctor as dt', 'i.admdoctor', '=', 'dt.code')
+            ->select('dt.name as doctor_name', DB::raw('COUNT(i.admdoctor) as count_doctor_ipt'))
+            ->whereBetween('regdate', [$years['year_old'].'-10-01', $years['year_new'].'-09-30'])
+            ->groupBy('i.admdoctor');
+
+        $daily_count = $daily_count_query->get();
+
+        // ดึง SQL query พร้อมกับ bindings
+        $sql = $daily_count_query->toSql();
+        $bindings = $daily_count_query->getBindings();
+
+        // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+        $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
 
         $endTime = microtime(true);
 
         $executionTime = $endTime - $startTime;
-        $formattedExecutionTime = number_format($executionTime, 3) . 's';
-    
-        $output = '';
-        if (count($daily_count) > 0) {
-            $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_table">
-                <thead>
-                    <tr>
-                        <th style="width: 5%;">ลำดับ</th>
-                        <th style="width: 20%;">รายชื่อ</th>
-                        <th style="width: 75%;">จำนวนที่มีการ Admit</th>
-                    </tr>
-                </thead>
-                <tbody>';
-            $id = 0;
-            foreach ($daily_count as $dc) {
-                $output .= '<tr>
-                    <td>' . ++$id . '</td>
-                    <td class="text-start">' . $dc->doctor_name . '</td>
-                    <td>' . $dc->count_doctor_ipt . '</td>
-                </tr>';
+        $formattedExecutionTime = number_format($executionTime, 3);
+
+        $username = $this->someMethod($request);    
+
+        $ipt_log_data = [
+            'function' => 'getResultCountYearsDoctor',
+            'username' => $username,
+            'command_sql' => $fullSql,
+            'query_time' => $formattedExecutionTime,
+            'operation' => 'SELECT'
+        ];
+
+        if(IptLogModel::create($ipt_log_data)) {
+            $output = '';
+            if (count($daily_count) > 0) {
+                $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">ลำดับ</th>
+                            <th style="width: 20%;">รายชื่อ</th>
+                            <th style="width: 75%;">จำนวนที่มีการ Admit</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+                $id = 0;
+                foreach ($daily_count as $dc) {
+                    $output .= '<tr>
+                        <td>' . ++$id . '</td>
+                        <td class="text-start">' . $dc->doctor_name . '</td>
+                        <td>' . $dc->count_doctor_ipt . '</td>
+                    </tr>';
+                }
+                $output .= '</tbody></table>';
+            } else {
+                $output .= '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลของแพทย์ประจำปีบน Database!</h1>';
             }
-            $output .= '</tbody></table>';
-        } else {
-            $output .= '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลของแพทย์ประจำปีบน Database!</h1>';
+
+            // ส่งข้อมูล HTML กลับ
+            return response($output);
         }
-    
-        // ส่งข้อมูล HTML กลับ
-        return response($output);
     }
-       
+
     public function getResultCountMonthDoctor(Request $request) {
         $year = $request->years;
         $month = $request->month;
 
         $month_int = $this->getMonthNumber($month);
-        
+
         // Query ที่ใช้การ concatenate string เพื่อเชื่อมตัวแปร $year
         $daily_count = DB::connection('mysql')->select(
             "
@@ -463,7 +476,7 @@ class IptController extends Controller
                 GROUP BY i.admdoctor
             "
         );
-    
+
         $output = '';
         if (count($daily_count) > 0) {
             $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_table">
@@ -487,14 +500,14 @@ class IptController extends Controller
         } else {
             $output .= '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลของแพทย์ประจำเดือนบน Database!</h1>';
         }
-    
+
         // ส่งข้อมูล HTML กลับ
         return response($output);
     }
 
     public function getResultCountDateDoctor(Request $request) {
         $date = $request->date;
-        
+
         // Query ที่ใช้การ concatenate string เพื่อเชื่อมตัวแปร $year
         $daily_count = DB::connection('mysql')->select(
             "
@@ -507,7 +520,7 @@ class IptController extends Controller
                 GROUP BY i.admdoctor
             "
         );
-    
+
         $output = '';
         if (count($daily_count) > 0) {
             $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_table">
@@ -531,10 +544,10 @@ class IptController extends Controller
         } else {
             $output .= '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลของแพทย์ประจำวันบน Database!</h1>';
         }
-    
+
         // ส่งข้อมูล HTML กลับ
         return response($output);
     }
-    
+
 
 }

@@ -14,7 +14,7 @@ class IptLogModel extends Model
     protected $table = "ipt_log";
 
     protected $fillable = [
-        'title',
+        'function',
         'username',
         'command_sql',
         'query_time',
