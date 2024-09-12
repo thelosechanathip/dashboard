@@ -11,15 +11,17 @@ use App\Models\Log\IptLogModel;
 
 class IptController extends Controller
 {
-    private function someMethod(Request $request) {
-        $data = $request->session()->all();
-        $username = $request->session()->get('loginname');
-        
-        // ใช้งาน $username ต่อไปตามที่คุณต้องการ
-        return $username;
-    }
+    // Function ในการเรียกใช้งาน Username ที่เข้ามาใช้งาน SomeMethod Start
+        private function someMethod(Request $request) {
+            $data = $request->session()->all();
+            $username = $request->session()->get('loginname');
+            
+            // ใช้งาน $username ต่อไปตามที่คุณต้องการ
+            return $username;
+        }
+    // Function ในการเรียกใช้งาน Username ที่เข้ามาใช้งาน SomeMethod End
 
-    // นำปีมาแก้ไขเพื่อนำไปใช้ในปีงบประมาณ Start
+    // นำปีมาแก้ไขเพื่อนำไปใช้ในปีงบประมาณ Check_year Start
         private function check_year($year) {
             if($year) {
                 return [
@@ -30,9 +32,9 @@ class IptController extends Controller
                 return false;
             }
         }
-    // นำปีมาแก้ไขเพื่อนำไปใช้ในปีงบประมาณ End
+    // นำปีมาแก้ไขเพื่อนำไปใช้ในปีงบประมาณ Check_year End
 
-    // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง Start
+    // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง GetYear Start
         private function getYear($year_old, $year_new, $request) {
             $startTime = microtime(true);
         
@@ -83,9 +85,9 @@ class IptController extends Controller
             // ส่งข้อมูลกลับ
             return (array) $ovst_count;  // คืนค่าข้อมูลที่ดึงมา
         }
-    // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง End
+    // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง GetYear End
 
-    // นำเดือนมาสร้าง Chart Start
+    // นำเดือนมาสร้าง Chart GetChartYear Start
         private function getChartYear($response) {
             $chartDataYear = [
                 'labels' => ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'],
@@ -140,9 +142,9 @@ class IptController extends Controller
             ];
             return $chartDataYear;
         }
-    // นำเดือนมาสร้าง Chart End
+    // นำเดือนมาสร้าง Chart GetChartYear End
 
-    // แปลงเดือนที่เป็น Text ไปเป็น Int Start
+    // แปลงเดือนที่เป็น Text ไปเป็น Int GetMonthNumber Start
         private function getMonthNumber($month) {
             $months = [
                 'ตุลาคม' => '10',
@@ -166,9 +168,9 @@ class IptController extends Controller
                 return $month;
             }
         }
-    // แปลงเดือนที่เป็น Text ไปเป็น Int End
+    // แปลงเดือนที่เป็น Text ไปเป็น Int GetMonthNumber End
 
-    // แปลงเดือนที่เป็น Int ไปเป็น Text Start
+    // แปลงเดือนที่เป็น Int ไปเป็น Text GetMonthName Start
         private function getMonthName($month) {
             $months = [
                 '01' => 'มกราคม',
@@ -187,273 +189,365 @@ class IptController extends Controller
 
             return $months[$month] ?? $month;
         }
-    // แปลงเดือนที่เป็น Int ไปเป็น Text End
+    // แปลงเดือนที่เป็น Int ไปเป็น Text GetMonthName End
 
-    // หน้าแรกของ IPT Start
+    // หน้าแรกของ IPT Index Start
         public function index(Request $request) {
             $data = $request->session()->all();
             $year = date('Y');
 
-            return view('pages.ipt', compact('data', 'year'));
-        }
-    // หน้าแรกของ IPT End
-
-    public function getIptData(Request $request) {
-        $year = $request->input('year');
-
-        $years = $this->check_year($year);
-
-        $response_year = $this->getYear($years['year_old'], $years['year_new'], $request);
-
-        $chartDataYear = $this->getChartYear($response_year);
-
-        return response()->json([
-            'chartDataYear' => $chartDataYear
-        ]);
-    }
-
-    public function getIptDailyData(Request $request) {
-        try {
-            $year = $request->input('year');
-            $years = $this->check_year($year);
-    
-            $month = $request->input('month');
-            $month_int = $this->getMonthNumber($month);
-    
-            // กำหนดวันที่เริ่มต้นตามเงื่อนไขเดือน
-            if ($month_int == 10 || $month_int == 11 || $month_int == 12) {
-                $start_date = $years['year_old'] . '-' . $month_int . '-01';
-            } else {
-                $start_date = $years['year_new'] . '-' . $month_int . '-01';
-            }
-    
-            $end_date = date("Y-m-t", strtotime($start_date)); // คำนวณวันสิ้นเดือน
-    
-            $startTime = microtime(true);
-    
-            // Query เพื่อดึงข้อมูล
-            $daily_count = DB::table('ipt')
-                ->select(DB::raw('DATE(regdate) as date'), DB::raw('COUNT(*) as count'))
-                ->whereBetween('regdate', [$start_date, $end_date])
-                ->groupBy(DB::raw('DATE(regdate)'))
-                ->orderBy('date');
-    
-            $ovst_count = $daily_count->get(); // ดึงข้อมูลออกมา
-    
-            // ดึง SQL query พร้อม bindings
-            $sql = $daily_count->toSql();
-            $bindings = $daily_count->getBindings();
-            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
-    
-            $endTime = microtime(true);
-            $executionTime = $endTime - $startTime;
-            $formattedExecutionTime = number_format($executionTime, 3);
-    
-            // ดึง username จาก method someMethod
-            $username = $this->someMethod($request); 
-            
-            // สร้างข้อมูลสำหรับบันทึกใน log
             $ipt_log_data = [
-                'function' => 'getIptDailyData',
-                'username' => $username,
-                'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
-                'query_time' => $formattedExecutionTime,
-                'operation' => 'SELECT'
+                'function' => 'Come to the IPT page',
+                'username' => $data['loginname'],
+                'command_sql' => '',
+                'query_time' => '',
+                'operation' => 'OPEN'
             ];
         
             // บันทึกข้อมูลลงใน IptLogModel
             IptLogModel::create($ipt_log_data);
-    
-            // สร้างข้อมูลสำหรับกราฟ
-            $dates = [];
-            $counts = [];
-            foreach ($ovst_count as $data) {
-                $dates[] = $data->date;
-                $counts[] = $data->count;
-            }
-    
-            $chartDataDaily = [
-                'labels' => $dates,
-                'datasets' => [
-                    [
-                        'label' => 'จำนวน Admit รายวัน',
-                        'data' => $counts,
-                        'backgroundColor' => 'rgba(54, 162, 235, 1)',
-                        'borderColor' => 'rgba(54, 162, 235, 1)',
-                        'borderWidth' => 1
-                    ]
-                ]
-            ];
-    
-            return response()->json(['chartDataDaily' => $chartDataDaily]);
-    
-        } catch (\Exception $e) {
-            // บันทึกข้อผิดพลาดลงใน log
-            \Log::error($e->getMessage());
-            return response()->json(['error' => 'Server Error'], 500);
+
+            return view('pages.ipt', compact('data', 'year'));
         }
-    }
-    
+    // หน้าแรกของ IPT Index End
 
-    public function getIptNameDoctorData(Request $request) {
-        try {
-            $date = $request->input('date');
+    // GetIptData Start
+        public function getIptData(Request $request) {
+            $year = $request->input('year');
 
-            // Validate the date input
-            if (!$date || !strtotime($date)) {
-                return response()->json(['error' => 'Invalid date format'], 400);
-            }
+            $years = $this->check_year($year);
 
-            $daily_count = DB::connection('mysql')->select(
-                "
-                    SELECT
-                        dt.name AS doctor_name,
-                        COUNT(i.admdoctor) AS count_doctor_ipt
-                    FROM ipt i
-                    LEFT OUTER JOIN doctor dt ON i.admdoctor = dt.code
-                    WHERE regdate = ?
-                    GROUP BY i.admdoctor
-                ",
-                [$date]
-            );
+            $response_year = $this->getYear($years['year_old'], $years['year_new'], $request);
 
-            $doctor_names = [];
-            $count_doctor_iptes = [];
-            foreach ($daily_count as $data) {
-                $doctor_names[] = $data->doctor_name;
-                $count_doctor_iptes[] = $data->count_doctor_ipt;
-            }
+            $chartDataYear = $this->getChartYear($response_year);
 
-            $chartNameDoctorData = [
-                'labels' => $doctor_names,
-                'datasets' => [
-                    [
-                        'label' => 'จำนวน Admit รายวัน',
-                        'data' => $count_doctor_iptes,
-                        'backgroundColor' => 'rgba(54, 162, 235, 1)',
-                        'borderColor' => 'rgba(54, 162, 235, 3)',
-                        'borderWidth' => 1
-                    ]
-                ]
-            ];
-
-            return response()->json(['chartNameDoctorData' => $chartNameDoctorData]);
-        } catch (\Exception $e) {
-            // Log the error
-            \Log::error($e->getMessage());
-            return response()->json(['error' => 'Server Error'], 500);
+            return response()->json([
+                'chartDataYear' => $chartDataYear
+            ]);
         }
-    }
+    // GetIptData End
 
-    public function getIptSelectData(Request $request) {
-        try {
-            $minDate = $request->min_date;
-            $maxDate = $request->max_date;
-
-            if ($minDate != $maxDate) {
+    // GetIptDailyData Start
+        public function getIptDailyData(Request $request) {
+            try {
+                $year = $request->input('year');
+                $years = $this->check_year($year);
+        
+                $month = $request->input('month');
+                $month_int = $this->getMonthNumber($month);
+        
+                // กำหนดวันที่เริ่มต้นตามเงื่อนไขเดือน
+                if ($month_int == 10 || $month_int == 11 || $month_int == 12) {
+                    $start_date = $years['year_old'] . '-' . $month_int . '-01';
+                } else {
+                    $start_date = $years['year_new'] . '-' . $month_int . '-01';
+                }
+        
+                $end_date = date("Y-m-t", strtotime($start_date)); // คำนวณวันสิ้นเดือน
+        
+                $startTime = microtime(true);
+        
+                // Query เพื่อดึงข้อมูล
                 $daily_count = DB::table('ipt')
                     ->select(DB::raw('DATE(regdate) as date'), DB::raw('COUNT(*) as count'))
-                    ->whereBetween('regdate', [$minDate, $maxDate])
-                    // ->whereNull('dchdate')
+                    ->whereBetween('regdate', [$start_date, $end_date])
                     ->groupBy(DB::raw('DATE(regdate)'))
-                    ->orderBy('date')
-                    ->get();
-            } else {
-                $daily_count = DB::table('ipt')
-                    ->select(DB::raw('DATE(regdate) as date'), DB::raw('COUNT(*) as count'))
-                    ->whereDate('regdate', $minDate)
-                    // ->whereNull('dchdate')
-                    ->groupBy(DB::raw('DATE(regdate)'))
-                    ->orderBy('date')
-                    ->get();
-            }
-
-            if($daily_count == '') {
-                return response()->json([
-                    'error' => 'ไม่มีข้อมูลใน Database'
-                ]);
-            } else {
-                foreach ($daily_count as $data) {
+                    ->orderBy('date');
+        
+                $ovst_count = $daily_count->get(); // ดึงข้อมูลออกมา
+        
+                // ดึง SQL query พร้อม bindings
+                $sql = $daily_count->toSql();
+                $bindings = $daily_count->getBindings();
+                $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+        
+                $endTime = microtime(true);
+                $executionTime = $endTime - $startTime;
+                $formattedExecutionTime = number_format($executionTime, 3);
+        
+                // ดึง username จาก method someMethod
+                $username = $this->someMethod($request);
+                
+                // สร้างข้อมูลสำหรับบันทึกใน log
+                $ipt_log_data = [
+                    'function' => 'getIptDailyData',
+                    'username' => $username,
+                    'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
+                    'query_time' => $formattedExecutionTime,
+                    'operation' => 'SELECT'
+                ];
+            
+                // บันทึกข้อมูลลงใน IptLogModel
+                IptLogModel::create($ipt_log_data);
+        
+                // สร้างข้อมูลสำหรับกราฟ
+                $dates = [];
+                $counts = [];
+                foreach ($ovst_count as $data) {
                     $dates[] = $data->date;
                     $counts[] = $data->count;
                 }
-
-                $colors = [
-                    'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'
-                ];
-                $borderColors = [
-                    'rgba(255, 99, 132, 3)', 'rgba(54, 162, 235, 3)', 'rgba(255, 206, 86, 3)',
-                    'rgba(75, 192, 192, 3)', 'rgba(153, 102, 255, 3)', 'rgba(255, 159, 64, 3)'
-                ];
-
-                for ($i = 0; $i < count($dates); $i++) {
-                    $backgroundColor[] = $colors[$i % count($colors)];
-                    $borderColor[] = $borderColors[$i % count($borderColors)];
-                }
-
+        
                 $chartDataDaily = [
                     'labels' => $dates,
                     'datasets' => [
                         [
-                            'label' => 'จำนวน Admit',
+                            'label' => 'จำนวน Admit รายวัน',
                             'data' => $counts,
-                            'backgroundColor' => $backgroundColor,
-                            'borderColor' => $borderColor,
+                            'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                            'borderColor' => 'rgba(54, 162, 235, 1)',
+                            'borderWidth' => 1
+                        ]
+                    ]
+                ];
+        
+                return response()->json(['chartDataDaily' => $chartDataDaily]);
+        
+            } catch (\Exception $e) {
+                // บันทึกข้อผิดพลาดลงใน log
+                \Log::error($e->getMessage());
+                return response()->json(['error' => 'Server Error'], 500);
+            }
+        }
+    // GetIptDailyData End
+
+    // GetIptNameDoctorData Start
+        public function getIptNameDoctorData(Request $request) {
+            try {
+                $date = $request->input('date');
+
+                // Validate the date input
+                if (!$date || !strtotime($date)) {
+                    return response()->json(['error' => 'Invalid date format'], 400);
+                }
+
+                $startTime = microtime(true);
+
+                // ใช้ Query Builder แทน DB::select()
+                $daily_count_query = DB::table('ipt as i')
+                    ->leftJoin('doctor as dt', 'i.admdoctor', '=', 'dt.code')
+                    ->select('dt.name as doctor_name', DB::raw('COUNT(i.admdoctor) AS count_doctor_ipt'))
+                    ->whereDate('regdate', $date)
+                    ->groupBy('i.admdoctor');
+
+                // ดึงผลลัพธ์จาก query
+                $daily_count = $daily_count_query->get();
+
+                // ดึง SQL query พร้อม bindings
+                $sql = $daily_count_query->toSql();
+                $bindings = $daily_count_query->getBindings();
+                $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+                $endTime = microtime(true);
+                $executionTime = $endTime - $startTime;
+                $formattedExecutionTime = number_format($executionTime, 3);
+
+                // ดึง username จาก method someMethod
+                $username = $this->someMethod($request);
+                
+                // สร้างข้อมูลสำหรับบันทึกใน log
+                $ipt_log_data = [
+                    'function' => 'getIptNameDoctorData',
+                    'username' => $username,
+                    'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
+                    'query_time' => $formattedExecutionTime,
+                    'operation' => 'SELECT'
+                ];
+            
+                // บันทึกข้อมูลลงใน IptLogModel
+                IptLogModel::create($ipt_log_data);
+
+                $doctor_names = [];
+                $count_doctor_iptes = [];
+                foreach ($daily_count as $data) {
+                    $doctor_names[] = $data->doctor_name;
+                    $count_doctor_iptes[] = $data->count_doctor_ipt;
+                }
+
+                $chartNameDoctorData = [
+                    'labels' => $doctor_names,
+                    'datasets' => [
+                        [
+                            'label' => 'จำนวน Admit รายวัน',
+                            'data' => $count_doctor_iptes,
+                            'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                            'borderColor' => 'rgba(54, 162, 235, 3)',
                             'borderWidth' => 1
                         ]
                     ]
                 ];
 
-                return response()->json(['chartDataDaily' => $chartDataDaily]);
+                return response()->json(['chartNameDoctorData' => $chartNameDoctorData]);
+            } catch (\Exception $e) {
+                // Log the error
+                \Log::error($e->getMessage());
+                return response()->json(['error' => 'Server Error'], 500);
             }
-
-        } catch(\Exception $e) {
-            \Log::error($e->getMessage());
-            return response()->json([
-                'status' => 500,
-                'error' => 'ไม่มีข้อมูลใน Database'
-            ]);
         }
-    }
+    // GetIptNameDoctorData End
 
-    public function getResultCountYearsDoctor(Request $request) {
-        $year = $request->years;
-        $years = $this->check_year($year);
+    // GetIptSelectData Start
+        public function getIptSelectData(Request $request) {
+            try {
+                $minDate = $request->min_date;
+                $maxDate = $request->max_date;
 
-        $startTime = microtime(true);
+                if ($minDate != $maxDate) {
+                    $startTime = microtime(true);
 
-        $daily_count_query = DB::connection('mysql')->table('ipt as i')
-            ->leftJoin('doctor as dt', 'i.admdoctor', '=', 'dt.code')
-            ->select('dt.name as doctor_name', DB::raw('COUNT(i.admdoctor) as count_doctor_ipt'))
-            ->whereBetween('regdate', [$years['year_old'].'-10-01', $years['year_new'].'-09-30'])
-            ->groupBy('i.admdoctor');
+                    $daily_count_query = DB::table('ipt')
+                        ->select(DB::raw('DATE(regdate) as date'), DB::raw('COUNT(*) as count'))
+                        ->whereBetween('regdate', [$minDate, $maxDate])
+                        ->groupBy(DB::raw('DATE(regdate)'))
+                        ->orderBy('date');
 
-        $daily_count = $daily_count_query->get();
+                    $daily_count = $daily_count_query->get();
+                    // ดึง SQL query พร้อม bindings
+                    $sql = $daily_count_query->toSql();
+                    $bindings = $daily_count_query->getBindings();
+                    $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
 
-        // ดึง SQL query พร้อมกับ bindings
-        $sql = $daily_count_query->toSql();
-        $bindings = $daily_count_query->getBindings();
+                    $endTime = microtime(true);
+                    $executionTime = $endTime - $startTime;
+                    $formattedExecutionTime = number_format($executionTime, 3);
 
-        // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
-        $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+                    // ดึง username จาก method someMethod
+                    $username = $this->someMethod($request);
+                    
+                    // สร้างข้อมูลสำหรับบันทึกใน log
+                    $ipt_log_data = [
+                        'function' => 'getIptSelectData',
+                        'username' => $username,
+                        'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
+                        'query_time' => $formattedExecutionTime,
+                        'operation' => 'SELECT'
+                    ];
+                
+                    // บันทึกข้อมูลลงใน IptLogModel
+                    IptLogModel::create($ipt_log_data);
+                } else {
+                    $startTime = microtime(true);
 
-        $endTime = microtime(true);
+                    $daily_count_query = DB::table('ipt')
+                        ->select(DB::raw('DATE(regdate) as date'), DB::raw('COUNT(*) as count'))
+                        ->whereDate('regdate', $minDate)
+                        ->groupBy(DB::raw('DATE(regdate)'))
+                        ->orderBy('date');
 
-        $executionTime = $endTime - $startTime;
-        $formattedExecutionTime = number_format($executionTime, 3);
+                    $daily_count = $daily_count_query->get();
+                    // ดึง SQL query พร้อม bindings
+                    $sql = $daily_count_query->toSql();
+                    $bindings = $daily_count_query->getBindings();
+                    $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
 
-        $username = $this->someMethod($request);    
+                    $endTime = microtime(true);
+                    $executionTime = $endTime - $startTime;
+                    $formattedExecutionTime = number_format($executionTime, 3);
 
-        $ipt_log_data = [
-            'function' => 'getResultCountYearsDoctor',
-            'username' => $username,
-            'command_sql' => $fullSql,
-            'query_time' => $formattedExecutionTime,
-            'operation' => 'SELECT'
-        ];
+                    // ดึง username จาก method someMethod
+                    $username = $this->someMethod($request);
+                    
+                    // สร้างข้อมูลสำหรับบันทึกใน log
+                    $ipt_log_data = [
+                        'function' => 'getIptSelectData',
+                        'username' => $username,
+                        'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
+                        'query_time' => $formattedExecutionTime,
+                        'operation' => 'SELECT'
+                    ];
+                
+                    // บันทึกข้อมูลลงใน IptLogModel
+                    IptLogModel::create($ipt_log_data);
+                }
 
-        if(IptLogModel::create($ipt_log_data)) {
+                if($daily_count == '') {
+                    return response()->json([
+                        'error' => 'ไม่มีข้อมูลใน Database'
+                    ]);
+                } else {
+                    foreach ($daily_count as $data) {
+                        $dates[] = $data->date;
+                        $counts[] = $data->count;
+                    }
+
+                    $colors = [
+                        'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'
+                    ];
+                    $borderColors = [
+                        'rgba(255, 99, 132, 3)', 'rgba(54, 162, 235, 3)', 'rgba(255, 206, 86, 3)',
+                        'rgba(75, 192, 192, 3)', 'rgba(153, 102, 255, 3)', 'rgba(255, 159, 64, 3)'
+                    ];
+
+                    for ($i = 0; $i < count($dates); $i++) {
+                        $backgroundColor[] = $colors[$i % count($colors)];
+                        $borderColor[] = $borderColors[$i % count($borderColors)];
+                    }
+
+                    $chartDataDaily = [
+                        'labels' => $dates,
+                        'datasets' => [
+                            [
+                                'label' => 'จำนวน Admit',
+                                'data' => $counts,
+                                'backgroundColor' => $backgroundColor,
+                                'borderColor' => $borderColor,
+                                'borderWidth' => 1
+                            ]
+                        ]
+                    ];
+
+                    return response()->json(['chartDataDaily' => $chartDataDaily]);
+                }
+
+            } catch(\Exception $e) {
+                \Log::error($e->getMessage());
+                return response()->json([
+                    'status' => 500,
+                    'error' => 'ไม่มีข้อมูลใน Database'
+                ]);
+            }
+        }
+    // GetIptSelectData End
+
+    // GetResultCountYearsDoctor Start
+        public function getResultCountYearsDoctor(Request $request) {
+            $year = $request->years;
+            $years = $this->check_year($year);
+
+            $startTime = microtime(true);
+
+            $daily_count_query = DB::connection('mysql')->table('ipt as i')
+                ->leftJoin('doctor as dt', 'i.admdoctor', '=', 'dt.code')
+                ->select('dt.name as doctor_name', DB::raw('COUNT(i.admdoctor) as count_doctor_ipt'))
+                ->whereBetween('regdate', [$years['year_old'].'-10-01', $years['year_new'].'-09-30'])
+                ->groupBy('i.admdoctor');
+
+            $daily_count = $daily_count_query->get();
+
+            // ดึง SQL query พร้อมกับ bindings
+            $sql = $daily_count_query->toSql();
+            $bindings = $daily_count_query->getBindings();
+
+            // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+            $endTime = microtime(true);
+
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
+
+            $username = $this->someMethod($request);    
+
+            $ipt_log_data = [
+                'function' => 'getResultCountYearsDoctor',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
+            IptLogModel::create($ipt_log_data);
+
             $output = '';
             if (count($daily_count) > 0) {
                 $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_table">
@@ -481,98 +575,142 @@ class IptController extends Controller
             // ส่งข้อมูล HTML กลับ
             return response($output);
         }
-    }
+    // GetResultCountYearsDoctor End
 
-    public function getResultCountMonthDoctor(Request $request) {
-        $year = $request->years;
-        $month = $request->month;
+    // GetResultCountMonthDoctor Start
+        public function getResultCountMonthDoctor(Request $request) {
+            $year = $request->years;
+            $month = $request->month;
 
-        $month_int = $this->getMonthNumber($month);
+            $month_int = $this->getMonthNumber($month);
 
-        // Query ที่ใช้การ concatenate string เพื่อเชื่อมตัวแปร $year
-        $daily_count = DB::connection('mysql')->select(
-            "
-                SELECT
-                    dt.name AS doctor_name,
-                    COUNT(i.admdoctor) AS count_doctor_ipt
-                FROM ipt i
-                LEFT OUTER JOIN doctor dt ON i.admdoctor = dt.code
-                WHERE regdate LIKE '$year-$month_int-%'
-                GROUP BY i.admdoctor
-            "
-        );
+            $startTime = microtime(true);
 
-        $output = '';
-        if (count($daily_count) > 0) {
-            $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_table">
-                <thead>
-                    <tr>
-                        <th style="width: 5%;">ลำดับ</th>
-                        <th style="width: 20%;">รายชื่อ</th>
-                        <th style="width: 75%;">จำนวนที่มีการ Admit</th>
-                    </tr>
-                </thead>
-                <tbody>';
-            $id = 0;
-            foreach ($daily_count as $dc) {
-                $output .= '<tr>
-                    <td>' . ++$id . '</td>
-                    <td class="text-start">' . $dc->doctor_name . '</td>
-                    <td>' . $dc->count_doctor_ipt . '</td>
-                </tr>';
+            // Query ที่ใช้การ concatenate string เพื่อเชื่อมตัวแปร $year
+            $daily_count_query = DB::table('ipt as i')
+                ->leftJoin('doctor as dt', 'i.admdoctor', '=', 'dt.code')
+                ->select('dt.name as doctor_name', DB::raw('COUNT(i.admdoctor) as count_doctor_ipt'))
+                ->where('regdate', 'like', "$year-$month_int-%")
+                ->groupBy('i.admdoctor');
+
+            $daily_count = $daily_count_query->get();
+
+            // ดึง SQL query พร้อมกับ bindings
+            $sql = $daily_count_query->toSql();
+            $bindings = $daily_count_query->getBindings();
+
+            // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+            $endTime = microtime(true);
+
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
+
+            $username = $this->someMethod($request);    
+
+            $ipt_log_data = [
+                'function' => 'getResultCountMonthDoctor',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
+            IptLogModel::create($ipt_log_data);
+
+            $output = '';
+            if (count($daily_count) > 0) {
+                $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">ลำดับ</th>
+                            <th style="width: 20%;">รายชื่อ</th>
+                            <th style="width: 75%;">จำนวนที่มีการ Admit</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+                $id = 0;
+                foreach ($daily_count as $dc) {
+                    $output .= '<tr>
+                        <td>' . ++$id . '</td>
+                        <td class="text-start">' . $dc->doctor_name . '</td>
+                        <td>' . $dc->count_doctor_ipt . '</td>
+                    </tr>';
+                }
+                $output .= '</tbody></table>';
+            } else {
+                $output .= '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลของแพทย์ประจำปีบน Database!</h1>';
             }
-            $output .= '</tbody></table>';
-        } else {
-            $output .= '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลของแพทย์ประจำเดือนบน Database!</h1>';
+
+            // ส่งข้อมูล HTML กลับ
+            return response($output);
         }
+    // GetResultCountMonthDoctor End
 
-        // ส่งข้อมูล HTML กลับ
-        return response($output);
-    }
+    // GetResultCountDateDoctor Start
+        public function getResultCountDateDoctor(Request $request) {
+            $date = $request->date;
 
-    public function getResultCountDateDoctor(Request $request) {
-        $date = $request->date;
+            $startTime = microtime(true);
 
-        // Query ที่ใช้การ concatenate string เพื่อเชื่อมตัวแปร $year
-        $daily_count = DB::connection('mysql')->select(
-            "
-                SELECT
-                    dt.name AS doctor_name,
-                    COUNT(i.admdoctor) AS count_doctor_ipt
-                FROM ipt i
-                LEFT OUTER JOIN doctor dt ON i.admdoctor = dt.code
-                WHERE regdate = ' $date '
-                GROUP BY i.admdoctor
-            "
-        );
+            // Query ที่ใช้การ concatenate string เพื่อเชื่อมตัวแปร $year
+            $daily_count_query = DB::table('ipt as i')
+                ->leftJoin('doctor as dt', 'i.admdoctor', '=', 'dt.code')
+                ->select('dt.name as doctor_name', DB::raw('COUNT(i.admdoctor) as count_doctor_ipt'))
+                ->where('i.regdate', '=', "$date")
+                ->groupBy('i.admdoctor');
 
-        $output = '';
-        if (count($daily_count) > 0) {
-            $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_table">
-                <thead>
-                    <tr>
-                        <th style="width: 5%;">ลำดับ</th>
-                        <th style="width: 20%;">รายชื่อ</th>
-                        <th style="width: 75%;">จำนวนที่มีการ Admit</th>
-                    </tr>
-                </thead>
-                <tbody>';
-            $id = 0;
-            foreach ($daily_count as $dc) {
-                $output .= '<tr>
-                    <td>' . ++$id . '</td>
-                    <td class="text-start">' . $dc->doctor_name . '</td>
-                    <td>' . $dc->count_doctor_ipt . '</td>
-                </tr>';
+            $daily_count = $daily_count_query->get();
+
+            // ดึง SQL query พร้อมกับ bindings
+            $sql = $daily_count_query->toSql();
+            $bindings = $daily_count_query->getBindings();
+
+            // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+            $endTime = microtime(true);
+
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
+
+            $username = $this->someMethod($request);    
+
+            $ipt_log_data = [
+                'function' => 'getResultCountDateDoctor',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
+            IptLogModel::create($ipt_log_data);
+
+            $output = '';
+            if (count($daily_count) > 0) {
+                $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">ลำดับ</th>
+                            <th style="width: 20%;">รายชื่อ</th>
+                            <th style="width: 75%;">จำนวนที่มีการ Admit</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+                $id = 0;
+                foreach ($daily_count as $dc) {
+                    $output .= '<tr>
+                        <td>' . ++$id . '</td>
+                        <td class="text-start">' . $dc->doctor_name . '</td>
+                        <td>' . $dc->count_doctor_ipt . '</td>
+                    </tr>';
+                }
+                $output .= '</tbody></table>';
+            } else {
+                $output .= '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลของแพทย์ประจำวันบน Database!</h1>';
             }
-            $output .= '</tbody></table>';
-        } else {
-            $output .= '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลของแพทย์ประจำวันบน Database!</h1>';
+
+            // ส่งข้อมูล HTML กลับ
+            return response($output);
         }
-
-        // ส่งข้อมูล HTML กลับ
-        return response($output);
-    }
-
-
+    // GetResultCountDateDoctor End
 }

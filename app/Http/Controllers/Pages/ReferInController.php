@@ -9,283 +9,431 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 // ดึง Database เข้ามายัง Controller End
 
+use App\Models\Log\ReferInLogModel;
+
 class ReferInController extends Controller
 {
-    private function check_year($year) {
-        if($year) {
-            return [
-                'year_old' => $year - 1,
-                'year_new' => $year
-            ];
-        } else {
-            return false;
+    // Function ในการเรียกใช้งาน Username ที่เข้ามาใช้งาน SomeMethod Start
+        private function someMethod(Request $request) {
+            $data = $request->session()->all();
+            $username = $request->session()->get('loginname');
+            
+            // ใช้งาน $username ต่อไปตามที่คุณต้องการ
+            return $username;
         }
-    }
+    // Function ในการเรียกใช้งาน Username ที่เข้ามาใช้งาน SomeMethod End
 
-    private function getYear($year_old, $year_new) {
-        // Query table : referin และ COUNT ค่าออกมาแสดง Start
-        $ovst_count = DB::table('referin')
-            ->select(
-                DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_old}-10-01' AND '{$year_old}-10-31' THEN 1 END) AS october"),
-                DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_old}-11-01' AND '{$year_old}-11-30' THEN 1 END) AS november"),
-                DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_old}-12-01' AND '{$year_old}-12-31' THEN 1 END) AS december"),
-                DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-01-01' AND '{$year_new}-01-31' THEN 1 END) AS january"),
-                DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-02-01' AND '{$year_new}-02-31' THEN 1 END) AS february"),
-                DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-03-01' AND '{$year_new}-03-31' THEN 1 END) AS march"),
-                DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-04-01' AND '{$year_new}-04-30' THEN 1 END) AS april"),
-                DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-05-01' AND '{$year_new}-05-31' THEN 1 END) AS may"),
-                DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-06-01' AND '{$year_new}-06-30' THEN 1 END) AS june"),
-                DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-07-01' AND '{$year_new}-07-31' THEN 1 END) AS july"),
-                DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-08-01' AND '{$year_new}-08-31' THEN 1 END) AS august"),
-                DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-09-01' AND '{$year_new}-09-30' THEN 1 END) AS september")
-            )
-            ->first();
-        // Query table : referin และ COUNT ค่าออกมาแสดง End
-
-        // ส่งค่าออกไปพร้อมกับตัวแปรที่เก็บ Array Sart
-        return (array) $ovst_count;
-        // ส่งค่าออกไปพร้อมกับตัวแปรที่เก็บ Array End
-    }
-
-    private function getChartYear($response) {
-        $chartDataYear = [
-            'labels' => ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'],
-            'datasets' => [
-                [
-                    'label' => 'จำนวน Refer In',
-                    'data' => [
-                        $response['october'],
-                        $response['november'],
-                        $response['december'],
-                        $response['january'],
-                        $response['february'],
-                        $response['march'],
-                        $response['april'],
-                        $response['may'],
-                        $response['june'],
-                        $response['july'],
-                        $response['august'],
-                        $response['september']
-                    ],
-                    'backgroundColor' => [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)'
-                    ],
-                    'borderColor' => [
-                        'rgba(255, 99, 132, 3)',
-                        'rgba(54, 162, 235, 3)',
-                        'rgba(255, 206, 86, 3)',
-                        'rgba(75, 192, 192, 3)',
-                        'rgba(153, 102, 255, 3)',
-                        'rgba(255, 159, 64, 3)',
-                        'rgba(75, 192, 192, 3)',
-                        'rgba(153, 102, 255, 3)',
-                        'rgba(255, 159, 64, 3)',
-                        'rgba(255, 99, 132, 3)',
-                        'rgba(54, 162, 235, 3)',
-                        'rgba(255, 206, 86, 3)'
-                    ],
-                    'borderWidth' => 1
-                ]
-            ]
-        ];
-        return $chartDataYear;
-    }
-
-    private function getMonthNumber($month) {
-        $months = [
-            'ตุลาคม' => '10',
-            'พฤศจิกายน' => '11',
-            'ธันวาคม' => '12',
-            'มกราคม' => '01',
-            'กุมภาพันธ์' => '02',
-            'มีนาคม' => '03',
-            'เมษายน' => '04',
-            'พฤษภาคม' => '05',
-            'มิถุนายน' => '06',
-            'กรกฎาคม' => '07',
-            'สิงหาคม' => '08',
-            'กันยายน' => '09',
-        ];
-
-        if(!$month) {
-            return false;
-        } else {
-            $month = $months[$month];
-            // return true;
-            return $month;
-        }
-    }
-
-    private function getMonthName($month) {
-        $months = [
-            '01' => 'มกราคม',
-            '02' => 'กุมภาพันธ์',
-            '03' => 'มีนาคม',
-            '04' => 'เมษายน',
-            '05' => 'พฤษภาคม',
-            '06' => 'มิถุนายน',
-            '07' => 'กรกฎาคม',
-            '08' => 'สิงหาคม',
-            '09' => 'กันยายน',
-            '10' => 'ตุลาคม',
-            '11' => 'พฤศจิกายน',
-            '12' => 'ธันวาคม',
-        ];
-
-        return $months[$month] ?? $month;
-    }
-
-    public function index(Request $request) {
-        $data = $request->session()->all();
-        $year = date('Y');
-
-        return view('pages.referin', compact('data', 'year'));
-    }
-
-    public function getReferInData(Request $request) {
-        $year = $request->input('year');
-
-        $years = $this->check_year($year);
-
-        $response_year = $this->getYear($years['year_old'], $years['year_new']);
-
-        $chartDataYear = $this->getChartYear($response_year);
-
-        return response()->json([
-            'chartDataYear' => $chartDataYear
-        ]);
-    }
-
-    public function getReferInDailyData(Request $request) {
-        try {
-            $year = $request->input('year');
-            $years = $this->check_year($year);
-
-            $month = $request->input('month');
-            $month_int = $this->getMonthNumber($month);
-
-            if($month_int == 10 || $month_int == 11 || $month_int == 12) {
-                $start_date = $years['year_old'] . '-' . $month_int . '-01';
+    // นำปีมาแก้ไขเพื่อนำไปใช้ในปีงบประมาณ Check_year Start
+        private function check_year($year) {
+            if($year) {
+                return [
+                    'year_old' => $year - 1,
+                    'year_new' => $year
+                ];
             } else {
-                $start_date = $years['year_new'] . '-' . $month_int . '-01';
+                return false;
             }
+        }
+    // นำปีมาแก้ไขเพื่อนำไปใช้ในปีงบประมาณ Check_year End
 
-            $end_date = date("Y-m-t", strtotime($start_date));
+    // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง GetYear Start
+        private function getYear($year_old, $year_new, $request) {
+            $startTime = microtime(true);
 
-            $daily_count = DB::table('referin')
-                ->select(DB::raw('DATE(refer_date) as date'), DB::raw('COUNT(*) as count'))
-                ->whereBetween('refer_date', [$start_date, $end_date])
-                ->groupBy(DB::raw('DATE(refer_date)'))
-                ->orderBy('date')
-                ->get();
+            // Query table : referin และ COUNT ค่าออกมาแสดง Start
+            $query = DB::table('referin')
+                ->select(
+                    DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_old}-10-01' AND '{$year_old}-10-31' THEN 1 END) AS october"),
+                    DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_old}-11-01' AND '{$year_old}-11-30' THEN 1 END) AS november"),
+                    DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_old}-12-01' AND '{$year_old}-12-31' THEN 1 END) AS december"),
+                    DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-01-01' AND '{$year_new}-01-31' THEN 1 END) AS january"),
+                    DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-02-01' AND '{$year_new}-02-31' THEN 1 END) AS february"),
+                    DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-03-01' AND '{$year_new}-03-31' THEN 1 END) AS march"),
+                    DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-04-01' AND '{$year_new}-04-30' THEN 1 END) AS april"),
+                    DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-05-01' AND '{$year_new}-05-31' THEN 1 END) AS may"),
+                    DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-06-01' AND '{$year_new}-06-30' THEN 1 END) AS june"),
+                    DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-07-01' AND '{$year_new}-07-31' THEN 1 END) AS july"),
+                    DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-08-01' AND '{$year_new}-08-31' THEN 1 END) AS august"),
+                    DB::raw("COUNT(CASE WHEN refer_date BETWEEN '{$year_new}-09-01' AND '{$year_new}-09-30' THEN 1 END) AS september")
+                );
+            // Query table : referin และ COUNT ค่าออกมาแสดง End
 
-            $dates = [];
-            $counts = [];
-            foreach ($daily_count as $data) {
-                $dates[] = $data->date;
-                $counts[] = $data->count;
-            }
+            // ดึงข้อมูลจาก Query
+            $refer_in_count = $query->first();
+        
+            // ดึง SQL query พร้อม bindings
+            $sql = $query->toSql();
+            $bindings = $query->getBindings();
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+        
+            $endTime = microtime(true);
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
+        
+            // // ดึง username จาก method someMethod
+            $username = $this->someMethod($request); 
+            
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $refer_in_log_data = [
+                'function' => 'getYear',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน ReferInLogModel
+            ReferInLogModel::create($refer_in_log_data);
 
-            $chartDataDaily = [
-                'labels' => $dates,
+            // ส่งค่าออกไปพร้อมกับตัวแปรที่เก็บ Array Sart
+            return (array) $refer_in_count;
+            // ส่งค่าออกไปพร้อมกับตัวแปรที่เก็บ Array End
+        }
+    // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง GetYear End
+
+    // นำเดือนมาสร้าง Chart GetChartYear Start
+        private function getChartYear($response) {
+            $chartDataYear = [
+                'labels' => ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'],
                 'datasets' => [
                     [
-                        'label' => 'จำนวน Refer In รายวัน',
-                        'data' => $counts,
-                        'backgroundColor' => 'rgba(54, 162, 235, 1)',
-                        'borderColor' => 'rgba(54, 162, 235, 3)',
+                        'label' => 'จำนวน Refer In',
+                        'data' => [
+                            $response['october'],
+                            $response['november'],
+                            $response['december'],
+                            $response['january'],
+                            $response['february'],
+                            $response['march'],
+                            $response['april'],
+                            $response['may'],
+                            $response['june'],
+                            $response['july'],
+                            $response['august'],
+                            $response['september']
+                        ],
+                        'backgroundColor' => [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)'
+                        ],
+                        'borderColor' => [
+                            'rgba(255, 99, 132, 3)',
+                            'rgba(54, 162, 235, 3)',
+                            'rgba(255, 206, 86, 3)',
+                            'rgba(75, 192, 192, 3)',
+                            'rgba(153, 102, 255, 3)',
+                            'rgba(255, 159, 64, 3)',
+                            'rgba(75, 192, 192, 3)',
+                            'rgba(153, 102, 255, 3)',
+                            'rgba(255, 159, 64, 3)',
+                            'rgba(255, 99, 132, 3)',
+                            'rgba(54, 162, 235, 3)',
+                            'rgba(255, 206, 86, 3)'
+                        ],
                         'borderWidth' => 1
                     ]
                 ]
             ];
-
-            return response()->json(['chartDataDaily' => $chartDataDaily]);
-        } catch (\Exception $e) {
-            // บันทึกข้อผิดพลาดลงใน log
-            \Log::error($e->getMessage());
-            return response()->json(['error' => 'Server Error'], 500);
+            return $chartDataYear;
         }
-    }
+    // นำเดือนมาสร้าง Chart GetChartYear End
 
-    public function getReferInSelectData(Request $request) {
-        try {
-            $minDate = $request->min_date;
-            $maxDate = $request->max_date;
+    // แปลงเดือนที่เป็น Text ไปเป็น Int GetMonthNumber Start
+        private function getMonthNumber($month) {
+            $months = [
+                'ตุลาคม' => '10',
+                'พฤศจิกายน' => '11',
+                'ธันวาคม' => '12',
+                'มกราคม' => '01',
+                'กุมภาพันธ์' => '02',
+                'มีนาคม' => '03',
+                'เมษายน' => '04',
+                'พฤษภาคม' => '05',
+                'มิถุนายน' => '06',
+                'กรกฎาคม' => '07',
+                'สิงหาคม' => '08',
+                'กันยายน' => '09',
+            ];
 
-            if ($minDate != $maxDate) {
-                $daily_count = DB::table('referin')
-                    ->select(DB::raw('DATE(refer_date) as date'), DB::raw('COUNT(*) as count'))
-                    ->whereBetween('refer_date', [$minDate, $maxDate])
-                    ->groupBy(DB::raw('DATE(refer_date)'))
-                    ->orderBy('date')
-                    ->get();
+            if(!$month) {
+                return false;
             } else {
-                $daily_count = DB::table('referin')
-                    ->select(DB::raw('DATE(refer_date) as date'), DB::raw('COUNT(*) as count'))
-                    ->whereDate('refer_date', $minDate)
-                    ->groupBy(DB::raw('DATE(refer_date)'))
-                    ->orderBy('date')
-                    ->get();
+                $month = $months[$month];
+                // return true;
+                return $month;
             }
+        }
+    // แปลงเดือนที่เป็น Text ไปเป็น Int GetMonthNumber End
 
-            if($daily_count == '') {
-                return response()->json([
-                    'error' => 'ไม่มีข้อมูลใน Database'
-                ]);
-            } else {
-                foreach ($daily_count as $data) {
-                    $dates[] = $data->date;
-                    $counts[] = $data->count;
+    // แปลงเดือนที่เป็น Int ไปเป็น Text GetMonthName Start
+        private function getMonthName($month) {
+            $months = [
+                '01' => 'มกราคม',
+                '02' => 'กุมภาพันธ์',
+                '03' => 'มีนาคม',
+                '04' => 'เมษายน',
+                '05' => 'พฤษภาคม',
+                '06' => 'มิถุนายน',
+                '07' => 'กรกฎาคม',
+                '08' => 'สิงหาคม',
+                '09' => 'กันยายน',
+                '10' => 'ตุลาคม',
+                '11' => 'พฤศจิกายน',
+                '12' => 'ธันวาคม',
+            ];
+
+            return $months[$month] ?? $month;
+        }
+    // แปลงเดือนที่เป็น Int ไปเป็น Text GetMonthName End
+
+    // หน้าแรกของ Refer In Index Start
+        public function index(Request $request) {
+            $data = $request->session()->all();
+            $year = date('Y');
+
+            $refer_in_log_data = [
+                'function' => 'Come to the Refer In page',
+                'username' => $data['loginname'],
+                'command_sql' => '',
+                'query_time' => '',
+                'operation' => 'OPEN'
+            ];
+        
+            // บันทึกข้อมูลลงใน ReferInLogModel
+            ReferInLogModel::create($refer_in_log_data);
+
+            return view('pages.referin', compact('data', 'year'));
+        }
+    // หน้าแรกของ Refer In Index End
+
+    // GetReferInData Start
+        public function getReferInData(Request $request) {
+            $year = $request->input('year');
+
+            $years = $this->check_year($year);
+
+            $response_year = $this->getYear($years['year_old'], $years['year_new'], $request);
+
+            $chartDataYear = $this->getChartYear($response_year);
+
+            return response()->json([
+                'chartDataYear' => $chartDataYear
+            ]);
+        }
+    // GetReferInData End
+
+    // GetReferInDailyData Start
+        public function getReferInDailyData(Request $request) {
+            try {
+                $year = $request->input('year');
+                $years = $this->check_year($year);
+
+                $month = $request->input('month');
+                $month_int = $this->getMonthNumber($month);
+
+                if($month_int == 10 || $month_int == 11 || $month_int == 12) {
+                    $start_date = $years['year_old'] . '-' . $month_int . '-01';
+                } else {
+                    $start_date = $years['year_new'] . '-' . $month_int . '-01';
                 }
 
-                $colors = [
-                    'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'
-                ];
-                $borderColors = [
-                    'rgba(255, 99, 132, 3)', 'rgba(54, 162, 235, 3)', 'rgba(255, 206, 86, 3)',
-                    'rgba(75, 192, 192, 3)', 'rgba(153, 102, 255, 3)', 'rgba(255, 159, 64, 3)'
-                ];
+                $end_date = date("Y-m-t", strtotime($start_date));
 
-                for ($i = 0; $i < count($dates); $i++) {
-                    $backgroundColor[] = $colors[$i % count($colors)];
-                    $borderColor[] = $borderColors[$i % count($borderColors)];
+                $startTime = microtime(true);
+
+                $daily_count = DB::table('referin')
+                    ->select(DB::raw('DATE(refer_date) as date'), DB::raw('COUNT(*) as count'))
+                    ->whereBetween('refer_date', [$start_date, $end_date])
+                    ->groupBy(DB::raw('DATE(refer_date)'))
+                    ->orderBy('date');
+
+                $refer_in_count = $daily_count->get(); // ดึงข้อมูลออกมา
+
+                // ดึง SQL query พร้อม bindings
+                $sql = $daily_count->toSql();
+                $bindings = $daily_count->getBindings();
+                $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+        
+                $endTime = microtime(true);
+                $executionTime = $endTime - $startTime;
+                $formattedExecutionTime = number_format($executionTime, 3);
+        
+                // ดึง username จาก method someMethod
+                $username = $this->someMethod($request);
+                
+                // สร้างข้อมูลสำหรับบันทึกใน log
+                $refer_in_log_data = [
+                    'function' => 'getReferInDailyData',
+                    'username' => $username,
+                    'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
+                    'query_time' => $formattedExecutionTime,
+                    'operation' => 'SELECT'
+                ];
+            
+                // บันทึกข้อมูลลงใน ReferInLogModel
+                ReferInLogModel::create($refer_in_log_data);
+
+                $dates = [];
+                $counts = [];
+                foreach ($refer_in_count as $data) {
+                    $dates[] = $data->date;
+                    $counts[] = $data->count;
                 }
 
                 $chartDataDaily = [
                     'labels' => $dates,
                     'datasets' => [
                         [
-                            'label' => 'จำนวน Refer In',
+                            'label' => 'จำนวน Refer In รายวัน',
                             'data' => $counts,
-                            'backgroundColor' => $backgroundColor,
-                            'borderColor' => $borderColor,
+                            'backgroundColor' => 'rgba(54, 162, 235, 1)',
+                            'borderColor' => 'rgba(54, 162, 235, 3)',
                             'borderWidth' => 1
                         ]
                     ]
                 ];
 
                 return response()->json(['chartDataDaily' => $chartDataDaily]);
+            } catch (\Exception $e) {
+                // บันทึกข้อผิดพลาดลงใน log
+                \Log::error($e->getMessage());
+                return response()->json(['error' => 'Server Error'], 500);
             }
-
-        } catch(\Exception $e) {
-            \Log::error($e->getMessage());
-            return response()->json([
-                'status' => 500,
-                'error' => 'ไม่มีข้อมูลใน Database'
-            ]);
         }
-    }
+    // GetReferInDailyData End
+
+    // GetReferInSelectData Start
+        public function getReferInSelectData(Request $request) {
+            try {
+                $minDate = $request->min_date;
+                $maxDate = $request->max_date;
+
+                if ($minDate != $maxDate) {
+                    $startTime = microtime(true);
+
+                    $daily_count_query = DB::table('referin')
+                        ->select(DB::raw('DATE(refer_date) as date'), DB::raw('COUNT(*) as count'))
+                        ->whereBetween('refer_date', [$minDate, $maxDate])
+                        ->groupBy(DB::raw('DATE(refer_date)'))
+                        ->orderBy('date');
+
+                    $daily_count = $daily_count_query->get();
+                    // ดึง SQL query พร้อม bindings
+                    $sql = $daily_count_query->toSql();
+                    $bindings = $daily_count_query->getBindings();
+                    $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+                    $endTime = microtime(true);
+                    $executionTime = $endTime - $startTime;
+                    $formattedExecutionTime = number_format($executionTime, 3);
+
+                    // ดึง username จาก method someMethod
+                    $username = $this->someMethod($request);
+                    
+                    // สร้างข้อมูลสำหรับบันทึกใน log
+                    $refer_in_log_data = [
+                        'function' => 'getReferInSelectData',
+                        'username' => $username,
+                        'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
+                        'query_time' => $formattedExecutionTime,
+                        'operation' => 'SELECT'
+                    ];
+                
+                    // บันทึกข้อมูลลงใน ReferInLogModel
+                    ReferInLogModel::create($refer_in_log_data);
+                } else {
+                    $startTime = microtime(true);
+
+                    $daily_count_query = DB::table('referin')
+                        ->select(DB::raw('DATE(refer_date) as date'), DB::raw('COUNT(*) as count'))
+                        ->whereDate('refer_date', $minDate)
+                        ->groupBy(DB::raw('DATE(refer_date)'))
+                        ->orderBy('date');
+
+                    $daily_count = $daily_count_query->get();
+                    // ดึง SQL query พร้อม bindings
+                    $sql = $daily_count_query->toSql();
+                    $bindings = $daily_count_query->getBindings();
+                    $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+                    $endTime = microtime(true);
+                    $executionTime = $endTime - $startTime;
+                    $formattedExecutionTime = number_format($executionTime, 3);
+
+                    // ดึง username จาก method someMethod
+                    $username = $this->someMethod($request);
+                    
+                    // สร้างข้อมูลสำหรับบันทึกใน log
+                    $refer_in_log_data = [
+                        'function' => 'getReferInSelectData',
+                        'username' => $username,
+                        'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
+                        'query_time' => $formattedExecutionTime,
+                        'operation' => 'SELECT'
+                    ];
+                
+                    // บันทึกข้อมูลลงใน ReferInLogModel
+                    ReferInLogModel::create($refer_in_log_data);
+                }
+
+                if($daily_count == '') {
+                    return response()->json([
+                        'error' => 'ไม่มีข้อมูลใน Database'
+                    ]);
+                } else {
+                    foreach ($daily_count as $data) {
+                        $dates[] = $data->date;
+                        $counts[] = $data->count;
+                    }
+
+                    $colors = [
+                        'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'
+                    ];
+                    $borderColors = [
+                        'rgba(255, 99, 132, 3)', 'rgba(54, 162, 235, 3)', 'rgba(255, 206, 86, 3)',
+                        'rgba(75, 192, 192, 3)', 'rgba(153, 102, 255, 3)', 'rgba(255, 159, 64, 3)'
+                    ];
+
+                    for ($i = 0; $i < count($dates); $i++) {
+                        $backgroundColor[] = $colors[$i % count($colors)];
+                        $borderColor[] = $borderColors[$i % count($borderColors)];
+                    }
+
+                    $chartDataDaily = [
+                        'labels' => $dates,
+                        'datasets' => [
+                            [
+                                'label' => 'จำนวน Refer In',
+                                'data' => $counts,
+                                'backgroundColor' => $backgroundColor,
+                                'borderColor' => $borderColor,
+                                'borderWidth' => 1
+                            ]
+                        ]
+                    ];
+
+                    return response()->json(['chartDataDaily' => $chartDataDaily]);
+                }
+
+            } catch(\Exception $e) {
+                \Log::error($e->getMessage());
+                return response()->json([
+                    'status' => 500,
+                    'error' => 'ไม่มีข้อมูลใน Database'
+                ]);
+            }
+        }
+    // GetReferInSelectData End
 
 }
