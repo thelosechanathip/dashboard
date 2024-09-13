@@ -697,16 +697,6 @@ class PalliativeCareController extends Controller
                     'icon' => 'error'
                 ]);
             }
-        
-            if ($request->service_unit == 0) {
-                $service_unit = "";
-            } elseif ($request->service_unit == 99999) {
-                $service_unit = "";
-            } elseif ($request->service_unit == 11111) {
-                $service_unit = "AND vs.hospsub NOT IN('11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976')";
-            } else {
-                $service_unit = "AND vs.hospsub = '{$request->service_unit}'";
-            }
             
             if ($request->death_type == 0) {
                 return response()->json([
@@ -842,12 +832,37 @@ class PalliativeCareController extends Controller
                 ->whereBetween('vs.vstdate', [$min_date, $max_date]);
 
             // ตรวจสอบว่า $service_unit และ $death_type ไม่เป็นค่าว่างก่อนใช้ whereRaw
-            if (!empty($service_unit)) {
-                $query->whereRaw($service_unit);
+
+            $data_notIn = [
+                '11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976'
+            ];
+
+            if ($request->service_unit == 0) {
+                return response()->json([
+                    'status' => 400,
+                    'title' => 'Error',
+                    'message' => 'กรุณาเลือกหน่วยบริการ',
+                    'icon' => 'error'
+                ]);
+            } elseif ($request->service_unit == 99999) {
+                $service_unit = "";
+            } elseif ($request->service_unit == 11111) {
+                $query->whereNotIn('vs.hospsub', $data_notIn);
+            } else {
+                $query->where('vs.hospsub', $request->service_unit);
             }
 
-            if (!empty($death_type)) {
-                $query->whereRaw($death_type);
+            if ($request->death_type == 0) {
+                return response()->json([
+                    'status' => 400,
+                    'title' => 'Error',
+                    'message' => 'กรุณาเลือกสถานะ',
+                    'icon' => 'error'
+                ]);
+            } elseif ($request->death_type == 99999) {
+                $death_type = "";
+            } else {
+                $query->where('pt_all.death', $request->death_type);
             }
 
             $query->groupBy('vs.hn')
