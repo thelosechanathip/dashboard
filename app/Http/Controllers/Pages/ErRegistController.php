@@ -207,8 +207,8 @@ class ErRegistController extends Controller
                 'operation' => 'OPEN'
             ];
         
-            // บันทึกข้อมูลลงใน ErLogModel
-            ErLogModel::create($er_log_data);
+            // บันทึกข้อมูลลงใน ErRegistLogModel
+            ErRegistLogModel::create($er_log_data);
 
             $startTime_1 = microtime(true);
 
