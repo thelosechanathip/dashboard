@@ -22,10 +22,15 @@
             </div>
         </div>
         {{-- Title End --}}
+        @if(isset($data['error']))
+            <div class="alert alert-danger" role="alert">
+                {{ $data['error'] }}
+            </div>
+        @endif
         <div class="row gy-5 mt-2" id="all_dashboard">
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-12 col-sm-6 col-md-4" id="ovst_card">
                 <div class="card shadow-lg rounded-2 zoom-card">
-                    <a href="{{ route('indexOvst') }}" class="text-decoration-none text-dark">
+                    <a href="{{ route('indexOvst') }}" class="text-decoration-none text-dark" id="ovst" data-value="{{ $ovstStatusId->status_id }}">
                         <div class="card-body d-flex justify-content-center align-items-center">
                             <h5 class="card-title fw-bold">ผู้เข้ามารับบริการ</h5>
                         </div>
@@ -36,8 +41,8 @@
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-4">
-                <div class="card shadow-lg rounded-2 zoom-card">
-                    <a href="{{ route('indexErRegist') }}" class="text-decoration-none text-dark">
+                <div class="card shadow-lg rounded-2 zoom-card" id="er_card" >
+                    <a href="{{ route('indexErRegist') }}" class="text-decoration-none text-dark" id="er" data-value="{{ $erStatusId->status_id }}">
                         <div class="card-body d-flex justify-content-center align-items-center">
                             <h5 class="card-title fw-bold">ER</h5>
                         </div>
@@ -48,8 +53,8 @@
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-4">
-                <div class="card shadow-lg rounded-2 zoom-card">
-                    <a href="{{ route('indexReferOut') }}" class="text-decoration-none text-dark">
+                <div class="card shadow-lg rounded-2 zoom-card" id="refer_out_card">
+                    <a href="{{ route('indexReferOut') }}" class="text-decoration-none text-dark" id="refer_out" data-value="{{ $referOutStatusId->status_id }}">
                         <div class="card-body d-flex justify-content-center align-items-center">
                             <h5 class="card-title fw-bold">Refer Out</h5>
                         </div>
@@ -60,8 +65,8 @@
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-4">
-                <div class="card shadow-lg rounded-2 zoom-card">
-                    <a href="{{ route('indexReferIn') }}" class="text-decoration-none text-dark">
+                <div class="card shadow-lg rounded-2 zoom-card" id="refer_in_card">
+                    <a href="{{ route('indexReferIn') }}" class="text-decoration-none text-dark" id="refer_in" data-value="{{ $referInStatusId->status_id }}">
                         <div class="card-body d-flex justify-content-center align-items-center">
                             <h5 class="card-title fw-bold">Refer In</h5>
                         </div>
@@ -72,8 +77,8 @@
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-4">
-                <div class="card shadow-lg rounded-2 zoom-card">
-                    <a href="{{ route('indexIpt') }}" class="text-decoration-none text-dark">
+                <div class="card shadow-lg rounded-2 zoom-card" id="admit_card">
+                    <a href="{{ route('indexIpt') }}" class="text-decoration-none text-dark" id="admit" data-value="{{ $admitStatusId->status_id }}">
                         <div class="card-body d-flex justify-content-center align-items-center">
                             <h5 class="card-title fw-bold">Admit</h5>
                         </div>

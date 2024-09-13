@@ -53,7 +53,15 @@ class DashboardController extends Controller
     public function index(Request $request) {
         $data = $request->session()->all();
 
-        return view('dashboard', compact('data'));
+        $request->session()->forget('error');
+
+        $ovstStatusId = ModuleModel::where('module_name', 'Ovst')->first();
+        $admitStatusId = ModuleModel::where('module_name', 'Admit')->first();
+        $referInStatusId = ModuleModel::where('module_name', 'Refer In')->first();
+        $referOutStatusId = ModuleModel::where('module_name', 'Refer Out')->first();
+        $erStatusId = ModuleModel::where('module_name', 'ER')->first();
+
+        return view('dashboard', compact('data', 'ovstStatusId', 'admitStatusId', 'referInStatusId', 'referOutStatusId', 'erStatusId'));
     }
 
     public function check_status(Request $request) {

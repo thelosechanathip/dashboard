@@ -12,6 +12,8 @@ use App\Models\Dashboard_Setting\ModuleModel;
 use App\Models\Dashboard_Setting\AccessibilityModel;
 
 use App\Models\Log\PalliativeCareLogModel;
+use App\Models\Log\ModuleLogModel;
+use App\Models\Log\AccessibilityLogModel;
 
 class PalliativeCareController extends Controller
 {
@@ -198,8 +200,10 @@ class PalliativeCareController extends Controller
             }
             // ตรวจสอบว่ามีการส่ง Request มาหรือไม่ ถ้าไม่ก็ให้ส่ง False กลับไปยัง Function ที่เรียกใช้งาน Function นี้ End
 
+            $startTime = microtime(true);
+
             // Query ข้อมูลจาก Table และนำ Request ที่ถูกส่งเข้ามาไปแทนค่าในตัวแปร ({$firstDayOfMonth, $lastDayOfMonth}) ของคำสั่ง Query บน Mysql Start
-            $palliative_care_patients_pain = DB::table('opitemrece as op')
+            $query = DB::table('opitemrece as op')
                 ->distinct()
                 ->select(
                     'op.hn',
@@ -211,28 +215,82 @@ class PalliativeCareController extends Controller
                 ->leftJoin('vn_stat as vn', 'vn.vn', '=', 'op.vn')
                 ->leftJoin('patient as pt', 'pt.hn', '=', 'op.hn')
                 ->whereIn('op.icode', [1580001, 1590005, 1000156, 1000406, 1000412, 1000413, 1000430, 1550025])
-                ->whereBetween('op.vstdate', [$firstDayOfMonth, $lastDayOfMonth])
-                ->get();
+                ->whereBetween('op.vstdate', [$firstDayOfMonth, $lastDayOfMonth]);
             // Query ข้อมูลจาก Table และนำ Request ที่ถูกส่งเข้ามาไปแทนค่าในตัวแปร ({$firstDayOfMonth, $request_2}) ของคำสั่ง Query บน Mysql End
 
+            // ดึงข้อมูลจาก Query (ดึงหลายแถว)
+            $palliative_care_patients_pain = $query->get();
+        
+            // ดึง SQL query พร้อม bindings
+            $sql = $query->toSql();
+            $bindings = $query->getBindings();
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+        
+            $endTime = microtime(true);
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
+        
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+        
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $palliative_care_log_data = [
+                'function' => 'queryPalliativeCarePatientsPain',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน PalliativeCareLogModel
+            PalliativeCareLogModel::create($palliative_care_log_data);
+
             // ส่งค่า Query คืนกลับไปให้ Function ที่เรียกใช้งาน Function  นี้ ส่งกลับไปในรูปแบบของ Array Start
-            return (array) $palliative_care_patients_pain;
+            return $palliative_care_patients_pain;
             // ส่งค่า Query คืนกลับไปให้ Function ที่เรียกใช้งาน Function  นี้ ส่งกลับไปในรูปแบบของ Array End
         }
     // ดึงข้อมูล คนไข้ Palliative Care ที่มีอาการปวด( Pain ) จาก Request ที่ถูกส่งเข้ามา End
 
     // ดึงข้อมูล ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว Start
-        private function queryEclaimReceivedMoney() {
+        private function queryEclaimReceivedMoney(Request $request) {
+            $startTime = microtime(true);
+
             // Query ข้อมูลจาก Table Start
-            $rcmdb_repeclaim = DB::connection('mysql')->select(
-                "
-                    SELECT * ,SUBSTRING(FileName ,19,6)AS dd FROM rcmdb.repeclaim WHERE PallativeCare>0 ORDER BY Rep DESC
-                "
-            );
+            $query = DB::table('rcmdb.repeclaim')
+                ->select('*', DB::raw('SUBSTRING(FileName, 19, 6) AS dd'))
+                ->where('PallativeCare', '>', 0)
+                ->orderBy('Rep', 'desc');
             // Query ข้อมูลจาก Table End
 
+            // ดึงข้อมูลจาก Query (ดึงหลายแถว)
+            $rcmdb_repeclaim = $query->get();
+        
+            // ดึง SQL query พร้อม bindings
+            $sql = $query->toSql();
+            $bindings = $query->getBindings();
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+        
+            $endTime = microtime(true);
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
+        
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+        
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $palliative_care_log_data = [
+                'function' => 'queryEclaimReceivedMoney',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน PalliativeCareLogModel
+            PalliativeCareLogModel::create($palliative_care_log_data);
+
             // ส่งค่า Query คืนกลับไปให้ Function ที่เรียกใช้งาน Function  นี้ ส่งกลับไปในรูปแบบของ Array Start
-            return (array) $rcmdb_repeclaim;
+            return $rcmdb_repeclaim;
             // ส่งค่า Query คืนกลับไปให้ Function ที่เรียกใช้งาน Function  นี้ ส่งกลับไปในรูปแบบของ Array End
         }
     // ดึงข้อมูล ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว End
@@ -386,47 +444,150 @@ class PalliativeCareController extends Controller
 
     // หน้าแรกของ Palliative Care Start
         public function index(Request $request) {
-            $palliativeCareId = ModuleModel::where('module_name', 'Palliative Care')->first();
-
-            // Query สถานบริการ Start
-            $zbm_rpst_name = DB::connection('mysql')->select(
-                "
-                    SELECT
-                        rpst_id,
-                        rpst_name
-                    FROM zbm_rpst_name
-                    WHERE
-                        rpst_id IN('11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976', '00000')
-                "
-            );
-            // Query สถานบริการ End
-
             // ดึงข้อมูล Session ที่มีการ Login เข้ามาภายในระบบ
             $data = $request->session()->all();
 
-            if($palliativeCareId->status_id === 1) {
+            $startTime_1 = microtime(true);
 
-                if(!empty($data['groupname'])) {
-                    $accessibility_model = AccessibilityModel::select('status_id')->where('accessibility_name', $data['groupname'])->first();
-                    if($accessibility_model && $accessibility_model->status_id === 1) {
+            $query_1 = ModuleModel::where('module_name', 'Palliative Care');
+
+            $palliativeCareId = $query_1->first();
+        
+            // ดึง SQL query_1 พร้อม bindings
+            $sql_1 = $query_1->toSql();
+            $bindings_1 = $query_1->getBindings();
+            $fullSql_1 = vsprintf(str_replace('?', "'%s'", $sql_1), $bindings_1);
+        
+            $endTime_1 = microtime(true);
+            $executionTime_1 = $endTime_1 - $startTime_1;
+            $formattedExecutionTime_1 = number_format($executionTime_1, 3);
+
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $module_log_data = [
+                'function' => 'Where module_name = Palliative Care',
+                'username' => $data['loginname'],
+                'command_sql' => $fullSql_1,
+                'query_time' => $formattedExecutionTime_1,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน ModuleLogModel
+            ModuleLogModel::create($module_log_data);
+
+            $startTime_2 = microtime(true);
+
+            // Query สถานบริการ Start
+            $query_2 = DB::table('zbm_rpst_name')
+                ->select('rpst_id', 'rpst_name')
+                ->whereIn('rpst_id', ['11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976', '00000']);
+            // Query สถานบริการ End
+
+            // ดึงข้อมูลจาก Query (ดึงหลายแถว)
+            $zbm_rpst_name = $query_2->get();
+        
+            // ดึง SQL query พร้อม bindings
+            $sql_2 = $query_2->toSql();
+            $bindings_2 = $query_2->getBindings();
+            $fullSql_2 = vsprintf(str_replace('?', "'%s'", $sql_2), $bindings_2);
+        
+            $endTime_2 = microtime(true);
+            $executionTime_2 = $endTime_2 - $startTime_2;
+            $formattedExecutionTime_2 = number_format($executionTime_2, 3);
+        
+            // ดึง username จาก method someMethod
+            // $username = $this->someMethod($request);
+        
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $palliative_care_log_data = [
+                'function' => 'Come to the Palliative Care page AND SELECT DATA',
+                'username' => $data['loginname'],
+                'command_sql' => $fullSql_2,
+                'query_time' => $formattedExecutionTime_2,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน PalliativeCareLogModel
+            PalliativeCareLogModel::create($palliative_care_log_data);
+
+            if($palliativeCareId->status_id === 1) {
+                $startTime_3 = microtime(true);
+
+                $query_3 = AccessibilityModel::where('accessibility_name', $data['groupname'])->where('module_id', $palliativeCareId->id);
+
+                // ดึงข้อมูลจาก Query (ดึงหลายแถว)
+                $accessibility_groupname_model = $query_3->first();
+            
+                // ดึง SQL query พร้อม bindings
+                $sql_3 = $query_3->toSql();
+                $bindings_3 = $query_3->getBindings();
+                $fullSql_3 = vsprintf(str_replace('?', "'%s'", $sql_3), $bindings_3);
+            
+                $endTime_3 = microtime(true);
+                $executionTime_3 = $endTime_3 - $startTime_3;
+                $formattedExecutionTime_3 = number_format($executionTime_3, 3);
+            
+                // ดึง username จาก method someMethod
+                // $username = $this->someMethod($request);
+            
+                // สร้างข้อมูลสำหรับบันทึกใน log
+                $accessibility_log_data = [
+                    'function' => 'Where accessibility_name = [groupname]',
+                    'username' => $data['loginname'],
+                    'command_sql' => $fullSql_3,
+                    'query_time' => $formattedExecutionTime_3,
+                    'operation' => 'SELECT'
+                ];
+            
+                // บันทึกข้อมูลลงใน AccessibilityLogModel
+                AccessibilityLogModel::create($accessibility_log_data);
+                
+                if($accessibility_groupname_model !== null && $accessibility_groupname_model->status_id === 1) {
+                    // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data Start
+                    return view('pages.palliativeCare', compact('data', 'zbm_rpst_name'));
+                    // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data End
+                } else {
+                    $startTime_4 = microtime(true);
+
+                    $query_4 = AccessibilityModel::where('accessibility_name', $data['name'])->where('module_id', $palliativeCareId->id);
+
+                    // ดึงข้อมูลจาก Query (ดึงหลายแถว)
+                    $accessibility_name_model = $query_4->first();
+                
+                    // ดึง SQL query พร้อม bindings
+                    $sql_4 = $query_4->toSql();
+                    $bindings_4 = $query_4->getBindings();
+                    $fullSql_4 = vsprintf(str_replace('?', "'%s'", $sql_4), $bindings_4);
+                
+                    $endTime_4 = microtime(true);
+                    $executionTime_4 = $endTime_4 - $startTime_4;
+                    $formattedExecutionTime_4 = number_format($executionTime_4, 3);
+                
+                    // ดึง username จาก method someMethod
+                    // $username = $this->someMethod($request);
+                
+                    // สร้างข้อมูลสำหรับบันทึกใน log
+                    $accessibility_log_data = [
+                        'function' => 'Where accessibility_name = [name]',
+                        'username' => $data['loginname'],
+                        'command_sql' => $fullSql_4,
+                        'query_time' => $formattedExecutionTime_4,
+                        'operation' => 'SELECT'
+                    ];
+                
+                    // บันทึกข้อมูลลงใน AccessibilityLogModel
+                    AccessibilityLogModel::create($accessibility_log_data);
+
+                    if($accessibility_name_model !== null && $accessibility_name_model->status_id === 1) {
                         // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data Start
                         return view('pages.palliativeCare', compact('data', 'zbm_rpst_name'));
                         // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data End
                     } else {
-                        $accessibility_model = AccessibilityModel::where('accessibility_name', $data['name'])->first();
-                        if($accessibility_model && $accessibility_model->status_id === 1) {
-                            // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data Start
-                            return view('pages.palliativeCare', compact('data', 'zbm_rpst_name'));
-                            // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data End
-                        } else {
-                            return redirect()->route('dashboard');
-                        }
+                        $request->session()->put('error', 'ไม่มีสิทธิ์เข้าใช้งานระบบ Palliative Care หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
+                        return redirect()->route('dashboard');
                     }
-                } else {
-                    return redirect()->route('dashboard');
                 }
             } else {
-                // return view('dashboard', compact('data'));
+                $request->session()->put('error', 'ขณะนี้ระบบ Palliative Care ไม่ได้เปิดใช้งาน กรุณาแจ้ง Admin หากต้องการใช้งาน!');
                 return redirect()->route('dashboard');
             }
         }
@@ -442,28 +603,70 @@ class PalliativeCareController extends Controller
                     'icon' => 'error'
                 ]);
             } else {
-                $summarize_count_death = DB::connection('mysql')->select(
-                    "
-                        SELECT
-                            COUNT(DISTINCT ov.hn) as kk,
-                            ov.pdx
-                        FROM vn_stat ov
-                        LEFT JOIN ovst_community_service oc ON oc.vn=ov.vn AND oc.ovst_community_service_type_id BETWEEN 1 AND 103
-                        LEFT JOIN patient pt ON pt.hn=ov.hn
-                        LEFT JOIN thaiaddress th ON th.addressid = CONCAT(pt.chwpart,pt.amppart,pt.tmbpart)
-                        LEFT JOIN zbm_rpst zr ON zr.chwpart=pt.chwpart AND zr.amppart=pt.amppart AND zr.tmbpart=pt.tmbpart AND zr.moopart=pt.moopart
-                        LEFT JOIN zbm_rpst_name zn ON zn.rpst_id=zr.rpst_id
-                        WHERE (ov.pdx ='Z515' OR ov.dx0 ='Z515' OR ov.dx1 ='Z515' OR ov.dx2 ='Z515' OR ov.dx3 ='Z515' OR ov.dx4 ='Z515' OR ov.dx5 ='Z515')
-                        AND ov.vstdate BETWEEN ? AND ?
-                        AND pt.death ='Y'
-                        GROUP BY ov.pdx
-                    ",
-                    [$request->min_date, $request->max_date]
-                );
+                // เริ่มนับเวลา
+                $startTime = microtime(true);
+        
+                // สร้าง query
+                $query = DB::table('vn_stat as ov')
+                    ->select(DB::raw('COUNT(DISTINCT ov.hn) as kk'), 'ov.pdx')
+                    ->leftJoin('ovst_community_service as oc', function($join) {
+                        $join->on('oc.vn', '=', 'ov.vn')
+                            ->whereBetween('oc.ovst_community_service_type_id', [1, 103]);
+                    })
+                    ->leftJoin('patient as pt', 'pt.hn', '=', 'ov.hn')
+                    ->leftJoin(DB::raw('thaiaddress th'), DB::raw("th.addressid"), '=', DB::raw("CONCAT(pt.chwpart, pt.amppart, pt.tmbpart)"))
+                    ->leftJoin('zbm_rpst as zr', function($join) {
+                        $join->on('zr.chwpart', '=', 'pt.chwpart')
+                            ->on('zr.amppart', '=', 'pt.amppart')
+                            ->on('zr.tmbpart', '=', 'pt.tmbpart')
+                            ->on('zr.moopart', '=', 'pt.moopart');
+                    })
+                    ->leftJoin('zbm_rpst_name as zn', 'zn.rpst_id', '=', 'zr.rpst_id')
+                    ->where(function($query) {
+                        $query->where('ov.pdx', 'Z515')
+                            ->orWhere('ov.dx0', 'Z515')
+                            ->orWhere('ov.dx1', 'Z515')
+                            ->orWhere('ov.dx2', 'Z515')
+                            ->orWhere('ov.dx3', 'Z515')
+                            ->orWhere('ov.dx4', 'Z515')
+                            ->orWhere('ov.dx5', 'Z515');
+                    })
+                    ->whereBetween('ov.vstdate', [$request->min_date, $request->max_date])
+                    ->where('pt.death', 'Y')
+                    ->groupBy('ov.pdx');
+        
+                // ดึงข้อมูลจาก query
+                $summarize_count_death = $query->get();
 
-                if($summarize_count_death > 0) {
+                // ดึง SQL query พร้อม bindings
+                $sql = $query->toSql();
+                $bindings = $query->getBindings();
+                $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+            
+                $endTime = microtime(true);
+                $executionTime = $endTime - $startTime;
+                $formattedExecutionTime = number_format($executionTime, 3);
+
+                // ดึง username จาก method someMethod
+                $username = $this->someMethod($request);
+
+                // สร้างข้อมูลสำหรับบันทึกใน log
+                $palliative_care_log_data = [
+                    'function' => 'getPalliativeCareSelectData',
+                    'username' => $username,
+                    'command_sql' => $fullSql,
+                    'query_time' => $formattedExecutionTime,
+                    'operation' => 'SELECT'
+                ];
+            
+                // บันทึกข้อมูลลงใน PalliativeCareLogModel
+                PalliativeCareLogModel::create($palliative_care_log_data);
+        
+                // ตรวจสอบว่ามีข้อมูลหรือไม่
+                if($summarize_count_death->isNotEmpty()) {
+                    // เรียกฟังก์ชันเพื่อทำ chart
                     $chart_count_death = $this->getChartCountDeath($summarize_count_death);
-
+        
                     return response()->json([
                         'status' => 200,
                         'chart_count_death' => $chart_count_death
@@ -472,7 +675,7 @@ class PalliativeCareController extends Controller
                     return response()->json([
                         'status' => 400,
                         'title' => 'Error',
-                        'message' => 'ไม่มีข้อมูลถูกส่งไป',
+                        'message' => 'ไม่มีจำนวนผู้เสียชีวิตตาม วัน เดือน ปี ที่ท่านเลือก!',
                         'icon' => 'error'
                     ]);
                 }
@@ -484,8 +687,9 @@ class PalliativeCareController extends Controller
         public function getPalliativeCareFetchListName(Request $request) {
             $min_date = $request->min_date;
             $max_date = $request->max_date;
-
-            if($min_date == 0 || $max_date == 0) {
+        
+            // ตรวจสอบวันที่
+            if ($min_date == 0 || $max_date == 0) {
                 return response()->json([
                     'status' => 400,
                     'title' => 'Error',
@@ -493,49 +697,47 @@ class PalliativeCareController extends Controller
                     'icon' => 'error'
                 ]);
             }
-
-            if($request->service_unit == 0) {
-                return response()->json([
-                    'status' => 400,
-                    'title' => 'Error',
-                    'message' => 'กรุณาเลือกหน่วยบริการ',
-                    'icon' => 'error'
-                ]);
-            } else if($request->service_unit == 99999) {
+        
+            if ($request->service_unit == 0) {
                 $service_unit = "";
-            } else if($request->service_unit == 11111) {
+            } elseif ($request->service_unit == 99999) {
+                $service_unit = "";
+            } elseif ($request->service_unit == 11111) {
                 $service_unit = "AND vs.hospsub NOT IN('11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976')";
             } else {
                 $service_unit = "AND vs.hospsub = '{$request->service_unit}'";
             }
-
-            if($request->death_type == 0) {
+            
+            if ($request->death_type == 0) {
                 return response()->json([
                     'status' => 400,
                     'title' => 'Error',
                     'message' => 'กรุณาเลือกสถานะ',
                     'icon' => 'error'
                 ]);
-            } else if($request->death_type == 99999) {
+            } elseif ($request->death_type == 99999) {
                 $death_type = "";
             } else {
                 $death_type = "AND pt_all.death = '{$request->death_type}'";
             }
 
-            $palliativeCareFetchListName = DB::connection('mysql')->select(
-                "
-                    SELECT
-                        vs.vstdate,
-                        ptt.name AS 'pttype_name',
-                        vs.hn,
-                        pt_all.cid,
-                        pt_all.fullname,
-                        pt_all.birthday,
-                        pt_all.age,
-                        pt_all.fulladdress,
-                        zrn.rpst_id,
-                        zrn.rpst_name,
-                        vs.pdx,
+            $startTime = microtime(true);
+        
+            // Query ข้อมูลจากฐานข้อมูล
+            $query = DB::table('vn_stat as vs')
+                ->select(
+                    'vs.vstdate',
+                    'ptt.name as pttype_name',
+                    'vs.hn',
+                    'pt_all.cid',
+                    'pt_all.fullname',
+                    'pt_all.birthday',
+                    'pt_all.age',
+                    'pt_all.fulladdress',
+                    'zrn.rpst_id',
+                    'zrn.rpst_name',
+                    'vs.pdx',
+                    DB::raw("
                         CASE
                             WHEN vs.pdx = 'Z515'
                                 OR vs.dx0 = 'Z515'
@@ -546,7 +748,9 @@ class PalliativeCareController extends Controller
                                 OR vs.dx5 = 'Z515'
                             THEN 'Z515'
                             ELSE NULL
-                        END AS Z515,
+                        END AS Z515
+                    "),
+                    DB::raw("
                         CASE
                             WHEN vs.pdx = 'Z718'
                                 OR vs.dx0 = 'Z718'
@@ -557,14 +761,18 @@ class PalliativeCareController extends Controller
                                 OR vs.dx5 = 'Z718'
                             THEN 'Z718'
                             ELSE NULL
-                        END AS Z718,
+                        END AS Z718
+                    "),
+                    DB::raw("
                         (
                             SELECT COUNT(*)
                             FROM ovst_community_service a1
                             INNER JOIN vn_stat vn ON vn.vn = a1.vn
                             WHERE vn.hn = vs.hn
                             AND a1.ovst_community_service_type_id BETWEEN 1 AND 103
-                        ) AS dayc,
+                        ) AS dayc
+                    "),
+                    DB::raw("
                         (
                             SELECT COUNT(*)
                             FROM ovst_community_service a1
@@ -573,8 +781,10 @@ class PalliativeCareController extends Controller
                             WHERE di.icd10 = 'Z718'
                             AND vn.hn = vs.hn
                             AND a1.ovst_community_service_type_id BETWEEN 1 AND 103
-                        ) AS dayc1,
-                        pt_all.death,
+                        ) AS dayc1
+                    "),
+                    'pt_all.death',
+                    DB::raw("
                         DATEDIFF(NOW(), (
                             SELECT MAX(a1.entry_datetime)
                             FROM ovst_community_service a1
@@ -582,47 +792,100 @@ class PalliativeCareController extends Controller
                             WHERE vn.hn = vs.hn
                             AND a1.ovst_community_service_type_id BETWEEN 1 AND 103
                         )) AS daym
-                        ,(SELECT COUNT(r.REP) FROM eclaimdb.m_registerdata r LEFT JOIN eclaimdb.m_ppcom p ON p.ECLAIM_NO=r.ECLAIM_NO WHERE NOT ISNULL(p.ECLAIM_NO) AND p.GR_ITEMNAME='3 Palliative Care' AND r.HN=vs.hn) AS ec
-                        ,(
+                    "),
+                    DB::raw("
+                        (
+                            SELECT COUNT(r.REP)
+                            FROM eclaimdb.m_registerdata r
+                            LEFT JOIN eclaimdb.m_ppcom p ON p.ECLAIM_NO = r.ECLAIM_NO
+                            WHERE NOT ISNULL(p.ECLAIM_NO) AND p.GR_ITEMNAME = '3 Palliative Care'
+                            AND r.HN = vs.hn
+                        ) AS ec
+                    "),
+                    DB::raw("
+                        (
                             SELECT SUM(s.PallativeCare)
                             FROM rcmdb.repeclaim s
                             WHERE s.HN = vs.hn
                             AND s.PallativeCare > 0
                         ) AS money
-                    FROM(
-                        SELECT
-                            *
-                        FROM vn_stat vs
-                        WHERE vs.vstdate BETWEEN '{$min_date}' AND '{$max_date}'
-                    ) AS vs
-                    INNER JOIN (
-                        SELECT
-                            pt.hn,
-                            pt.cid,
-                            CONCAT(pt.pname, pt.fname, ' ', pt.lname) AS fullname,
-                            pt.birthday,
-                            (YEAR(CURRENT_DATE()) - YEAR(pt.birthday)) AS age,
-                            CONCAT(pt.addrpart, ' หมู่ ', pt.moopart, ' ', ta.full_name) AS fulladdress,
-                            pt.hcode,
-                            pt.death
-                        FROM patient pt
-                        LEFT OUTER JOIN thaiaddress ta ON CONCAT(pt.chwpart, pt.amppart, pt.tmbpart) = ta.addressid
-                    ) AS pt_all ON vs.hn = pt_all.hn
-                    INNER JOIN pttype ptt ON vs.pttype = ptt.pttype
-                    LEFT OUTER JOIN ovst_community_service AS oc ON oc.vn = vs.vn AND oc.ovst_community_service_type_id BETWEEN 1 AND 103
-                    LEFT OUTER JOIN zbm_rpst_name zrn ON vs.hospsub = zrn.rpst_id
-                    WHERE
-                        (vs.pdx = 'Z515' OR vs.dx0 = 'Z515' OR vs.dx1 = 'Z515' OR vs.dx2 = 'Z515' OR vs.dx3 = 'Z515' OR vs.dx4 = 'Z515' OR vs.dx5 = 'Z515')
-                        {$service_unit}
-                        {$death_type}
-                    GROUP BY vs.hn
-                    ORDER BY vs.hn DESC;
-                "
-            );
+                    ")
+                )
+                ->join(DB::raw("(
+                    SELECT
+                        pt.hn,
+                        pt.cid,
+                        CONCAT(pt.pname, pt.fname, ' ', pt.lname) AS fullname,
+                        pt.birthday,
+                        (YEAR(CURRENT_DATE()) - YEAR(pt.birthday)) AS age,
+                        CONCAT(pt.addrpart, ' หมู่ ', pt.moopart, ' ', ta.full_name) AS fulladdress,
+                        pt.hcode,
+                        pt.death
+                    FROM patient pt
+                    LEFT OUTER JOIN thaiaddress ta ON CONCAT(pt.chwpart, pt.amppart, pt.tmbpart) = ta.addressid
+                ) AS pt_all"), 'vs.hn', '=', 'pt_all.hn')
+                ->join('pttype as ptt', 'vs.pttype', '=', 'ptt.pttype')
+                ->leftJoin('ovst_community_service as oc', function($join) {
+                    $join->on('oc.vn', '=', 'vs.vn')
+                        ->whereBetween('oc.ovst_community_service_type_id', [1, 103]);
+                })
+                ->leftJoin('zbm_rpst_name as zrn', 'vs.hospsub', '=', 'zrn.rpst_id')
+                ->where(function($query) {
+                    $query->where('vs.pdx', 'Z515')
+                        ->orWhere('vs.dx0', 'Z515')
+                        ->orWhere('vs.dx1', 'Z515')
+                        ->orWhere('vs.dx2', 'Z515')
+                        ->orWhere('vs.dx3', 'Z515')
+                        ->orWhere('vs.dx4', 'Z515')
+                        ->orWhere('vs.dx5', 'Z515');
+                })
+                ->whereBetween('vs.vstdate', [$min_date, $max_date]);
 
+            // ตรวจสอบว่า $service_unit และ $death_type ไม่เป็นค่าว่างก่อนใช้ whereRaw
+            if (!empty($service_unit)) {
+                $query->whereRaw($service_unit);
+            }
+
+            if (!empty($death_type)) {
+                $query->whereRaw($death_type);
+            }
+
+            $query->groupBy('vs.hn')
+                ->orderBy('vs.hn', 'DESC');
+
+            $palliativeCareFetchListName = $query->get();
+
+            // ดึง SQL query พร้อม bindings
+            $sql = $query->toSql();
+            $bindings = $query->getBindings();
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+        
+            $endTime = microtime(true);
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
+
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $palliative_care_log_data = [
+                'function' => 'getPalliativeCareFetchListName',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน PalliativeCareLogModel
+            PalliativeCareLogModel::create($palliative_care_log_data);
+            
+                // Debug ข้อมูล
+            // dd($palliativeCareFetchListName);
+        
             $output = '';
-
-            if (count($palliativeCareFetchListName) > 0) {
+        
+            if ($palliativeCareFetchListName->isNotEmpty()) {
+                // สร้างตาราง
                 $output .= '<table id="table-fetch-list-name" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
                 <thead>
                     <tr>
@@ -643,7 +906,9 @@ class PalliativeCareController extends Controller
                     </tr>
                 </thead>
                 <tbody>';
+                // ลูปข้อมูลเพื่อนำไปแสดงในตาราง
                 foreach ($palliativeCareFetchListName as $pcfln) {
+                    // เช็คสถานะการเสียชีวิต
                     if ($pcfln->death == 'Y') {
                         $class = 'table-danger';
                         $bgColor = "text-dark";
@@ -655,19 +920,19 @@ class PalliativeCareController extends Controller
                         if($pcfln->daym < 30) {
                             $class = 'table-light';
                             $deathMessage = '<span class="">เยี่ยม ' . $pcfln->daym . ' วันที่แล้ว</span>';
-                        } else if($pcfln->daym < 60) {
+                        } elseif($pcfln->daym < 60) {
                             $class = 'table-primary';
                             $deathMessage = '<span class="">เยี่ยม 1 เดือนที่แล้ว</span>';
-                        } else if($pcfln->daym < 90) {
+                        } elseif($pcfln->daym < 90) {
                             $class = 'table-primary';
                             $deathMessage = '<span class="">เยี่ยม 2 เดือนที่แล้ว</span>';
-                        } else if($pcfln->daym < 120) {
+                        } elseif($pcfln->daym < 120) {
                             $class = 'table-success';
                             $deathMessage = '<span class="">เยี่ยม 3 เดือนที่แล้ว</span>';
-                        } else if($pcfln->daym < 210) {
+                        } elseif($pcfln->daym < 210) {
                             $class = 'table-success';
                             $deathMessage = '<span class="">เยี่ยม 6 เดือนที่แล้ว</span>';
-                        } else if($pcfln->daym < 420) {
+                        } elseif($pcfln->daym < 420) {
                             $class = 'table-warning';
                             $deathMessage = '<span class="">เยี่ยม 1 ปีที่แล้ว</span>';
                         } else {
@@ -675,10 +940,11 @@ class PalliativeCareController extends Controller
                             $deathMessage = '<span class="">เยี่ยมมากกว่า 1 ปี</span>';
                         }
                     }
-
+        
+                    // สร้างแถวของตาราง
                     $vstdate = $this->DateThai($pcfln->vstdate);
                     $birthday = $this->DateThai($pcfln->birthday);
-
+        
                     $output .= '<tr class="' . $class . '">
                     <td>' . $vstdate . '</td>
                     <td>' . $pcfln->pttype_name . '</td>
@@ -716,33 +982,106 @@ class PalliativeCareController extends Controller
         public function getHomeVisitingInformation(Request $request) {
             $hn = $request->id;
 
-            $ovst_community_service = DB::connection('mysql')->select(
-                "
-                    SELECT DATE(entry_datetime) AS vstdate,dt.name AS dtname,os.cc,os.hpi,GROUP_CONCAT(DISTINCT ot.ovst_community_service_type_name) AS csname,os.temperature,os.pulse,os.rr,CONCAT( LEFT(os.bps,3), '/',LEFT(os.bpd,2))as bp
-                    FROM ovst_community_service oc
-                    INNER JOIN opdscreen os ON os.vn=oc.vn
-                    INNER JOIN ovst_community_service_type ot ON ot.ovst_community_service_type_id=oc.ovst_community_service_type_id
-                    INNER JOIN (SELECT cs.vn FROM ovst_community_service cs INNER JOIN vn_stat vn ON vn.vn=cs.vn AND cs.ovst_community_service_type_id BETWEEN 1 AND 103 AND vn.hn='{$hn}') tb ON tb.vn=oc.vn
-                    LEFT JOIN doctor dt ON dt.code= oc.doctor
-                    WHERE os.hn='{$hn}' GROUP BY oc.vn ORDER BY oc.vn DESC
-                "
-            );
+            $startTime_1 = microtime(true);
 
-            $patient = DB::connection('mysql')->select(
-                "
-                    SELECT pt.hn,pt.cid,CONCAT(pt.pname,pt.fname,' ',pt.lname) AS fullname,CONCAT(pt.addrpart,' หมู่ ',pt.moopart,' ',th.full_name) AS fulladdress,zn.rpst_name
-                    FROM patient pt
-                    LEFT JOIN thaiaddress th ON th.addressid = CONCAT(pt.chwpart,pt.amppart,pt.tmbpart)
-                    LEFT JOIN zbm_rpst zr ON zr.chwpart=pt.chwpart AND zr.amppart=pt.amppart AND zr.tmbpart=pt.tmbpart AND zr.moopart=pt.moopart
-                    LEFT JOIN zbm_rpst_name zn ON zn.rpst_id=zr.rpst_id
-                    WHERE pt.hn='{$hn}'
-                    GROUP BY pt.hn
-                "
-            );
+            $query_1 = DB::table('ovst_community_service as oc')
+                ->select(
+                    DB::raw('DATE(oc.entry_datetime) AS vstdate'),
+                    'dt.name as dtname',
+                    'os.cc',
+                    'os.hpi',
+                    DB::raw('GROUP_CONCAT(DISTINCT ot.ovst_community_service_type_name) AS csname'),
+                    'os.temperature',
+                    'os.pulse',
+                    'os.rr',
+                    DB::raw("CONCAT(LEFT(os.bps, 3), '/', LEFT(os.bpd, 2)) as bp")
+                )
+                ->join('opdscreen as os', 'os.vn', '=', 'oc.vn')
+                ->join('ovst_community_service_type as ot', 'ot.ovst_community_service_type_id', '=', 'oc.ovst_community_service_type_id')
+                ->join(DB::raw("(SELECT cs.vn FROM ovst_community_service cs INNER JOIN vn_stat vn ON vn.vn = cs.vn AND cs.ovst_community_service_type_id BETWEEN 1 AND 103 AND vn.hn = '{$hn}') as tb"), 'tb.vn', '=', 'oc.vn')
+                ->leftJoin('doctor as dt', 'dt.code', '=', 'oc.doctor')
+                ->where('os.hn', $hn)
+                ->groupBy('oc.vn')
+                ->orderBy('oc.vn', 'DESC')
+            ;
+
+            $ovst_community_service = $query_1->get();
+
+            // ดึง SQL query_1 พร้อม bindings
+            $sql_1 = $query_1->toSql();
+            $bindings_1 = $query_1->getBindings();
+            $fullSql_1 = vsprintf(str_replace('?', "'%s'", $sql_1), $bindings_1);
+        
+            $endTime_1 = microtime(true);
+            $executionTime_1 = $endTime_1 - $startTime_1;
+            $formattedExecutionTime_1 = number_format($executionTime_1, 3);
+
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $ovst_community_service_log_data = [
+                'function' => 'getHomeVisitingInformation => Query : ovst_community_service',
+                'username' => $username,
+                'command_sql' => $fullSql_1,
+                'query_time' => $formattedExecutionTime_1,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน PalliativeCareLogModel
+            PalliativeCareLogModel::create($ovst_community_service_log_data);
+
+            $startTime_2 = microtime(true);
+
+            $query_2 = DB::table('patient as pt')
+                ->select(
+                    'pt.hn',
+                    'pt.cid',
+                    DB::raw("CONCAT(pt.pname, pt.fname, ' ', pt.lname) AS fullname"),
+                    DB::raw("CONCAT(pt.addrpart, ' หมู่ ', pt.moopart, ' ', th.full_name) AS fulladdress"),
+                    'zn.rpst_name'
+                )
+                ->leftJoin('thaiaddress as th', DB::raw("CONCAT(pt.chwpart, pt.amppart, pt.tmbpart)"), '=', 'th.addressid')
+                ->leftJoin('zbm_rpst as zr', function($join) {
+                    $join->on('zr.chwpart', '=', 'pt.chwpart')
+                         ->on('zr.amppart', '=', 'pt.amppart')
+                         ->on('zr.tmbpart', '=', 'pt.tmbpart')
+                         ->on('zr.moopart', '=', 'pt.moopart');
+                })
+                ->leftJoin('zbm_rpst_name as zn', 'zn.rpst_id', '=', 'zr.rpst_id')
+                ->where('pt.hn', $hn)
+                ->groupBy('pt.hn')
+            ;
+
+            $patient = $query_2->get();
+
+            // ดึง SQL query_2 พร้อม bindings
+            $sql_2 = $query_2->toSql();
+            $bindings_2 = $query_2->getBindings();
+            $fullSql_2 = vsprintf(str_replace('?', "'%s'", $sql_2), $bindings_2);
+        
+            $endTime_2 = microtime(true);
+            $executionTime_2 = $endTime_2 - $startTime_2;
+            $formattedExecutionTime_2 = number_format($executionTime_2, 3);
+
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $patient_log_data = [
+                'function' => 'getHomeVisitingInformation => Query : patient',
+                'username' => $username,
+                'command_sql' => $fullSql_2,
+                'query_time' => $formattedExecutionTime_2,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน PalliativeCareLogModel
+            PalliativeCareLogModel::create($patient_log_data);
 
             $output = '';
 
-            if(count($ovst_community_service) > 0 && count($patient) > 0) {
+            if($ovst_community_service->isNotEmpty() && $patient->isNotEmpty()) {
                 $output .= '
                     <div class="row border">
                         <div class="col-2 border-end">
@@ -843,39 +1182,131 @@ class PalliativeCareController extends Controller
         public function getHomeVisitingInformationZ718(Request $request) {
             $hn = $request->id;
 
-            $ovst_community_service = DB::connection('mysql')->select(
-                "
-                    SELECT DATE(entry_datetime) AS vstdate,dt.name AS dtname,os.cc,os.hpi,GROUP_CONCAT(DISTINCT ot.ovst_community_service_type_name) AS csname,di.icd10
-                    ,if(ov.pdx ='Z515' OR ov.dx0 ='Z515' OR ov.dx1 ='Z515' OR ov.dx1 ='Z515' OR ov.dx2 ='Z515' OR ov.dx3 ='Z515' OR ov.dx4 ='Z515' OR ov.dx5 ='Z515','Z515',NULL) AS Z
-                    ,if(ov.pdx ='Z718' OR ov.dx0 ='Z718' OR ov.dx1 ='Z718' OR ov.dx1 ='Z718' OR ov.dx2 ='Z718' OR ov.dx3 ='Z718' OR ov.dx4 ='Z718' OR ov.dx5 ='Z718','Z718',NULL) AS Z718
-                    FROM ovst_community_service oc
-                    INNER JOIN opdscreen os ON os.vn=oc.vn
-                    INNER JOIN ovst_community_service_type ot ON ot.ovst_community_service_type_id=oc.ovst_community_service_type_id
-                    INNER JOIN (SELECT cs.vn FROM ovst_community_service cs INNER JOIN vn_stat vn ON vn.vn=cs.vn AND cs.ovst_community_service_type_id BETWEEN 1 AND 103 AND vn.hn='{$hn}') tb ON tb.vn=oc.vn
-                    LEFT JOIN doctor dt ON dt.code= oc.doctor
-                    LEFT JOIN ovstdiag di ON oc.vn = di.vn
-                    LEFT JOIN vn_stat ov ON ov.vn = oc.vn
-                    WHERE (ov.pdx ='Z515' OR ov.dx0 ='Z515' OR ov.dx1 ='Z515' OR ov.dx2 ='Z515' OR ov.dx3 ='Z515' OR ov.dx4 ='Z515' OR ov.dx5 ='Z515')
-                    AND (ov.pdx ='Z718' OR ov.dx0 ='Z718' OR ov.dx1 ='Z718' OR ov.dx2 ='Z718' OR ov.dx3 ='Z718' OR ov.dx4 ='Z718' OR ov.dx5 ='Z718')
-                    AND os.hn='{$hn}' GROUP BY oc.vn ORDER BY oc.vn DESC
-                "
-            );
+            $startTime_1 = microtime(true);
 
-            $patient = DB::connection('mysql')->select(
-                "
-                    SELECT pt.hn,pt.cid,CONCAT(pt.pname,pt.fname,' ',pt.lname) AS fullname,CONCAT(pt.addrpart,' หมู่ ',pt.moopart,' ',th.full_name) AS fulladdress,zn.rpst_name
-                    FROM patient pt
-                    LEFT JOIN thaiaddress th ON th.addressid = CONCAT(pt.chwpart,pt.amppart,pt.tmbpart)
-                    LEFT JOIN zbm_rpst zr ON zr.chwpart=pt.chwpart AND zr.amppart=pt.amppart AND zr.tmbpart=pt.tmbpart AND zr.moopart=pt.moopart
-                    LEFT JOIN zbm_rpst_name zn ON zn.rpst_id=zr.rpst_id
-                    WHERE pt.hn='{$hn}'
-                    GROUP BY pt.hn
-                "
-            );
+            $query_1 = DB::table('ovst_community_service as oc')
+                ->select(
+                    DB::raw('DATE(oc.entry_datetime) AS vstdate'),
+                    'dt.name as dtname',
+                    'os.cc',
+                    'os.hpi',
+                    DB::raw('GROUP_CONCAT(DISTINCT ot.ovst_community_service_type_name) AS csname'),
+                    'di.icd10',
+                    DB::raw("
+                        IF(ov.pdx = 'Z515' OR ov.dx0 = 'Z515' OR ov.dx1 = 'Z515' OR ov.dx2 = 'Z515'
+                        OR ov.dx3 = 'Z515' OR ov.dx4 = 'Z515' OR ov.dx5 = 'Z515', 'Z515', NULL) AS Z515
+                    "),
+                    DB::raw("
+                        IF(ov.pdx = 'Z718' OR ov.dx0 = 'Z718' OR ov.dx1 = 'Z718' OR ov.dx2 = 'Z718'
+                        OR ov.dx3 = 'Z718' OR ov.dx4 = 'Z718' OR ov.dx5 = 'Z718', 'Z718', NULL) AS Z718
+                    ")
+                )
+                ->join('opdscreen as os', 'os.vn', '=', 'oc.vn')
+                ->join('ovst_community_service_type as ot', 'ot.ovst_community_service_type_id', '=', 'oc.ovst_community_service_type_id')
+                ->join(DB::raw("(SELECT cs.vn FROM ovst_community_service cs INNER JOIN vn_stat vn ON vn.vn = cs.vn AND cs.ovst_community_service_type_id BETWEEN 1 AND 103 AND vn.hn = '{$hn}') as tb"), 'tb.vn', '=', 'oc.vn')
+                ->leftJoin('doctor as dt', 'dt.code', '=', 'oc.doctor')
+                ->leftJoin('ovstdiag as di', 'oc.vn', '=', 'di.vn')
+                ->leftJoin('vn_stat as ov', 'ov.vn', '=', 'oc.vn')
+                ->where(function ($query) {
+                    $query->where('ov.pdx', 'Z515')
+                        ->orWhere('ov.dx0', 'Z515')
+                        ->orWhere('ov.dx1', 'Z515')
+                        ->orWhere('ov.dx2', 'Z515')
+                        ->orWhere('ov.dx3', 'Z515')
+                        ->orWhere('ov.dx4', 'Z515')
+                        ->orWhere('ov.dx5', 'Z515');
+                })
+                ->where(function ($query) {
+                    $query->where('ov.pdx', 'Z718')
+                        ->orWhere('ov.dx0', 'Z718')
+                        ->orWhere('ov.dx1', 'Z718')
+                        ->orWhere('ov.dx2', 'Z718')
+                        ->orWhere('ov.dx3', 'Z718')
+                        ->orWhere('ov.dx4', 'Z718')
+                        ->orWhere('ov.dx5', 'Z718');
+                })
+                ->where('os.hn', $hn)
+                ->groupBy('oc.vn')
+                ->orderBy('oc.vn', 'DESC')
+            ;
+
+            $ovst_community_service = $query_1->get();
+
+            // ดึง SQL query_1 พร้อม bindings
+            $sql_1 = $query_1->toSql();
+            $bindings_1 = $query_1->getBindings();
+            $fullSql_1 = vsprintf(str_replace('?', "'%s'", $sql_1), $bindings_1);
+        
+            $endTime_1 = microtime(true);
+            $executionTime_1 = $endTime_1 - $startTime_1;
+            $formattedExecutionTime_1 = number_format($executionTime_1, 3);
+
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $ovst_community_service_log_data = [
+                'function' => 'getHomeVisitingInformationZ718 => Query : ovst_community_service',
+                'username' => $username,
+                'command_sql' => $fullSql_1,
+                'query_time' => $formattedExecutionTime_1,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน PalliativeCareLogModel
+            PalliativeCareLogModel::create($ovst_community_service_log_data);
+
+            $startTime_2 = microtime(true);
+            
+            $query_2 = DB::table('patient as pt')
+                ->select(
+                    'pt.hn',
+                    'pt.cid',
+                    DB::raw("CONCAT(pt.pname, pt.fname, ' ', pt.lname) AS fullname"),
+                    DB::raw("CONCAT(pt.addrpart, ' หมู่ ', pt.moopart, ' ', th.full_name) AS fulladdress"),
+                    'zn.rpst_name'
+                )
+                ->leftJoin('thaiaddress as th', DB::raw("CONCAT(pt.chwpart, pt.amppart, pt.tmbpart)"), '=', 'th.addressid')
+                ->leftJoin('zbm_rpst as zr', function($join) {
+                    $join->on('zr.chwpart', '=', 'pt.chwpart')
+                         ->on('zr.amppart', '=', 'pt.amppart')
+                         ->on('zr.tmbpart', '=', 'pt.tmbpart')
+                         ->on('zr.moopart', '=', 'pt.moopart');
+                })
+                ->leftJoin('zbm_rpst_name as zn', 'zn.rpst_id', '=', 'zr.rpst_id')
+                ->where('pt.hn', $hn)
+                ->groupBy('pt.hn')
+            ;
+
+            $patient = $query_2->get();
+
+            // ดึง SQL query_2 พร้อม bindings
+            $sql_2 = $query_2->toSql();
+            $bindings_2 = $query_2->getBindings();
+            $fullSql_2 = vsprintf(str_replace('?', "'%s'", $sql_2), $bindings_2);
+        
+            $endTime_2 = microtime(true);
+            $executionTime_2 = $endTime_2 - $startTime_2;
+            $formattedExecutionTime_2 = number_format($executionTime_2, 3);
+
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $patient_log_data = [
+                'function' => 'getHomeVisitingInformationZ718 => Query : patient',
+                'username' => $username,
+                'command_sql' => $fullSql_2,
+                'query_time' => $formattedExecutionTime_2,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน PalliativeCareLogModel
+            PalliativeCareLogModel::create($patient_log_data);
 
             $output = '';
 
-            if(count($ovst_community_service) > 0 && count($patient) > 0) {
+            if($ovst_community_service->isNotEmpty() && $patient->isNotEmpty()) {
                 $output .= '
                     <div class="row border">
                         <div class="col-2 border-end">
@@ -970,8 +1401,8 @@ class PalliativeCareController extends Controller
     // Funtion สำหรับจัดการเกี่ยวกับข้อมูลการเยี่ยมบ้าน Z718 จาก Request ที่ถูกส่งเข้ามา End
 
     // Function สำหรับจัดการ ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว Start
-        public function getEclaimReceivedMoney() {
-            $rcmdb_repeclaim = $this->queryEclaimReceivedMoney();
+        public function getEclaimReceivedMoney(Request $request) {
+            $rcmdb_repeclaim = $this->queryEclaimReceivedMoney($request);
 
             $output = '';
 
@@ -1007,482 +1438,482 @@ class PalliativeCareController extends Controller
     // Function สำหรับจัดการ ทะเบียนผู้ป่วยส่งเบิก E-Claim ที่ได้รับเงินแล้ว End
 
     // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตามเดือนและปีปัจจุบัน Start
-    public function getNumberOfNewPatients(Request $request) {
-        $request_1 = "MONTH(v.vstdate) = MONTH(CURRENT_DATE())";
-        $request_2 = "LAST_DAY(CURRENT_DATE() - INTERVAL 1 MONTH)";
+        public function getNumberOfNewPatients(Request $request) {
+            $request_1 = "MONTH(v.vstdate) = MONTH(CURRENT_DATE())";
+            $request_2 = "LAST_DAY(CURRENT_DATE() - INTERVAL 1 MONTH)";
 
-        $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2, $request);
+            $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2, $request);
 
-        $output = '';
+            $output = '';
 
-        if (count($number_of_new_patients) != false) {
-            $output .= '
-            <table id="table-number-of-new-patients" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>ลำดับ</th>
-                    <th>hn</th>
-                    <th>ชื่อ - สกุล</th>
-                    <th>pdx</th>
-                    <th>สิทธิ์</th>
-                    <th>อายุ</th>
-                    <th>วันที่</th>
-                    <th>ที่อยู่</th>
-                </tr>
-            </thead>
-            <tbody>';
-            $i = 0;
-            foreach ($number_of_new_patients as $nonp) {
-                $changeDate = $this->DateThai($nonp->day1);
-                $output .= '<tr>
-                <td>' . ++$i . '</td>
-                <td>' . $nonp->hn . '</td>
-                <td>' . $nonp->fullname . '</td>
-                <td>' . $nonp->pdx . '</td>
-                <td>' . $nonp->pttype_name . '</td>
-                <td>' . $nonp->age . '</td>
-                <td>' . $changeDate . '</td>
-                <td>' . $nonp->fulladdress . '</td>
-              </tr>';
+            if (count($number_of_new_patients) != false) {
+                $output .= '
+                <table id="table-number-of-new-patients" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>hn</th>
+                        <th>ชื่อ - สกุล</th>
+                        <th>pdx</th>
+                        <th>สิทธิ์</th>
+                        <th>อายุ</th>
+                        <th>วันที่</th>
+                        <th>ที่อยู่</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $i = 0;
+                foreach ($number_of_new_patients as $nonp) {
+                    $changeDate = $this->DateThai($nonp->day1);
+                    $output .= '<tr>
+                    <td>' . ++$i . '</td>
+                    <td>' . $nonp->hn . '</td>
+                    <td>' . $nonp->fullname . '</td>
+                    <td>' . $nonp->pdx . '</td>
+                    <td>' . $nonp->pttype_name . '</td>
+                    <td>' . $nonp->age . '</td>
+                    <td>' . $changeDate . '</td>
+                    <td>' . $nonp->fulladdress . '</td>
+                </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
             }
-            $output .= '</tbody></table>';
-            echo $output;
-        } else {
-            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
         }
-    }
     // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตามเดือนและปีปัจจุบัน End
 
     // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตาม ปีงบประมาณ ของ Request ที่ส่งเข้ามา Start
-    public function getNumberOfNewPatientsSelectFiscalYears(Request $request) {
-        $years = $request->nonpsfy_years;
+        public function getNumberOfNewPatientsSelectFiscalYears(Request $request) {
+            $years = $request->nonpsfy_years;
 
-        if($years == 0) {
-            return response()->json([
-                'status' => 400,
-                'title' => 'Error',
-                'message' => 'กรุณาเลือกปีงบประมาณก่อนครับ',
-                'icon' => 'error'
-            ]);
-        }
-
-        $years = $years - 543;
-
-        $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, 10, 1, $years - 1));
-        $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, 9, 1, $years));
-
-        $request_1 = "v.vstdate BETWEEN '{$firstDayOfMonth}' AND '{$lastDayOfMonth}'";
-        $request_2 = "'{$firstDayOfMonth}'";
-
-        $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2, $request);
-
-        $output = '';
-
-        if (count($number_of_new_patients) != false) {
-            $output .= '
-            <table id="table-number-of-new-patients-select-fiscal-years" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>ลำดับ</th>
-                    <th>hn</th>
-                    <th>ชื่อ - สกุล</th>
-                    <th>pdx</th>
-                    <th>สิทธิ์</th>
-                    <th>อายุ</th>
-                    <th>วันที่</th>
-                    <th>ที่อยู่</th>
-                </tr>
-            </thead>
-            <tbody>';
-            $i = 0;
-            foreach ($number_of_new_patients as $nonp) {
-                $changeDate = $this->DateThai($nonp->day1);
-                $output .= '<tr>
-                <td>' . ++$i . '</td>
-                <td>' . $nonp->hn . '</td>
-                <td>' . $nonp->fullname . '</td>
-                <td>' . $nonp->pdx . '</td>
-                <td>' . $nonp->pttype_name . '</td>
-                <td>' . $nonp->age . '</td>
-                <td>' . $changeDate . '</td>
-                <td>' . $nonp->fulladdress . '</td>
-            </tr>';
+            if($years == 0) {
+                return response()->json([
+                    'status' => 400,
+                    'title' => 'Error',
+                    'message' => 'กรุณาเลือกปีงบประมาณก่อนครับ',
+                    'icon' => 'error'
+                ]);
             }
-            $output .= '</tbody></table>';
-            echo $output;
-        } else {
-            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
+
+            $years = $years - 543;
+
+            $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, 10, 1, $years - 1));
+            $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, 9, 1, $years));
+
+            $request_1 = "v.vstdate BETWEEN '{$firstDayOfMonth}' AND '{$lastDayOfMonth}'";
+            $request_2 = "'{$firstDayOfMonth}'";
+
+            $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2, $request);
+
+            $output = '';
+
+            if (count($number_of_new_patients) != false) {
+                $output .= '
+                <table id="table-number-of-new-patients-select-fiscal-years" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>hn</th>
+                        <th>ชื่อ - สกุล</th>
+                        <th>pdx</th>
+                        <th>สิทธิ์</th>
+                        <th>อายุ</th>
+                        <th>วันที่</th>
+                        <th>ที่อยู่</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $i = 0;
+                foreach ($number_of_new_patients as $nonp) {
+                    $changeDate = $this->DateThai($nonp->day1);
+                    $output .= '<tr>
+                    <td>' . ++$i . '</td>
+                    <td>' . $nonp->hn . '</td>
+                    <td>' . $nonp->fullname . '</td>
+                    <td>' . $nonp->pdx . '</td>
+                    <td>' . $nonp->pttype_name . '</td>
+                    <td>' . $nonp->age . '</td>
+                    <td>' . $changeDate . '</td>
+                    <td>' . $nonp->fulladdress . '</td>
+                </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
+            }
         }
-    }
     // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตาม ปีงบประมาณ ของ Request ที่ส่งเข้ามา End
 
     // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตาม กำหนดเอง ของ Request ที่ส่งเข้ามา Start
-    public function getPatientDateRangeSelect(Request $request) {
-        $date_1 = $request->pdrs_1;
-        $date_2 = $request->pdrs_2;
+        public function getPatientDateRangeSelect(Request $request) {
+            $date_1 = $request->pdrs_1;
+            $date_2 = $request->pdrs_2;
 
-        if($date_1 == 0 || $date_2 == 0) {
-            return response()->json([
-                'status' => 400,
-                'title' => 'Error',
-                'message' => 'กรุณาเลือกเดือนที่ต้องการก่อนครับ',
-                'icon' => 'error'
-            ]);
-        }
-
-        $date_all = $this->isThaiYear($date_1, $date_2);
-
-        if($date_all == false) {
-            return response()->json([
-                'message' => 'ไม่มีข้อมูลถูกส่งไป'
-            ]);
-        } else {
-            $date_1 = $date_all['date_1'];
-            $date_2 = $date_all['date_2'];
-        }
-
-        $request_1 = "v.vstdate BETWEEN '{$date_1}' AND '{$date_2}'";
-        $request_2 = "'{$date_1}'";
-
-        $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2, $request);
-
-        $output = '';
-
-        if (count($number_of_new_patients) != false) {
-            $output .= '
-            <table id="table-patient-date-range-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>ลำดับ</th>
-                    <th>hn</th>
-                    <th>ชื่อ - สกุล</th>
-                    <th>pdx</th>
-                    <th>สิทธิ์</th>
-                    <th>อายุ</th>
-                    <th>วันที่</th>
-                    <th>ที่อยู่</th>
-                </tr>
-            </thead>
-            <tbody>';
-            $i = 0;
-            foreach ($number_of_new_patients as $nonp) {
-                $changeDate = $this->DateThai($nonp->day1);
-                $output .= '<tr>
-                <td>' . ++$i . '</td>
-                <td>' . $nonp->hn . '</td>
-                <td>' . $nonp->fullname . '</td>
-                <td>' . $nonp->pdx . '</td>
-                <td>' . $nonp->pttype_name . '</td>
-                <td>' . $nonp->age . '</td>
-                <td>' . $changeDate . '</td>
-                <td>' . $nonp->fulladdress . '</td>
-            </tr>';
+            if($date_1 == 0 || $date_2 == 0) {
+                return response()->json([
+                    'status' => 400,
+                    'title' => 'Error',
+                    'message' => 'กรุณาเลือกเดือนที่ต้องการก่อนครับ',
+                    'icon' => 'error'
+                ]);
             }
-            $output .= '</tbody></table>';
-            echo $output;
-        } else {
-            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
+
+            $date_all = $this->isThaiYear($date_1, $date_2);
+
+            if($date_all == false) {
+                return response()->json([
+                    'message' => 'ไม่มีข้อมูลถูกส่งไป'
+                ]);
+            } else {
+                $date_1 = $date_all['date_1'];
+                $date_2 = $date_all['date_2'];
+            }
+
+            $request_1 = "v.vstdate BETWEEN '{$date_1}' AND '{$date_2}'";
+            $request_2 = "'{$date_1}'";
+
+            $number_of_new_patients = $this->queryNumberOfNewPatients($request_1, $request_2, $request);
+
+            $output = '';
+
+            if (count($number_of_new_patients) != false) {
+                $output .= '
+                <table id="table-patient-date-range-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>hn</th>
+                        <th>ชื่อ - สกุล</th>
+                        <th>pdx</th>
+                        <th>สิทธิ์</th>
+                        <th>อายุ</th>
+                        <th>วันที่</th>
+                        <th>ที่อยู่</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $i = 0;
+                foreach ($number_of_new_patients as $nonp) {
+                    $changeDate = $this->DateThai($nonp->day1);
+                    $output .= '<tr>
+                    <td>' . ++$i . '</td>
+                    <td>' . $nonp->hn . '</td>
+                    <td>' . $nonp->fullname . '</td>
+                    <td>' . $nonp->pdx . '</td>
+                    <td>' . $nonp->pttype_name . '</td>
+                    <td>' . $nonp->age . '</td>
+                    <td>' . $changeDate . '</td>
+                    <td>' . $nonp->fulladdress . '</td>
+                </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายใหม่</h1>';
+            }
         }
-    }
     // Function สำหรับจัดการ Palliative Care คนไข้รายใหม่ตาม กำหนดเอง ของ Request ที่ส่งเข้ามา End
 
     // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตามเดือนและปีปัจจุบัน Start
-    public function getNumberOfOldPatients(Request $request) {
-        $currentYear = date('Y');
-        $currentMonth = date('m');
+        public function getNumberOfOldPatients(Request $request) {
+            $currentYear = date('Y');
+            $currentMonth = date('m');
 
-        $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, $currentMonth, 1, $currentYear));
-        $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, $currentMonth, 1, $currentYear));
+            $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, $currentMonth, 1, $currentYear));
+            $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, $currentMonth, 1, $currentYear));
 
-        $number_of_old_patients = $this->queryNumberOfOldPatients($firstDayOfMonth, $lastDayOfMonth, $request);
+            $number_of_old_patients = $this->queryNumberOfOldPatients($firstDayOfMonth, $lastDayOfMonth, $request);
 
-        $output = '';
+            $output = '';
 
-        if (count($number_of_old_patients) != false) {
-            $output .= '
-            <table id="table-number-of-old-patients" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>ลำดับ</th>
-                    <th>hn</th>
-                    <th>ชื่อ - สกุล</th>
-                    <th>ที่อยู่</th>
-                </tr>
-            </thead>
-            <tbody>';
-            $i = 0;
-            foreach ($number_of_old_patients as $noop) {
-                $output .= '<tr>
-                <td>' . ++$i . '</td>
-                <td>' . $noop->hn . '</td>
-                <td>' . $noop->fullname . '</td>
-                <td>' . $noop->fulladdress . '</td>
-              </tr>';
+            if (count($number_of_old_patients) != false) {
+                $output .= '
+                <table id="table-number-of-old-patients" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>hn</th>
+                        <th>ชื่อ - สกุล</th>
+                        <th>ที่อยู่</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $i = 0;
+                foreach ($number_of_old_patients as $noop) {
+                    $output .= '<tr>
+                    <td>' . ++$i . '</td>
+                    <td>' . $noop->hn . '</td>
+                    <td>' . $noop->fullname . '</td>
+                    <td>' . $noop->fulladdress . '</td>
+                </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
             }
-            $output .= '</tbody></table>';
-            echo $output;
-        } else {
-            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
         }
-    }
     // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตามเดือนและปีปัจจุบัน End
 
     // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตาม เดือน-ปี ของ Request ที่ส่งเข้ามา Start
-    public function getNumberOfOldPatientsSelectFiscalYears(Request $request) {
-        $years = $request->noopsfy_years;
+        public function getNumberOfOldPatientsSelectFiscalYears(Request $request) {
+            $years = $request->noopsfy_years;
 
-        if($years == 0) {
-            return response()->json([
-                'status' => 400,
-                'title' => 'Error',
-                'message' => 'กรุณาเลือกปีงบประมาณก่อนครับ',
-                'icon' => 'error'
-            ]);
-        }
-
-        $years = $years - 543;
-
-        $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, 10, 1, $years - 1));
-        $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, 9, 1, $years));
-
-        $number_of_old_patients = $this->queryNumberOfOldPatients($firstDayOfMonth, $lastDayOfMonth, $request);
-
-        $output = '';
-
-        if (count($number_of_old_patients) != false) {
-            $output .= '
-            <table id="table-number-of-old-patients-select-fiscal-years" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>ลำดับ</th>
-                    <th>hn</th>
-                    <th>ชื่อ - สกุล</th>
-                    <th>ที่อยู่</th>
-                </tr>
-            </thead>
-            <tbody>';
-            $i = 0;
-            foreach ($number_of_old_patients as $noop) {
-                $output .= '<tr>
-                <td>' . ++$i . '</td>
-                <td>' . $noop->hn . '</td>
-                <td>' . $noop->fullname . '</td>
-                <td>' . $noop->fulladdress . '</td>
-              </tr>';
+            if($years == 0) {
+                return response()->json([
+                    'status' => 400,
+                    'title' => 'Error',
+                    'message' => 'กรุณาเลือกปีงบประมาณก่อนครับ',
+                    'icon' => 'error'
+                ]);
             }
-            $output .= '</tbody></table>';
-            echo $output;
-        } else {
-            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
+
+            $years = $years - 543;
+
+            $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, 10, 1, $years - 1));
+            $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, 9, 1, $years));
+
+            $number_of_old_patients = $this->queryNumberOfOldPatients($firstDayOfMonth, $lastDayOfMonth, $request);
+
+            $output = '';
+
+            if (count($number_of_old_patients) != false) {
+                $output .= '
+                <table id="table-number-of-old-patients-select-fiscal-years" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>hn</th>
+                        <th>ชื่อ - สกุล</th>
+                        <th>ที่อยู่</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $i = 0;
+                foreach ($number_of_old_patients as $noop) {
+                    $output .= '<tr>
+                    <td>' . ++$i . '</td>
+                    <td>' . $noop->hn . '</td>
+                    <td>' . $noop->fullname . '</td>
+                    <td>' . $noop->fulladdress . '</td>
+                </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
+            }
         }
-    }
     // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตาม เดือน-ปี ของ Request ที่ส่งเข้ามา End
 
     // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตาม กำหนดเอง ของ Request ที่ส่งเข้ามา Start
-    public function getPatientDateRangeSelectOld(Request $request) {
-        $date_1 = $request->pdrso_1;
-        $date_2 = $request->pdrso_2;
+        public function getPatientDateRangeSelectOld(Request $request) {
+            $date_1 = $request->pdrso_1;
+            $date_2 = $request->pdrso_2;
 
-        if($date_1 == 0 || $date_2 == 0) {
-            return response()->json([
-                'status' => 400,
-                'title' => 'Error',
-                'message' => 'กรุณาเลือกเดือนที่ต้องการก่อนครับ',
-                'icon' => 'error'
-            ]);
-        }
-
-        $date_all = $this->isThaiYear($date_1, $date_2);
-
-        if($date_all == false) {
-            return response()->json([
-                'message' => 'ไม่มีข้อมูลถูกส่งไป'
-            ]);
-        } else {
-            $date_1 = $date_all['date_1'];
-            $date_2 = $date_all['date_2'];
-        }
-
-        $number_of_old_patients = $this->queryNumberOfOldPatients($date_1, $date_2, $request);
-
-        $output = '';
-
-        if (count($number_of_old_patients) != false) {
-            $output .= '
-            <table id="table-patient-date-range-select-old" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>ลำดับ</th>
-                    <th>hn</th>
-                    <th>ชื่อ - สกุล</th>
-                    <th>ที่อยู่</th>
-                </tr>
-            </thead>
-            <tbody>';
-            $i = 0;
-            foreach ($number_of_old_patients as $noop) {
-                $output .= '<tr>
-                <td>' . ++$i . '</td>
-                <td>' . $noop->hn . '</td>
-                <td>' . $noop->fullname . '</td>
-                <td>' . $noop->fulladdress . '</td>
-              </tr>';
+            if($date_1 == 0 || $date_2 == 0) {
+                return response()->json([
+                    'status' => 400,
+                    'title' => 'Error',
+                    'message' => 'กรุณาเลือกเดือนที่ต้องการก่อนครับ',
+                    'icon' => 'error'
+                ]);
             }
-            $output .= '</tbody></table>';
-            echo $output;
-        } else {
-            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
+
+            $date_all = $this->isThaiYear($date_1, $date_2);
+
+            if($date_all == false) {
+                return response()->json([
+                    'message' => 'ไม่มีข้อมูลถูกส่งไป'
+                ]);
+            } else {
+                $date_1 = $date_all['date_1'];
+                $date_2 = $date_all['date_2'];
+            }
+
+            $number_of_old_patients = $this->queryNumberOfOldPatients($date_1, $date_2, $request);
+
+            $output = '';
+
+            if (count($number_of_old_patients) != false) {
+                $output .= '
+                <table id="table-patient-date-range-select-old" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>hn</th>
+                        <th>ชื่อ - สกุล</th>
+                        <th>ที่อยู่</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $i = 0;
+                foreach ($number_of_old_patients as $noop) {
+                    $output .= '<tr>
+                    <td>' . ++$i . '</td>
+                    <td>' . $noop->hn . '</td>
+                    <td>' . $noop->fullname . '</td>
+                    <td>' . $noop->fulladdress . '</td>
+                </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้รายเก่า</h1>';
+            }
         }
-    }
     // Function สำหรับจัดการ Palliative Care คนไข้รายเก่าตาม กำหนดเอง ของ Request ที่ส่งเข้ามา End
 
     // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) Start
-    public function getPalliativeCarePatientsPain() {
-        $currentYear = date('Y');
-        $currentMonth = date('m');
+        public function getPalliativeCarePatientsPain(Request $request) {
+            $currentYear = date('Y');
+            $currentMonth = date('m');
 
-        $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, $currentMonth, 1, $currentYear));
-        $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, $currentMonth, 1, $currentYear));
+            $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, $currentMonth, 1, $currentYear));
+            $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, $currentMonth, 1, $currentYear));
 
-        $palliative_care_patients_pain = $this->queryPalliativeCarePatientsPain($firstDayOfMonth, $lastDayOfMonth);
+            $palliative_care_patients_pain = $this->queryPalliativeCarePatientsPain($firstDayOfMonth, $lastDayOfMonth, $request);
 
-        $output = '';
+            $output = '';
 
-        if (count($palliative_care_patients_pain) != false) {
-            $output .= '
-            <table id="table-number-of-old-patients" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>ลำดับ</th>
-                    <th>hn</th>
-                    <th>ชื่อ - สกุล</th>
-                    <th>ที่อยู่</th>
-                </tr>
-            </thead>
-            <tbody>';
-            $i = 0;
-            foreach ($palliative_care_patients_pain as $pcpp) {
-                $output .= '<tr>
-                <td>' . ++$i . '</td>
-                <td>' . $pcpp->hn . '</td>
-                <td>' . $pcpp->fullname . '</td>
-                <td>' . $pcpp->fulladdress . '</td>
-              </tr>';
+            if (count($palliative_care_patients_pain) != false) {
+                $output .= '
+                <table id="table-number-of-old-patients" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>hn</th>
+                        <th>ชื่อ - สกุล</th>
+                        <th>ที่อยู่</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $i = 0;
+                foreach ($palliative_care_patients_pain as $pcpp) {
+                    $output .= '<tr>
+                    <td>' . ++$i . '</td>
+                    <td>' . $pcpp->hn . '</td>
+                    <td>' . $pcpp->fullname . '</td>
+                    <td>' . $pcpp->fulladdress . '</td>
+                </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้ที่มีอาการปวด( Pain )</h1>';
             }
-            $output .= '</tbody></table>';
-            echo $output;
-        } else {
-            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้ที่มีอาการปวด( Pain )</h1>';
         }
-    }
     // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) End
 
     // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) เดือน-ปี ของ Request ที่ส่งเข้ามา Start
-    public function getPalliativeCarePatientsWithPainFiscalYears(Request $request) {
-        $years = $request->pcpwpf_years;
+        public function getPalliativeCarePatientsWithPainFiscalYears(Request $request) {
+            $years = $request->pcpwpf_years;
 
-        if($years == 0) {
-            return response()->json([
-                'status' => 400,
-                'title' => 'Error',
-                'message' => 'กรุณาเลือกปีงบประมาณก่อนครับ',
-                'icon' => 'error'
-            ]);
-        }
-
-        $years = $years - 543;
-
-        $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, 10, 1, $years - 1));
-        $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, 9, 1, $years));
-
-        $palliative_care_patients_pain = $this->queryPalliativeCarePatientsPain($firstDayOfMonth, $lastDayOfMonth);
-
-        $output = '';
-
-        if (count($palliative_care_patients_pain) != false) {
-            $output .= '
-            <table id="table-palliative-care-patients-with-pain-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>ลำดับ</th>
-                    <th>hn</th>
-                    <th>ชื่อ - สกุล</th>
-                    <th>ที่อยู่</th>
-                </tr>
-            </thead>
-            <tbody>';
-            $i = 0;
-            foreach ($palliative_care_patients_pain as $pcpp) {
-                $output .= '<tr>
-                <td>' . ++$i . '</td>
-                <td>' . $pcpp->hn . '</td>
-                <td>' . $pcpp->fullname . '</td>
-                <td>' . $pcpp->fulladdress . '</td>
-            </tr>';
+            if($years == 0) {
+                return response()->json([
+                    'status' => 400,
+                    'title' => 'Error',
+                    'message' => 'กรุณาเลือกปีงบประมาณก่อนครับ',
+                    'icon' => 'error'
+                ]);
             }
-            $output .= '</tbody></table>';
-            echo $output;
-        } else {
-            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้ที่มีอาการปวด( Pain )</h1>';
+
+            $years = $years - 543;
+
+            $firstDayOfMonth = date('Y-m-01', mktime(0, 0, 0, 10, 1, $years - 1));
+            $lastDayOfMonth = date('Y-m-t', mktime(0, 0, 0, 9, 1, $years));
+
+            $palliative_care_patients_pain = $this->queryPalliativeCarePatientsPain($firstDayOfMonth, $lastDayOfMonth, $request);
+
+            $output = '';
+
+            if (count($palliative_care_patients_pain) != false) {
+                $output .= '
+                <table id="table-palliative-care-patients-with-pain-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>hn</th>
+                        <th>ชื่อ - สกุล</th>
+                        <th>ที่อยู่</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $i = 0;
+                foreach ($palliative_care_patients_pain as $pcpp) {
+                    $output .= '<tr>
+                    <td>' . ++$i . '</td>
+                    <td>' . $pcpp->hn . '</td>
+                    <td>' . $pcpp->fullname . '</td>
+                    <td>' . $pcpp->fulladdress . '</td>
+                </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้ที่มีอาการปวด( Pain )</h1>';
+            }
         }
-    }
     // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) เดือน-ปี ของ Request ที่ส่งเข้ามา End
 
     // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) กำหนดเอง ของ Request ที่ส่งเข้ามา Start
-    public function getPalliativeCarePatientsWithPainDateRangeSelect(Request $request) {
-        $date_1 = $request->pcpwpdrs_1;
-        $date_2 = $request->pcpwpdrs_2;
+        public function getPalliativeCarePatientsWithPainDateRangeSelect(Request $request) {
+            $date_1 = $request->pcpwpdrs_1;
+            $date_2 = $request->pcpwpdrs_2;
 
-        if($date_1 == 0 || $date_2 == 0) {
-            return response()->json([
-                'status' => 400,
-                'title' => 'Error',
-                'message' => 'กรุณาเลือกเดือนที่ต้องการก่อนครับ',
-                'icon' => 'error'
-            ]);
-        }
-
-        $date_all = $this->isThaiYear($date_1, $date_2);
-
-        if($date_all == false) {
-            return response()->json([
-                'message' => 'ไม่มีข้อมูลถูกส่งไป'
-            ]);
-        } else {
-            $date_1 = $date_all['date_1'];
-            $date_2 = $date_all['date_2'];
-        }
-
-        $palliative_care_patients_pain = $this->queryPalliativeCarePatientsPain($date_1, $date_2);
-
-        $output = '';
-
-        if (count($palliative_care_patients_pain) != false) {
-            $output .= '
-            <table id="table-palliative-care-patients-with-pain-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>ลำดับ</th>
-                    <th>hn</th>
-                    <th>ชื่อ - สกุล</th>
-                    <th>ที่อยู่</th>
-                </tr>
-            </thead>
-            <tbody>';
-            $i = 0;
-            foreach ($palliative_care_patients_pain as $pcpp) {
-                $output .= '<tr>
-                <td>' . ++$i . '</td>
-                <td>' . $pcpp->hn . '</td>
-                <td>' . $pcpp->fullname . '</td>
-                <td>' . $pcpp->fulladdress . '</td>
-            </tr>';
+            if($date_1 == 0 || $date_2 == 0) {
+                return response()->json([
+                    'status' => 400,
+                    'title' => 'Error',
+                    'message' => 'กรุณาเลือกเดือนที่ต้องการก่อนครับ',
+                    'icon' => 'error'
+                ]);
             }
-            $output .= '</tbody></table>';
-            echo $output;
-        } else {
-            echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้ที่มีอาการปวด( Pain )</h1>';
+
+            $date_all = $this->isThaiYear($date_1, $date_2);
+
+            if($date_all == false) {
+                return response()->json([
+                    'message' => 'ไม่มีข้อมูลถูกส่งไป'
+                ]);
+            } else {
+                $date_1 = $date_all['date_1'];
+                $date_2 = $date_all['date_2'];
+            }
+
+            $palliative_care_patients_pain = $this->queryPalliativeCarePatientsPain($date_1, $date_2, $request);
+
+            $output = '';
+
+            if (count($palliative_care_patients_pain) != false) {
+                $output .= '
+                <table id="table-palliative-care-patients-with-pain-select" class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>hn</th>
+                        <th>ชื่อ - สกุล</th>
+                        <th>ที่อยู่</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                $i = 0;
+                foreach ($palliative_care_patients_pain as $pcpp) {
+                    $output .= '<tr>
+                    <td>' . ++$i . '</td>
+                    <td>' . $pcpp->hn . '</td>
+                    <td>' . $pcpp->fullname . '</td>
+                    <td>' . $pcpp->fulladdress . '</td>
+                </tr>';
+                }
+                $output .= '</tbody></table>';
+                echo $output;
+            } else {
+                echo '<h1 class="text-center text-secondary my-5">ไม่มีรายการคนไข้ที่มีอาการปวด( Pain )</h1>';
+            }
         }
-    }
     // Function สำหรับจัดการ Palliative Care ที่มีอาการปวด( Pain ) กำหนดเอง ของ Request ที่ส่งเข้ามา End
 }

@@ -26,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
         View::composer('layout.template.sidebar', function ($view) {
             // ดึงข้อมูลจากฐานข้อมูล
             $palliativeCareStatusId = ModuleModel::where('module_name', 'Palliative Care')->first();
+            $authenCodeStatusId = ModuleModel::where('module_name', 'Authen Code')->first();
 
             $dashboard = "dashboard";
 
@@ -33,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with([
                 'palliativeCareStatusId' => $palliativeCareStatusId,
                 'dashboard' => $dashboard,
+                'authenCodeStatusId' => $authenCodeStatusId,
             ]);
         });
 

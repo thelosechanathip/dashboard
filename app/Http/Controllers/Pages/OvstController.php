@@ -9,7 +9,12 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;
 
+use App\Models\Dashboard_Setting\ModuleModel;
+use App\Models\Dashboard_Setting\AccessibilityModel;
+
 use App\Models\Log\OvstLogModel;
+use App\Models\Log\ModuleLogModel;
+use App\Models\Log\AccessibilityLogModel;
 
 class OvstController extends Controller
 {
@@ -208,7 +213,100 @@ class OvstController extends Controller
             // บันทึกข้อมูลลงใน OvstLogModel
             OvstLogModel::create($ovst_log_data);
 
-            return view('pages.ovst', compact('data', 'year'));
+            $startTime_1 = microtime(true);
+
+            $query_1 = ModuleModel::where('module_name', 'Ovst');
+
+            $ovstId = $query_1->first();
+
+            // ดึง SQL query_1 พร้อม bindings
+            $sql_1 = $query_1->toSql();
+            $bindings_1 = $query_1->getBindings();
+            $fullSql_1 = vsprintf(str_replace('?', "'%s'", $sql_1), $bindings_1);
+        
+            $endTime_1 = microtime(true);
+            $executionTime_1 = $endTime_1 - $startTime_1;
+            $formattedExecutionTime_1 = number_format($executionTime_1, 3);
+
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $module_log_data = [
+                'function' => 'Where module_name = Ovst',
+                'username' => $data['loginname'],
+                'command_sql' => $fullSql_1,
+                'query_time' => $formattedExecutionTime_1,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน ModuleLogModel
+            ModuleLogModel::create($module_log_data);
+
+            if($ovstId->status_id === 1) {
+                $startTime_2 = microtime(true);
+
+                $query_2 = AccessibilityModel::where('accessibility_name', $data['groupname'])->where('module_id', $ovstId->id);
+                $accessibility_groupname_model = $query_2->first();
+
+                // ดึง SQL query_2 พร้อม bindings
+                $sql_2 = $query_2->toSql();
+                $bindings_2 = $query_2->getBindings();
+                $fullSql_2 = vsprintf(str_replace('?', "'%s'", $sql_2), $bindings_2);
+            
+                $endTime_2 = microtime(true);
+                $executionTime_2 = $endTime_2 - $startTime_2;
+                $formattedExecutionTime_2 = number_format($executionTime_2, 3);
+
+                // สร้างข้อมูลสำหรับบันทึกใน log
+                $accessibility_log_data = [
+                    'function' => 'Where accessibility_name = {groupname} AND {module_id}',
+                    'username' => $data['loginname'],
+                    'command_sql' => $fullSql_2,
+                    'query_time' => $formattedExecutionTime_2,
+                    'operation' => 'SELECT'
+                ];
+            
+                // บันทึกข้อมูลลงใน AccessibilityLogModel
+                AccessibilityLogModel::create($accessibility_log_data);
+
+                if($accessibility_groupname_model !== null && $accessibility_groupname_model->status_id === 1) {
+                    return view('pages.ovst', compact('data', 'year'));
+                } else {
+                    $startTime_3 = microtime(true);
+
+                    $query_3 = AccessibilityModel::where('accessibility_name', $data['name'])->where('module_id', $ovstId->id);
+                    $accessibility_name_model = $query_3->first();
+
+                    // ดึง SQL query_3 พร้อม bindings
+                    $sql_3 = $query_3->toSql();
+                    $bindings_3 = $query_3->getBindings();
+                    $fullSql_3 = vsprintf(str_replace('?', "'%s'", $sql_3), $bindings_3);
+                
+                    $endTime_3 = microtime(true);
+                    $executionTime_3 = $endTime_3 - $startTime_3;
+                    $formattedExecutionTime_3 = number_format($executionTime_3, 3);
+
+                    // สร้างข้อมูลสำหรับบันทึกใน log
+                    $accessibility_log_data = [
+                        'function' => 'Where accessibility_name = {name} AND {module_id}',
+                        'username' => $data['loginname'],
+                        'command_sql' => $fullSql_3,
+                        'query_time' => $formattedExecutionTime_3,
+                        'operation' => 'SELECT'
+                    ];
+                
+                    // บันทึกข้อมูลลงใน AccessibilityLogModel
+                    AccessibilityLogModel::create($accessibility_log_data);
+
+                    if($accessibility_name_model !== null && $accessibility_name_model->status_id === 1) {
+                        return view('pages.ovst', compact('data', 'year'));
+                    } else {
+                        $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ Ovst หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
+                        return redirect()->route('dashboard');
+                    }
+                }
+            } else {
+                $request->session()->put('error', 'ขณะนี้ระบบ Ovst ไม่ได้เปิดใช้งาน กรุณาแจ้ง Admin หากต้องการใช้งาน!');
+                return redirect()->route('dashboard');
+            }
         }
     // หน้าแรกของ Ovst Index End
 

@@ -11,8 +11,25 @@ use Illuminate\Support\Facades\DB;
 
 use Maatwebsite\Excel\Facades\Excel;
 
+use App\Models\Dashboard_Setting\ModuleModel;
+use App\Models\Dashboard_Setting\AccessibilityModel;
+
+use App\Models\Log\AuthenCodeLogModel;
+use App\Models\Log\ModuleLogModel;
+use App\Models\Log\AccessibilityLogModel;
+
 class AuthenCodeController extends Controller
 {
+
+    // Function ในการเรียกใช้งาน Username ที่เข้ามาใช้งาน SomeMethod Start
+        private function someMethod(Request $request) {
+            $data = $request->session()->all();
+            $username = $request->session()->get('loginname');
+            
+            // ใช้งาน $username ต่อไปตามที่คุณต้องการ
+            return $username;
+        }
+    // Function ในการเรียกใช้งาน Username ที่เข้ามาใช้งาน SomeMethod End
 
     private function getChart($summarize_count) {
         $total_all = $summarize_count->total_all;
@@ -47,31 +64,32 @@ class AuthenCodeController extends Controller
         return $chart;
     }
 
-    private function query_authen_code() {
-        $summarize_report = DB::connection('mysql')->select(
-            "
-                SELECT
-                        o.hn,
-                        pt.cid,
-                        pt.pname,
-                        CONCAT(pt.fname, ' ', pt.lname) AS fullname,
-                        ptt.name AS pttype_name,
-                        CASE
-                            WHEN vp.auth_code
-                                    THEN vp.auth_code
-                            ELSE 'ยังไม่มีเลข Authen Code บนระบบ HoSXP'
-                        END AS result
-                FROM ovst o
-                LEFT OUTER JOIN visit_pttype vp ON o.vn = vp.vn
-                LEFT OUTER JOIN patient pt ON o.hn = pt.hn
-                LEFT OUTER JOIN vn_stat vs ON o.vn = vs.vn
-                LEFT OUTER JOIN pttype ptt ON vs.pttype = ptt.pttype
-                WHERE o.vstdate = CURDATE()
-                    AND pt.nationality = '99'
-                    AND vp.auth_code IS NULL
-                ORDER BY o.hn DESC
-            "
-        );
+    private function query_authen_code(Request $request) {
+        $startTime = microtime(true);
+
+        $query = "SELECT o.hn, pt.cid, pt.pname, CONCAT(pt.fname, ' ', pt.lname) AS fullname, ptt.name AS pttype_name, CASE WHEN vp.auth_code THEN vp.auth_code ELSE 'ยังไม่มีเลข Authen Code บนระบบ HoSXP' END AS result FROM ovst o  INNER JOIN visit_pttype vp ON o.vn = vp.vn  INNER JOIN patient pt ON o.hn = pt.hn  INNER JOIN vn_stat vs ON o.vn = vs.vn INNER JOIN pttype ptt ON vs.pttype = ptt.pttype WHERE o.vstdate = CURDATE() AND pt.nationality = '99' AND vp.auth_code IS NULL;";
+
+        $summarize_report = DB::connection('mysql')->select($query);
+
+        $endTime = microtime(true);
+        $executionTime = $endTime - $startTime;
+        $formattedExecutionTime = number_format($executionTime, 3);
+
+        // ดึง username จาก method someMethod
+        $username = $this->someMethod($request);
+        
+        // สร้างข้อมูลสำหรับบันทึกใน log
+        $authen_code_log_data = [
+            'function' => 'query_authen_code',
+            'username' => $username,
+            'command_sql' => $query, // SQL query ที่มีการแทนค่าจริง
+            'query_time' => $formattedExecutionTime,
+            'operation' => 'SELECT'
+        ];
+    
+        // บันทึกข้อมูลลงใน AuthenCodeLogModel
+        AuthenCodeLogModel::create($authen_code_log_data);
+
         return (array) $summarize_report;
     }
 
@@ -81,77 +99,197 @@ class AuthenCodeController extends Controller
         // Get the current year
         $year = date('Y');
 
+        $startTime = microtime(true);
+    
         // Execute the query to get the summarized counts
-        $summarize_count = DB::connection('mysql')->select(
-            "
+        $query = DB::table('ovst as t1')
+            ->select(
+                DB::raw('COUNT(t1.vn) AS ovst_all'),
+                DB::raw('COUNT(t2.vn) AS ovst_authen_all'),
+                DB::raw("COUNT(CASE WHEN t2.pttype_spp_name = 'ข้าราชการ/รัฐวิสาหกิจ' THEN 1 END) AS ofc_lgo_authen"),
+                DB::raw("COUNT(CASE WHEN t2.pttype_spp_name = 'บัตรประกันสังคม' THEN 1 END) AS sss_authen"),
+                DB::raw("COUNT(CASE WHEN t2.pttype_spp_name = 'UC (บัตรทอง ไม่มี ท.)' THEN 1 END) AS ucs_authen"),
+                DB::raw("COUNT(CASE WHEN t2.pttype_spp_name = 'สปร. (บัตรทอง มี ท.)' THEN 1 END) AS wel_authen"),
+                DB::raw("COUNT(CASE WHEN t2.pttype_spp_name = 'คนต่างด้าวที่ขึ้นทะเบียน' THEN 1 END) AS nrh_authen"),
+                DB::raw("COUNT(CASE WHEN t2.pttype_spp_name = 'อื่นๆ (ต่างด้าวไม่ขึ้นทะเบียน / ชำระเงินเอง)' THEN 1 END) AS other_authen"),
+                DB::raw('COUNT(t3.vn) AS ovst_not_authen_all'),
+                DB::raw("COUNT(CASE WHEN t3.pttype_spp_name = 'ข้าราชการ/รัฐวิสาหกิจ' THEN 1 END) AS ofc_lgo_not_authen"),
+                DB::raw("COUNT(CASE WHEN t3.pttype_spp_name = 'บัตรประกันสังคม' THEN 1 END) AS sss_not_authen"),
+                DB::raw("COUNT(CASE WHEN t3.pttype_spp_name = 'UC (บัตรทอง ไม่มี ท.)' THEN 1 END) AS ucs_not_authen"),
+                DB::raw("COUNT(CASE WHEN t3.pttype_spp_name = 'สปร. (บัตรทอง มี ท.)' THEN 1 END) AS wel_not_authen"),
+                DB::raw("COUNT(CASE WHEN t3.pttype_spp_name = 'คนต่างด้าวที่ขึ้นทะเบียน' THEN 1 END) AS nrh_not_authen"),
+                DB::raw("COUNT(CASE WHEN t3.pttype_spp_name = 'อื่นๆ (ต่างด้าวไม่ขึ้นทะเบียน / ชำระเงินเอง)' THEN 1 END) AS other_not_authen")
+            )
+            ->leftJoin(DB::raw('(
                 SELECT
-                    COUNT(t1.vn) AS ovst_all,
-                    COUNT(t2.vn) AS ovst_authen_all,
-                    COUNT(CASE WHEN t2.pttype_spp_name = 'ข้าราชการ/รัฐวิสาหกิจ' THEN 1 END) AS ofc_lgo_authen,
-                    COUNT(CASE WHEN t2.pttype_spp_name = 'บัตรประกันสังคม' THEN 1 END) AS sss_authen,
-                    COUNT(CASE WHEN t2.pttype_spp_name = 'UC (บัตรทอง ไม่มี ท.)' THEN 1 END) AS ucs_authen,
-                    COUNT(CASE WHEN t2.pttype_spp_name = 'สปร. (บัตรทอง มี ท.)' THEN 1 END) AS wel_authen,
-                    COUNT(CASE WHEN t2.pttype_spp_name = 'คนต่างด้าวที่ขึ้นทะเบียน' THEN 1 END) AS nrh_authen,
-                    COUNT(CASE WHEN t2.pttype_spp_name = 'อื่นๆ (ต่างด้าวไม่ขึ้นทะเบียน / ชำระเงินเอง)' THEN 1 END) AS other_authen,
-                    COUNT(t3.vn) AS ovst_not_authen_all,
-                    COUNT(CASE WHEN t3.pttype_spp_name = 'ข้าราชการ/รัฐวิสาหกิจ' THEN 1 END) AS ofc_lgo_not_authen,
-                    COUNT(CASE WHEN t3.pttype_spp_name = 'บัตรประกันสังคม' THEN 1 END) AS sss_not_authen,
-                    COUNT(CASE WHEN t3.pttype_spp_name = 'UC (บัตรทอง ไม่มี ท.)' THEN 1 END) AS ucs_not_authen,
-                    COUNT(CASE WHEN t3.pttype_spp_name = 'สปร. (บัตรทอง มี ท.)' THEN 1 END) AS wel_not_authen,
-                    COUNT(CASE WHEN t3.pttype_spp_name = 'คนต่างด้าวที่ขึ้นทะเบียน' THEN 1 END) AS nrh_not_authen,
-                    COUNT(CASE WHEN t3.pttype_spp_name = 'อื่นๆ (ต่างด้าวไม่ขึ้นทะเบียน / ชำระเงินเอง)' THEN 1 END) AS other_not_authen
-                FROM (
-                    SELECT
-                        vn,
-                        hn,
-                        vstdate
-                    FROM ovst
-                    WHERE vstdate = CURRENT_DATE()
-                ) AS t1
-                LEFT JOIN (
-                    SELECT
-                        vp.vn,
-                        ptts.pttype_spp_name
-                    FROM visit_pttype vp
-                    LEFT JOIN vn_stat vs ON vp.vn = vs.vn
-                    LEFT JOIN pttype ptt ON vs.pttype = ptt.pttype
-                    LEFT JOIN pttype_spp ptts ON ptt.pttype_spp_id = ptts.pttype_spp_id
-                    WHERE vp.auth_code IS NOT NULL
-                ) AS t2 ON t1.vn = t2.vn
-                LEFT JOIN (
-                    SELECT
-                        vp.vn,
-                        ptts.pttype_spp_name
-                    FROM visit_pttype vp
-                    LEFT JOIN vn_stat vs ON vp.vn = vs.vn
-                    LEFT JOIN pttype ptt ON vs.pttype = ptt.pttype
-                    LEFT JOIN pttype_spp ptts ON ptt.pttype_spp_id = ptts.pttype_spp_id
-                    WHERE vp.auth_code IS NULL
-                ) AS t3 ON t1.vn = t3.vn
-            "
-        );
-
-        // Get the first (and only) result from the query
-        $summarize_count = $summarize_count[0];
-
-        // Return the view with the necessary data
-        return view('reportes.authenCode', compact('data', 'year', 'summarize_count'));
-    }
-
-    public function getAuthenCodeCount() {
-        $summarize_count = DB::connection('mysql')->select(
-            "
+                    vp.vn,
+                    ptts.pttype_spp_name
+                FROM visit_pttype vp
+                LEFT JOIN vn_stat vs ON vp.vn = vs.vn
+                LEFT JOIN pttype ptt ON vs.pttype = ptt.pttype
+                LEFT JOIN pttype_spp ptts ON ptt.pttype_spp_id = ptts.pttype_spp_id
+                WHERE vp.auth_code IS NOT NULL
+            ) as t2'), 't1.vn', '=', 't2.vn')
+            ->leftJoin(DB::raw('(
                 SELECT
-                    COUNT(*) AS total_all,
-                    COUNT(vp.auth_code IN (SELECT auth_code FROM visit_pttype WHERE auth_code IS NOT NULL)) AS total_authen_success,
-                    COUNT(*) - COUNT(vp.auth_code IN (SELECT auth_code FROM visit_pttype WHERE auth_code IS NOT NULL)) AS total_not_authen
-                FROM ovst o
-                LEFT OUTER JOIN visit_pttype vp ON o.vn = vp.vn
-                LEFT OUTER JOIN patient pt ON o.hn =pt.hn
-                WHERE o.vstdate = CURRENT_DATE()
-                AND pt.nationality = '99';
-            "
-        );
+                    vp.vn,
+                    ptts.pttype_spp_name
+                FROM visit_pttype vp
+                LEFT JOIN vn_stat vs ON vp.vn = vs.vn
+                LEFT JOIN pttype ptt ON vs.pttype = ptt.pttype
+                LEFT JOIN pttype_spp ptts ON ptt.pttype_spp_id = ptts.pttype_spp_id
+                WHERE vp.auth_code IS NULL
+            ) as t3'), 't1.vn', '=', 't3.vn')
+            ->whereDate('t1.vstdate', '=', DB::raw('CURRENT_DATE()'))
+        ;
+
+        $summarize_count = $query->first();
+
+        // ดึง SQL query พร้อม bindings
+        $sql = $query->toSql();
+        $bindings = $query->getBindings();
+        $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+        $endTime = microtime(true);
+        $executionTime = $endTime - $startTime;
+        $formattedExecutionTime = number_format($executionTime, 3);
+
+        // ดึง username จาก method someMethod
+        $username = $this->someMethod($request);
+        
+        // สร้างข้อมูลสำหรับบันทึกใน log
+        $authen_code_log_data = [
+            'function' => 'Come to the Authen Code page => Query summarize_count',
+            'username' => $username,
+            'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
+            'query_time' => $formattedExecutionTime,
+            'operation' => 'SELECT'
+        ];
+    
+        // บันทึกข้อมูลลงใน AuthenCodeLogModel
+        AuthenCodeLogModel::create($authen_code_log_data);
+
+        $startTime_1 = microtime(true);
+
+        $query_1 = ModuleModel::where('module_name', 'Authen Code');
+
+        $authenCodeId = $query_1->first();
+
+        // ดึง SQL query_1 พร้อม bindings
+        $sql_1 = $query_1->toSql();
+        $bindings_1 = $query_1->getBindings();
+        $fullSql_1 = vsprintf(str_replace('?', "'%s'", $sql_1), $bindings_1);
+    
+        $endTime_1 = microtime(true);
+        $executionTime_1 = $endTime_1 - $startTime_1;
+        $formattedExecutionTime_1 = number_format($executionTime_1, 3);
+
+        // สร้างข้อมูลสำหรับบันทึกใน log
+        $module_log_data = [
+            'function' => 'Where module_name = Authen Code',
+            'username' => $data['loginname'],
+            'command_sql' => $fullSql_1,
+            'query_time' => $formattedExecutionTime_1,
+            'operation' => 'SELECT'
+        ];
+    
+        // บันทึกข้อมูลลงใน ModuleLogModel
+        ModuleLogModel::create($module_log_data);
+
+        if($authenCodeId->status_id === 1) {
+            $startTime_2 = microtime(true);
+
+            $query_2 = AccessibilityModel::where('accessibility_name', $data['groupname'])->where('module_id', $authenCodeId->id);
+            $accessibility_groupname_model = $query_2->first();
+
+            // ดึง SQL query_2 พร้อม bindings
+            $sql_2 = $query_2->toSql();
+            $bindings_2 = $query_2->getBindings();
+            $fullSql_2 = vsprintf(str_replace('?', "'%s'", $sql_2), $bindings_2);
+        
+            $endTime_2 = microtime(true);
+            $executionTime_2 = $endTime_2 - $startTime_2;
+            $formattedExecutionTime_2 = number_format($executionTime_2, 3);
+
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $accessibility_log_data = [
+                'function' => 'Where accessibility_name = {groupname} AND {module_id}',
+                'username' => $data['loginname'],
+                'command_sql' => $fullSql_2,
+                'query_time' => $formattedExecutionTime_2,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน AccessibilityLogModel
+            AccessibilityLogModel::create($accessibility_log_data);
+
+            if($accessibility_groupname_model !== null && $accessibility_groupname_model->status_id === 1) {
+                return view('reportes.authenCode', compact('data', 'year', 'summarize_count'));
+            } else {
+                $startTime_3 = microtime(true);
+
+                $query_3 = AccessibilityModel::where('accessibility_name', $data['name'])->where('module_id', $authenCodeId->id);
+                $accessibility_name_model = $query_3->first();
+
+                // ดึง SQL query_3 พร้อม bindings
+                $sql_3 = $query_3->toSql();
+                $bindings_3 = $query_3->getBindings();
+                $fullSql_3 = vsprintf(str_replace('?', "'%s'", $sql_3), $bindings_3);
+            
+                $endTime_3 = microtime(true);
+                $executionTime_3 = $endTime_3 - $startTime_3;
+                $formattedExecutionTime_3 = number_format($executionTime_3, 3);
+
+                // สร้างข้อมูลสำหรับบันทึกใน log
+                $accessibility_log_data = [
+                    'function' => 'Where accessibility_name = {name} AND {module_id}',
+                    'username' => $data['loginname'],
+                    'command_sql' => $fullSql_3,
+                    'query_time' => $formattedExecutionTime_3,
+                    'operation' => 'SELECT'
+                ];
+            
+                // บันทึกข้อมูลลงใน AccessibilityLogModel
+                AccessibilityLogModel::create($accessibility_log_data);
+
+                if($accessibility_name_model !== null && $accessibility_name_model->status_id === 1) {
+                    return view('reportes.authenCode', compact('data', 'year', 'summarize_count'));
+                } else {
+                    $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ Authen Code หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
+                    return redirect()->route('dashboard');
+                }
+            }
+        } else {
+            $request->session()->put('error', 'ขณะนี้ระบบ Authen Code ไม่ได้เปิดใช้งาน กรุณาแจ้ง Admin หากต้องการใช้งาน!');
+            return redirect()->route('dashboard');
+        }
+    }    
+
+    public function getAuthenCodeCount(Request $request) {
+        $startTime = microtime(true);
+
+        $query = "SELECT COUNT(*) AS total_all, COUNT(vp.auth_code IN (SELECT auth_code FROM visit_pttype WHERE auth_code IS NOT NULL)) AS total_authen_success, COUNT(*) - COUNT(vp.auth_code IN (SELECT auth_code FROM visit_pttype WHERE auth_code IS NOT NULL)) AS total_not_authen FROM ovst o LEFT OUTER JOIN visit_pttype vp ON o.vn = vp.vn LEFT OUTER JOIN patient pt ON o.hn =pt.hn WHERE o.vstdate = CURRENT_DATE() AND pt.nationality = '99';";
+
+        $summarize_count = DB::connection('mysql')->select($query);
+
+        $endTime = microtime(true);
+        $executionTime = $endTime - $startTime;
+        $formattedExecutionTime = number_format($executionTime, 3);
+
+        // ดึง username จาก method someMethod
+        $username = $this->someMethod($request);
+        
+        // สร้างข้อมูลสำหรับบันทึกใน log
+        $authen_code_log_data = [
+            'function' => 'getAuthenCodeCount',
+            'username' => $username,
+            'command_sql' => $query, // SQL query ที่มีการแทนค่าจริง
+            'query_time' => $formattedExecutionTime,
+            'operation' => 'SELECT'
+        ];
+    
+        // บันทึกข้อมูลลงใน AuthenCodeLogModel
+        AuthenCodeLogModel::create($authen_code_log_data);
 
         $summarize_count = $summarize_count[0];
 
@@ -162,8 +300,8 @@ class AuthenCodeController extends Controller
         ]);
     }
 
-    public function authenCodeFetchAll() {
-        $summarize_report = $this->query_authen_code();
+    public function authenCodeFetchAll(Request $request) {
+        $summarize_report = $this->query_authen_code($request);
 
         $output = '';
 
@@ -197,8 +335,8 @@ class AuthenCodeController extends Controller
         }
     }
 
-    public function exportNotAuthenCode() {
-        $summarize_report = $this->query_authen_code();
+    public function exportNotAuthenCode(Request $request) {
+        $summarize_report = $this->query_authen_code($request);
         if (count($summarize_report) > 0) {
             // ส่ง JSON กลับไปยัง AJAX
             return response()->json([
@@ -215,8 +353,8 @@ class AuthenCodeController extends Controller
     }
 
     // สร้างฟังก์ชันใหม่สำหรับดาวน์โหลดไฟล์
-    public function downloadAuthenCode() {
-        $summarize_report = $this->query_authen_code();
+    public function downloadAuthenCode(Request $request) {
+        $summarize_report = $this->query_authen_code($request);
         return Excel::download(new AuthenCodeExport($summarize_report), 'authencode.xlsx');
     }
 }
