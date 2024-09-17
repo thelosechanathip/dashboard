@@ -88,6 +88,18 @@
                     </a>
                 </div>
             </div>
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="card shadow-lg rounded-2 zoom-card" id="opdscreen_card">
+                    <a href="{{ route('indexOpdScreen') }}" class="text-decoration-none text-dark" id="opdscreen" data-value="{{ $opdscreenStatusId->status_id }}">
+                        <div class="card-body d-flex justify-content-center align-items-center">
+                            <h5 class="card-title fw-bold">OPD</h5>
+                        </div>
+                        <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
+                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="opdscreen_count"></span> <span>ราย</span></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
         {{-- <div class="row mt-5">
 
@@ -112,6 +124,7 @@
                         $('#refer_out_count').text(response.refer_out_count);
                         $('#refer_in_count').text(response.refer_in_count);
                         $('#ipt_count').text(response.ipt_count);
+                        $('#opdscreen_count').text(response.opdscreen_count);
                         $('#all_dashboard').show();  // แสดง Element เมื่อโหลดข้อมูลเสร็จแล้ว
                     }
                 });

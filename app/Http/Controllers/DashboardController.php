@@ -16,6 +16,15 @@ class DashboardController extends Controller
             ->whereDate('vstdate', '=', DB::raw('CURRENT_DATE()'))
             ->first()
             ->count;
+        
+        $opdscreen_count = DB::table('opdscreen')
+            ->select(DB::raw('COUNT(*) as count'))
+            ->whereDate('vstdate', '=', DB::raw('CURRENT_DATE()'))
+            ->where('screen_dep', '027')
+            ->whereNotNull('cc')
+            ->where('cc', '!=', '')
+            ->first()
+            ->count;
 
         $er_regist_count = DB::table('er_regist')
             ->select(DB::raw('COUNT(*) as count'))
@@ -47,6 +56,7 @@ class DashboardController extends Controller
             'refer_out_count' => $refer_out_count,
             'refer_in_count' => $refer_in_count,
             'ipt_count' => $ipt_count,
+            'opdscreen_count' => $opdscreen_count,
         ]);
     }
 
@@ -60,8 +70,17 @@ class DashboardController extends Controller
         $referInStatusId = ModuleModel::where('module_name', 'Refer In')->first();
         $referOutStatusId = ModuleModel::where('module_name', 'Refer Out')->first();
         $erStatusId = ModuleModel::where('module_name', 'ER')->first();
+        $opdscreenStatusId = ModuleModel::where('module_name', 'Opdscreen')->first();
 
-        return view('dashboard', compact('data', 'ovstStatusId', 'admitStatusId', 'referInStatusId', 'referOutStatusId', 'erStatusId'));
+        return view('dashboard', compact(
+            'data', 
+            'ovstStatusId', 
+            'admitStatusId', 
+            'referInStatusId', 
+            'referOutStatusId', 
+            'erStatusId', 
+            'opdscreenStatusId',
+        ));
     }
 
     public function check_status(Request $request) {

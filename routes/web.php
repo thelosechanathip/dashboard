@@ -10,6 +10,7 @@ use App\Http\Controllers\Pages\ReferOutController;
 use App\Http\Controllers\Pages\ReferInController;
 use App\Http\Controllers\Pages\IptController;
 use App\Http\Controllers\Pages\PalliativeCareController;
+use App\Http\Controllers\Pages\OpdScreenController;
 use App\Http\Controllers\Reportes\AuthenCodeController;
 use App\Http\Controllers\Setting\ModuleAccessRightsController;
 
@@ -45,6 +46,14 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('getOvstDailyData', [OvstController::class, 'getOvstDailyData'])->name('getOvstDailyData');
             Route::get('getOvstSelectData', [OvstController::class, 'getOvstSelectData'])->name('getOvstSelectData');
         // Ovst End
+        
+        // Opd Screen Start
+            Route::get('indexOpdScreen', [OpdScreenController::class, 'index'])->name('indexOpdScreen');
+            Route::get('showOpdScreen', [OpdScreenController::class, 'showOpdScreen'])->name('showOpdScreen');
+            Route::get('getOpdScreenData', [OpdScreenController::class, 'getOpdScreenData'])->name('getOpdScreenData');
+            Route::get('getOpdScreenDailyData', [OpdScreenController::class, 'getOpdScreenDailyData'])->name('getOpdScreenDailyData');
+            Route::get('getOpdScreenSelectData', [OpdScreenController::class, 'getOpdScreenSelectData'])->name('getOpdScreenSelectData');
+        // Opd Screen End
 
         // Er Regist Start
             Route::get('indexErRegist', [ErRegistController::class, 'index'])->name('indexErRegist');

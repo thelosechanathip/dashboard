@@ -76,6 +76,13 @@
                 } else{
                     $('#er_card').hide();
                 }
+
+                let opdscreenStatusId = $('#opdscreen').data('value');
+                if(opdscreenStatusId === 1) {
+                    $('#opdscreen_card').show();
+                } else{
+                    $('#opdscreen_card').hide();
+                }
             }
 
         });
