@@ -1,7 +1,7 @@
 @extends('layout.dashboard_template')
 
 @section('title')
-    <title>opdscreen</title>
+    <title>{{ $wardData->name }}</title>
 @endsection
 
 @section('content')
@@ -9,8 +9,9 @@
         {{-- Title Start --}}
         <div
             class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
-            <div class="">
-                <h1 class="h2">OPD</h1>
+            <div class="d-flex">
+                <button class="btn btn-outline-danger me-3" onclick="history.back()">Back</button>
+                <h1 class="h2">{{ $wardData->name }}</h1>
             </div>
             <div class="d-flex">
                 <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
@@ -18,6 +19,7 @@
                 <p> <span class="fw-bold">แผนก :</span> {{ $data['groupname'] }}</p>
             </div>
         </div>
+        {{-- Title End --}}
         <div class="mt-2 d-flex justify-content-end align-items-center">
             <div class="d-flex">
                 <p><span id="setText"></span><span id="setCount"></span></p>
@@ -127,11 +129,13 @@
 
             function fetch_one_year(year) {
                 showLoadingIcon();
+                let wardId = "{{ $wardData->ward }}";
                 $.ajax({
-                    url: '{{ route('getOpdScreenData') }}',
+                    url: '{{ route('getIptWardData') }}',
                     type: 'GET',
                     data: {
-                        year: year
+                        year: year,
+                        wardId: wardId
                     },
                     success: function(response) {
                         hideLoadingIcon();
@@ -203,12 +207,14 @@
 
             function fetch_daily_data(year, month) {
                 showLoadingIcon();
+                let wardId = "{{ $wardData->ward }}";
                 $.ajax({
-                    url: '{{ route('getOpdScreenDailyData') }}',
+                    url: '{{ route('getIptWardDailyData') }}',
                     type: 'GET',
                     data: {
                         year: year,
-                        month: month
+                        month: month,
+                        wardId: wardId,
                     },
                     success: function(response) {
                         hideLoadingIcon();
@@ -239,10 +245,14 @@
             }
 
             $('#submitAll').click(function() {
-                var formData = $('#allForm').serialize();
+                var formData = $('#allForm').serializeArray();
+                let wardId = "{{ $wardData->ward }}";
+
+                formData.push({name: 'wardId', value: wardId});
+
                 showLoadingIcon();
                 $.ajax({
-                    url: '{{ route('getOpdScreenSelectData') }}',
+                    url: '{{ route('getIptWardSelectData') }}',
                     type: 'GET',
                     data: formData,
                     success: function(response) {
@@ -300,3 +310,5 @@
         });
     </script>
 @endsection
+
+

@@ -34,7 +34,23 @@
                 </div>
             </div>
         {{-- Result Count Modal End --}}
-        <div class="mt-2 d-flex justify-content-end align-items-center">
+        <div class="row gy-4 mt-2 pb-3 border-bottom">
+            @foreach($wards as $w)
+                <div class="col-12 col-sm-6 col-md-4 mb-3 ipt_ward_card" data-value="{{ $w->name }}">
+                    <div class="card shadow-lg rounded-2 zoom-card">
+                        <a href="{{ route('ward.details', ['wardId' => $w->ward]) }}" class="text-decoration-none text-dark ipt_ward" data-value="{{ $w->ward }}">
+                            <div class="card-body d-flex justify-content-center align-items-center">
+                                <h5 class="card-title fw-bold">{{ $w->name }}</h5>
+                            </div>
+                            <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
+                                <p class="card-text"><span>ภายในวันนี้ : </span><span class="ipt_ward_count"></span> <span>ราย</span></p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        <div class="mt-5 d-flex justify-content-end align-items-center">
             <div class="d-flex">
                 <p><span id="setText"></span><span id="setCount"></span></p>
                 @if ($year)
@@ -107,6 +123,46 @@
 @section('script')
     <script>
         $(document).ready(function() {
+
+            $('.ipt_ward_card').each(function() {
+                var wardCard = $(this); // เก็บ reference ของ card ปัจจุบัน
+                var wardId = wardCard.find('.ipt_ward').data('value'); // ดึง wardId จากลิงก์
+                var wardName = wardCard.attr('data-value'); // ดึง wardName จาก card โดยตรง
+
+                $.ajax({
+                    url: '{{ route('checkStatusWard') }}',
+                    method: 'GET',
+                    data: {
+                        'wardName': wardName, // ส่ง wardName
+                    },
+                    success: function(response) {
+                        // console.log(response);
+                        if (response && response.status_id === 1) { // ตรวจสอบค่า status_id
+                            wardCard.show(); // แสดง card
+                            $.ajax({
+                                url: '{{ route('getResultWard') }}',
+                                method: 'GET',
+                                data: {
+                                    'wardId': wardId, // ส่ง wardId
+                                },
+                                success: function(response) {
+                                    // อัพเดตจำนวนในแต่ละ card โดยใช้ response ที่ได้
+                                    wardCard.find('.ipt_ward_count').text(response);
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error:', error);
+                                }
+                            });
+                        } else {
+                            wardCard.hide(); // ซ่อน card หาก status_id ไม่เท่ากับ 1
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+
             $('#yearForm').hide();
             $('#allForm').hide();
 

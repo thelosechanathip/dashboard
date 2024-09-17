@@ -5,6 +5,21 @@
 @endsection
 
 @section('content')
+    {{-- ประกาศ Start --}}
+        <div class="modal" id="announce_modal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-auto">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">ประกาศ</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>เนื่องจากทีม IT จะปิดปรับปรุงระบบ Admit เพื่อเพิ่ม Ward ขออภัยในความไม่สะดวก</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{-- ประกาศ End --}}
     <main class="main-content">
         {{-- Title Start --}}
         <div
@@ -139,6 +154,8 @@
                 $('#loadingIcon').hide();
                 $('#all_dashboard').show();
             }
+
+            $('#announce_modal').modal('hide');
         });
     </script>
 @endsection

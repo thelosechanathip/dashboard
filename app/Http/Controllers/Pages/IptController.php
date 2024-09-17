@@ -14,6 +14,8 @@ use App\Models\Log\IptLogModel;
 use App\Models\Log\ModuleLogModel;
 use App\Models\Log\AccessibilityLogModel;
 
+use Carbon\Carbon;
+
 class IptController extends Controller
 {
     // Function ในการเรียกใช้งาน Username ที่เข้ามาใช้งาน SomeMethod Start
@@ -201,6 +203,33 @@ class IptController extends Controller
             $data = $request->session()->all();
             $year = date('Y');
 
+            $startTime = microtime(true);
+
+            $query = DB::table('ward')->where('ward', '!=', '00');
+
+            $wards = $query->get();
+
+            // ดึง SQL query พร้อม bindings
+            $sql = $query->toSql();
+            $bindings = $query->getBindings();
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+        
+            $endTime = microtime(true);
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
+
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $ward_log_data = [
+                'function' => 'Query Ward',
+                'username' => $data['loginname'],
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน IptLogModel
+            IptLogModel::create($ward_log_data);
+
             $ipt_log_data = [
                 'function' => 'Come to the IPT page',
                 'username' => $data['loginname'],
@@ -267,7 +296,11 @@ class IptController extends Controller
                 AccessibilityLogModel::create($accessibility_log_data);
 
                 if($accessibility_groupname_model !== null && $accessibility_groupname_model->status_id === 1) {
-                    return view('pages.ipt', compact('data', 'year'));
+                    return view('pages.ipt', compact(
+                        'data', 
+                        'year',
+                        'wards'
+                    ));
                 } else {
                     $startTime_3 = microtime(true);
 
@@ -296,9 +329,14 @@ class IptController extends Controller
                     AccessibilityLogModel::create($accessibility_log_data);
 
                     if($accessibility_name_model !== null && $accessibility_name_model->status_id === 1) {
-                        return view('pages.ipt', compact('data', 'year'));
+                        return view('pages.ipt', compact(
+                            'data', 
+                            'year',
+                            'wards'
+                        ));
                     } else {
-                        $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ Admit หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
+                        // $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ Admit หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
+                        $request->session()->put('error', 'เนื่องจากมีการปิดปรับปรุงระบบขออภัยในความไม่สะดวก!');
                         return redirect()->route('dashboard');
                     }
                 }
@@ -811,4 +849,83 @@ class IptController extends Controller
             return response($output);
         }
     // GetResultCountDateDoctor End
+
+    // CheckStatusWard Start
+    public function checkStatusWard(Request $request) {
+        $wardName = $request->wardName;
+
+        $startTime = microtime(true);
+
+        $query = ModuleModel::select('status_id')->where('module_name', '=', $wardName);
+
+        $module_model = $query->first();
+
+        // ดึง SQL query พร้อมกับ bindings
+        $sql = $query->toSql();
+        $bindings = $query->getBindings();
+
+        // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+        $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+        $endTime = microtime(true);
+
+        $executionTime = $endTime - $startTime;
+        $formattedExecutionTime = number_format($executionTime, 3);
+
+        $username = $this->someMethod($request);    
+
+        $ipt_log_data = [
+            'function' => 'checkStatusWard',
+            'username' => $username,
+            'command_sql' => $fullSql,
+            'query_time' => $formattedExecutionTime,
+            'operation' => 'SELECT'
+        ];
+
+        IptLogModel::create($ipt_log_data);
+
+        return response()->json($module_model);
+    }
+    // CheckStatusWard End
+
+    // GetResultWard Start
+    public function getResultWard(Request $request) {
+        $ward = $request->wardId;
+
+        $startTime = microtime(true);
+    
+        // นับจำนวนข้อมูลที่ตรงกับเงื่อนไข
+        $query = DB::table('ipt')
+            ->whereDate('regdate', Carbon::today()) // เปรียบเทียบ regdate กับวันที่ปัจจุบัน
+            ->where('ward', $ward);
+
+        $count = $query->count();
+
+        // ดึง SQL query พร้อมกับ bindings
+        $sql = $query->toSql();
+        $bindings = $query->getBindings();
+
+        // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+        $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+        $endTime = microtime(true);
+
+        $executionTime = $endTime - $startTime;
+        $formattedExecutionTime = number_format($executionTime, 3);
+
+        $username = $this->someMethod($request);    
+
+        $ipt_log_data = [
+            'function' => 'getResultWard',
+            'username' => $username,
+            'command_sql' => $fullSql,
+            'query_time' => $formattedExecutionTime,
+            'operation' => 'SELECT'
+        ];
+
+        IptLogModel::create($ipt_log_data);
+    
+        return response()->json($count); // ส่งค่าจำนวนข้อมูลกลับไป
+    }
+    // GetResultWard End
 }

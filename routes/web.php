@@ -11,6 +11,7 @@ use App\Http\Controllers\Pages\ReferInController;
 use App\Http\Controllers\Pages\IptController;
 use App\Http\Controllers\Pages\PalliativeCareController;
 use App\Http\Controllers\Pages\OpdScreenController;
+use App\Http\Controllers\Pages\WardController;
 use App\Http\Controllers\Reportes\AuthenCodeController;
 use App\Http\Controllers\Setting\ModuleAccessRightsController;
 
@@ -89,7 +90,16 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('getResultCountYearsDoctor', [IptController::class, 'getResultCountYearsDoctor'])->name('getResultCountYearsDoctor');
             Route::get('getResultCountMonthDoctor', [IptController::class, 'getResultCountMonthDoctor'])->name('getResultCountMonthDoctor');
             Route::get('getResultCountDateDoctor', [IptController::class, 'getResultCountDateDoctor'])->name('getResultCountDateDoctor');
+            Route::get('checkStatusWard', [IptController::class, 'checkStatusWard'])->name('checkStatusWard');
+            Route::get('getResultWard', [IptController::class, 'getResultWard'])->name('getResultWard');
         // Ipt End
+
+        // Ward Start
+            Route::get('/ward/{wardId}', [WardController::class, 'show'])->name('ward.details');
+            Route::get('getIptWardData', [WardController::class, 'getIptWardData'])->name('getIptWardData');
+            Route::get('getIptWardDailyData', [WardController::class, 'getIptWardDailyData'])->name('getIptWardDailyData');
+            Route::get('getIptWardSelectData', [WardController::class, 'getIptWardSelectData'])->name('getIptWardSelectData');
+        // Ward End
 
         // Palliative Care Start
             Route::get('palliative_care', [PalliativeCareController::class, 'index'])->name('palliative_care');

@@ -30,6 +30,7 @@
                     <span class="fw-bold">รายละเอียดการ Update</span><br>
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. เพิ่มระบบ OPD( ผู้ป่วยนอกเข้ามา )</span><br>
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. เพิ่ม Modal ในการดูว่ามีรายการอะไร Update บ้างใน Version นี้</span><br>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. เพิ่ม การดูข้อมูลแบบแยกของตึกผู้ป่วยในทั้งหมด และเพิ่ม Chart</span><br>
                 </div>
             </div>
         </div>
