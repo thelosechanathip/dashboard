@@ -17,6 +17,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Detail การ Update Version -->
+    <div class="modal fade" id="DetailUpdateVersionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-auto">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="DetailUpdateVersionTitle">รายการที่มีการ Update ของ Version 1.1</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <span class="fw-bold">รายละเอียดการ Update</span><br>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. เพิ่มระบบ OPD( ผู้ป่วยนอกเข้ามา )</span><br>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. เพิ่ม Modal ในการดูว่ามีรายการอะไร Update บ้างใน Version นี้</span><br>
+                </div>
+            </div>
+        </div>
+    </div>
     @include('layout.template.footer')
     @include('layout.template.scriptes')
 
