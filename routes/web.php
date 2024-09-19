@@ -14,6 +14,7 @@ use App\Http\Controllers\Pages\OpdScreenController;
 use App\Http\Controllers\Pages\WardController;
 use App\Http\Controllers\Reportes\AuthenCodeController;
 use App\Http\Controllers\Setting\ModuleAccessRightsController;
+use App\Http\Controllers\Setting\SidebarMenuController;
 
 /*
 |--------------------------------------------------------------------------
@@ -157,6 +158,25 @@ Route::middleware(['check.something'])->group(function() {
             Route::post('ChangeStatusIdInAccessibilityRealtime', [ModuleAccessRightsController::class, 'ChangeStatusIdInAccessibilityRealtime'])->name('ChangeStatusIdInAccessibilityRealtime');
             Route::delete('deleteDataAccessibility', [ModuleAccessRightsController::class, 'deleteDataAccessibility'])->name('deleteDataAccessibility');
         // Module Access Rights End
+
+        // Sidebar Main Menu Start
+            Route::get('sm_index', [SidebarMenuController::class, 'index'])->name('sm_index');
+            Route::get('fetchAllDataSidebarMainMenu', [SidebarMenuController::class, 'fetchAllDataSidebarMainMenu'])->name('fetchAllDataSidebarMainMenu');
+            Route::post('insertDataSidebarMainMenu', [SidebarMenuController::class, 'insertDataSidebarMainMenu'])->name('insertDataSidebarMainMenu');
+            Route::get('findOneDataSidebarMainMenu', [SidebarMenuController::class, 'findOneDataSidebarMainMenu'])->name('findOneDataSidebarMainMenu');
+            Route::post('updateDataSidebarMainMenu', [SidebarMenuController::class, 'updateDataSidebarMainMenu'])->name('updateDataSidebarMainMenu');
+            Route::delete('deleteDataSidebarMainMenu', [SidebarMenuController::class, 'deleteDataSidebarMainMenu'])->name('deleteDataSidebarMainMenu');
+        // Sidebar Main Menu End
+
+
+        // Sidebar Sub1 Menu Start
+            Route::get('sm_index', [SidebarMenuController::class, 'index'])->name('sm_index');
+            Route::get('fetchAllDataSidebarSub1Menu', [SidebarMenuController::class, 'fetchAllDataSidebarSub1Menu'])->name('fetchAllDataSidebarSub1Menu');
+            Route::post('insertDataSidebarSub1Menu', [SidebarMenuController::class, 'insertDataSidebarSub1Menu'])->name('insertDataSidebarSub1Menu');
+            Route::get('findOneDataSidebarSub1Menu', [SidebarMenuController::class, 'findOneDataSidebarSub1Menu'])->name('findOneDataSidebarSub1Menu');
+            Route::post('updateDataSidebarSub1Menu', [SidebarMenuController::class, 'updateDataSidebarSub1Menu'])->name('updateDataSidebarSub1Menu');
+            Route::delete('deleteDataSidebarSub1Menu', [SidebarMenuController::class, 'deleteDataSidebarSub1Menu'])->name('deleteDataSidebarSub1Menu');
+        // Sidebar Sub1 Menu End
     // Setting End
 });
 
