@@ -45,20 +45,38 @@
             setUpStatus();
 
             function setUpStatus() {
-                let palliativeCareStatusId = $('#palliative_care').data('value');
-                if(palliativeCareStatusId === 1) {
-                    $('#palliative_care').show();
-                } else{
-                    $('#palliative_care').hide();
-                }
 
-                let authenCodeStatusId = $('#authen_code').data('value');
-                if(authenCodeStatusId === 1) {
-                    $('#authen_code').show();
-                } else{
-                    $('#authen_code').hide();
-                }
+                $('.sidebar-main-menu').each(function() {
+                    var sidebarMainMenuLi = $(this); // เก็บ reference ของ Li ปัจจุบัน
+                    var sidebarMainMenuA = sidebarMainMenuLi.find('.sidebar-main-menu-a');
 
+                    if (sidebarMainMenuA.length > 0) {
+                        var sidebarMainMenuId = sidebarMainMenuA.data('value');
+                        if(sidebarMainMenuId === 1) {
+                            sidebarMainMenuLi.show();
+                        } else {
+                            sidebarMainMenuLi.hide();
+                        }
+                    } else {
+                        console.error('Element .sidebar-main-menu-a not found');
+                    }
+                });
+
+                $('.sidebar-sub1-menu').each(function() {
+                    var sidebarSub1MenuLi = $(this); // เก็บ reference ของ Li ปัจจุบัน
+                    var sidebarSub1MenuA = sidebarSub1MenuLi.find('.sidebar-sub1-menu-a');
+
+                    if (sidebarSub1MenuA.length > 0) {
+                        var sidebarMainMenuId = sidebarSub1MenuA.data('value');
+                        if(sidebarMainMenuId === 1) {
+                            sidebarSub1MenuLi.show();
+                        } else {
+                            sidebarSub1MenuLi.hide();
+                        }
+                    } else {
+                        console.error('Element .sidebar-sub1-menu-a not found');
+                    }
+                });
                 
                 let ovstStatusId = $('#ovst').data('value');
                 if(ovstStatusId === 1) {

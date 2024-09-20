@@ -24,4 +24,12 @@ class StatusModel extends Model
     public function accessibilities() {
         return $this->hasMany(AccessibilityModel::class, 'status_id', 'id');
     }
+
+    public function sidebarMainMenu() {
+        return $this->hasMany(SidebarMainMenuModel::class, 'status_id', 'id');
+    }
+
+    public function sidebarSub1Menu() {
+        return $this->hasMany(SidebarSub1MenuModel::class, 'status_id', 'id');
+    }
 }

@@ -335,8 +335,8 @@ class IptController extends Controller
                             'wards'
                         ));
                     } else {
-                        // $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ Admit หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
-                        $request->session()->put('error', 'เนื่องจากมีการปิดปรับปรุงระบบขออภัยในความไม่สะดวก!');
+                        $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ Admit หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
+                        // $request->session()->put('error', 'เนื่องจากมีการปิดปรับปรุงระบบขออภัยในความไม่สะดวก!');
                         return redirect()->route('dashboard');
                     }
                 }
@@ -851,41 +851,41 @@ class IptController extends Controller
     // GetResultCountDateDoctor End
 
     // CheckStatusWard Start
-    public function checkStatusWard(Request $request) {
-        $wardName = $request->wardName;
+        public function checkStatusWard(Request $request) {
+            $wardName = $request->wardName;
 
-        $startTime = microtime(true);
+            $startTime = microtime(true);
 
-        $query = ModuleModel::select('status_id')->where('module_name', '=', $wardName);
+            $query = ModuleModel::select('status_id')->where('module_name', '=', $wardName);
 
-        $module_model = $query->first();
+            $module_model = $query->first();
 
-        // ดึง SQL query พร้อมกับ bindings
-        $sql = $query->toSql();
-        $bindings = $query->getBindings();
+            // ดึง SQL query พร้อมกับ bindings
+            $sql = $query->toSql();
+            $bindings = $query->getBindings();
 
-        // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
-        $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+            // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
 
-        $endTime = microtime(true);
+            $endTime = microtime(true);
 
-        $executionTime = $endTime - $startTime;
-        $formattedExecutionTime = number_format($executionTime, 3);
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
 
-        $username = $this->someMethod($request);    
+            $username = $this->someMethod($request);    
 
-        $ipt_log_data = [
-            'function' => 'checkStatusWard',
-            'username' => $username,
-            'command_sql' => $fullSql,
-            'query_time' => $formattedExecutionTime,
-            'operation' => 'SELECT'
-        ];
+            $ipt_log_data = [
+                'function' => 'checkStatusWard',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
 
-        IptLogModel::create($ipt_log_data);
+            IptLogModel::create($ipt_log_data);
 
-        return response()->json($module_model);
-    }
+            return response()->json($module_model);
+        }
     // CheckStatusWard End
 
     // GetResultWard Start

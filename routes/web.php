@@ -39,6 +39,7 @@ Route::middleware(['check.something'])->group(function() {
     Route::get('check_status', [DashboardController::class, 'check_status'])->name('check_status');
     Route::get('check_group_and_user', [DashboardController::class, 'check_group_and_user'])->name('check_group_and_user');
     Route::get('query_all_count_data', [DashboardController::class, 'query_all_count_data'])->name('query_all_count_data');
+    Route::get('checkStatusSidebarMainMenu', [DashboardController::class, 'checkStatusSidebarMainMenu'])->name('checkStatusSidebarMainMenu');
 
     // Pages Start
         // Ovst Start
@@ -123,7 +124,7 @@ Route::middleware(['check.something'])->group(function() {
 
     // Reportes Start
         // Authen Code Start
-            Route::get('report_index_authen_code', [AuthenCodeController::class, 'index'])->name('report_index_authen_code');
+            Route::get('report_index_authen_code/{id}', [AuthenCodeController::class, 'index'])->name('report_index_authen_code');
             Route::get('getAuthenCodeCount', [AuthenCodeController::class, 'getAuthenCodeCount'])->name('getAuthenCodeCount');
             Route::get('authenCodeFetchAll', [AuthenCodeController::class, 'authenCodeFetchAll'])->name('authenCodeFetchAll');
             Route::get('exportNotAuthenCode', [AuthenCodeController::class, 'exportNotAuthenCode'])->name('exportNotAuthenCode');
@@ -166,6 +167,7 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('findOneDataSidebarMainMenu', [SidebarMenuController::class, 'findOneDataSidebarMainMenu'])->name('findOneDataSidebarMainMenu');
             Route::post('updateDataSidebarMainMenu', [SidebarMenuController::class, 'updateDataSidebarMainMenu'])->name('updateDataSidebarMainMenu');
             Route::delete('deleteDataSidebarMainMenu', [SidebarMenuController::class, 'deleteDataSidebarMainMenu'])->name('deleteDataSidebarMainMenu');
+            Route::post('ChangeStatusIdInSidebarMainMenuRealtime', [SidebarMenuController::class, 'ChangeStatusIdInSidebarMainMenuRealtime'])->name('ChangeStatusIdInSidebarMainMenuRealtime');
         // Sidebar Main Menu End
 
 
@@ -176,6 +178,8 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('findOneDataSidebarSub1Menu', [SidebarMenuController::class, 'findOneDataSidebarSub1Menu'])->name('findOneDataSidebarSub1Menu');
             Route::post('updateDataSidebarSub1Menu', [SidebarMenuController::class, 'updateDataSidebarSub1Menu'])->name('updateDataSidebarSub1Menu');
             Route::delete('deleteDataSidebarSub1Menu', [SidebarMenuController::class, 'deleteDataSidebarSub1Menu'])->name('deleteDataSidebarSub1Menu');
+            Route::post('ChangeStatusIdInSidebarSub1MenuRealtime', [SidebarMenuController::class, 'ChangeStatusIdInSidebarSub1MenuRealtime'])->name('ChangeStatusIdInSidebarSub1MenuRealtime');
+
         // Sidebar Sub1 Menu End
     // Setting End
 });

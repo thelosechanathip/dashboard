@@ -15,10 +15,15 @@ class SidebarMainMenuModel extends Model
 
     protected $fillable = [
         'sidebar_main_menu_name',
-        'link_url'
+        'link_url_or_route',
+        'status_id',
     ];
 
     public function sidebarSub1Menu() {
         return $this->hasMany(SidebarSub1MenuModel::class, 'sidebar_main_menu_id', 'id');
+    }
+
+    public function status() {
+        return $this->belongsTo(StatusModel::class, 'status_id', 'id');
     }
 }

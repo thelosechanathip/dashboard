@@ -27,8 +27,8 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('layout.template.sidebar', function ($view) {
             // ดึงข้อมูลจากฐานข้อมูล
-            $palliativeCareStatusId = ModuleModel::where('module_name', 'Palliative Care')->first();
-            $authenCodeStatusId = ModuleModel::where('module_name', 'Authen Code')->first();
+            // $palliativeCareStatusId = ModuleModel::where('module_name', 'Palliative Care')->first();
+            // $authenCodeStatusId = ModuleModel::where('module_name', 'Authen Code')->first();
 
             $sidebarMainMenuModel = SidebarMainMenuModel::with('sidebarSub1Menu')->get();
             $sidebarSub1MenuModel = SidebarSub1MenuModel::get();
@@ -37,8 +37,8 @@ class AppServiceProvider extends ServiceProvider
 
             // ส่งตัวแปรไปยัง Sidebar พร้อมค่า
             $view->with([
-                'palliativeCareStatusId' => $palliativeCareStatusId,
-                'authenCodeStatusId' => $authenCodeStatusId,
+                // 'palliativeCareStatusId' => $palliativeCareStatusId,
+                // 'authenCodeStatusId' => $authenCodeStatusId,
                 'sidebarMainMenuModel' => $sidebarMainMenuModel,
                 'sidebarSub1MenuModel' => $sidebarSub1MenuModel,
             ]);

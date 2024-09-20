@@ -24,8 +24,17 @@
                                 <input type="text" class="form-control" id="sidebar_main_menu_name" name="sidebar_main_menu_name">
                             </div>
                             <div class="mb-3">
-                                <label for="link_url_or_route" class="form-label">Link URL หรือ Route บน Laravel</label>
-                                <input type="text" class="form-control" id="link_url_or_route" name="link_url_or_route">
+                                <label for="link_url_or_route_main" class="form-label">Link URL หรือ Route บน Laravel</label>
+                                <input type="text" class="form-control" id="link_url_or_route_main" name="link_url_or_route_main">
+                            </div>
+                            <div class="mb-3" id="hide_status_id_for_sidebar_main_menu">
+                                <label for="status_id_for_sidebar_main_menu" class="form-label">Status</label>
+                                <select class="form-select" aria-label="Default select example" name="status_id_for_sidebar_main_menu" id="status_id_for_sidebar_main_menu">
+                                    <option selected value="0">--------------</option>
+                                    @foreach($status_model AS $sm)
+                                        <option value="{{ $sm->id }}">{{ $sm->status_name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="mb-3 d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary zoom-card" id="sidebar_main_menu_submit">ยืนยัน</button>
@@ -65,6 +74,15 @@
                             <div class="mb-3">
                                 <label for="link_url_or_route_sub1" class="form-label">Link URL หรือ Route บน Laravel</label>
                                 <input type="text" class="form-control" id="link_url_or_route_sub1" name="link_url_or_route_sub1">
+                            </div>
+                            <div class="mb-3" id="hide_status_id_for_sidebar_sub1_menu">
+                                <label for="status_id_for_sidebar_sub1_menu" class="form-label">Status</label>
+                                <select class="form-select" aria-label="Default select example" name="status_id_for_sidebar_sub1_menu" id="status_id_for_sidebar_sub1_menu">
+                                    <option selected value="0">--------------</option>
+                                    @foreach($status_model AS $sm)
+                                        <option value="{{ $sm->id }}">{{ $sm->status_name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="mb-3 d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary zoom-card" id="sidebar_sub_menu_submit">ยืนยัน</button>
@@ -308,8 +326,9 @@
                         },
                         success: function(response) {
                             $("#sidebar_main_menu_name").val(response.sidebar_main_menu_name);
-                            $("#link_url_or_route").val(response.link_url_or_route);
+                            $("#link_url_or_route_main").val(response.link_url_or_route);
                             $("#sidebar_main_menu_id_find_one").val(response.id);
+                            $("#hide_status_id_for_sidebar_main_menu").hide();
                         }
                     });
                 });
@@ -360,6 +379,59 @@
                     })
                 });
             // Delete Data Sidebar Main Menu End
+
+            // Change Status_id In Sidebar Main Menu Start
+                $(document).ready(function() {
+                    $('.status_checked_in_sidebar_main_menu').each(function() {
+                        var status = $(this).val();
+                        if (status == 1) {
+                            $(this).prop('checked', true);
+                        } else if (status == 2) {
+                            $(this).prop('checked', false);
+                        }
+                    });
+
+                    $(document).on('change', '.status_checked_in_sidebar_main_menu', function(e) {
+                        e.preventDefault();
+
+                        const status_id_for_sidebar_main_menu = $(this).is(':checked') ? 1 : 2;
+                        const form = $(this).closest('form'); // Get the closest form
+                        const id = form.find('#sidebar_main_menu_id').val(); // Get the ID from the hidden input
+
+                        // Create a data object to hold the status_id and id
+                        let data = {
+                            status_id_for_sidebar_main_menu: status_id_for_sidebar_main_menu,
+                            id: id,
+                            _token: form.find('input[name="_token"]').val()
+                        };
+
+                        $.ajax({
+                            url: '{{ route('ChangeStatusIdInSidebarMainMenuRealtime') }}',
+                            method: 'POST',
+                            data: data, // Send the data object containing the status_id and id
+                            success: function(response) {
+                                if(response.status === 400) {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                } else {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                    fetchAllDataSidebarMainMenu();
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error:', error);
+                            }
+                        });
+                    });
+                });
+            // Change Status_id In Sidebar Main Menu End
 
             // Fetch All Data Sidebar Sub1 Menu Start
                 fetchAllDataSidebarSub1Menu();
@@ -462,8 +534,10 @@
                         },
                         success: function(response) {
                             $("#sidebar_sub1_menu_name").val(response.sidebar_sub1_menu_name);
-                            $("#link_url_or_route").val(response.link_url_or_route);
+                            $("#sidebar_main_menu_id").val(response.sidebar_main_menu_id);
+                            $("#link_url_or_route_sub1").val(response.link_url_or_route);
                             $("#sidebar_sub1_menu_id_find_one").val(response.id);
+                            $("#hide_status_id_for_sidebar_sub1_menu").hide();
                         }
                     });
                 });
@@ -514,6 +588,59 @@
                     })
                 });
             // Delete Data Sidebar Sub1 Menu End
+
+            // Change Status_id In Sidebar Sub1 Menu Start
+                $(document).ready(function() {
+                    $('.status_checked_in_sidebar_sub1_menu').each(function() {
+                        var status = $(this).val();
+                        if (status == 1) {
+                            $(this).prop('checked', true);
+                        } else if (status == 2) {
+                            $(this).prop('checked', false);
+                        }
+                    });
+
+                    $(document).on('change', '.status_checked_in_sidebar_sub1_menu', function(e) {
+                        e.preventDefault();
+
+                        const status_id_for_sidebar_sub1_menu = $(this).is(':checked') ? 1 : 2;
+                        const form = $(this).closest('form'); // Get the closest form
+                        const id = form.find('#sidebar_sub1_menu_id').val(); // Get the ID from the hidden input
+
+                        // Create a data object to hold the status_id and id
+                        let data = {
+                            status_id_for_sidebar_sub1_menu: status_id_for_sidebar_sub1_menu,
+                            id: id,
+                            _token: form.find('input[name="_token"]').val()
+                        };
+
+                        $.ajax({
+                            url: '{{ route('ChangeStatusIdInSidebarSub1MenuRealtime') }}',
+                            method: 'POST',
+                            data: data, // Send the data object containing the status_id and id
+                            success: function(response) {
+                                if(response.status === 400) {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                } else {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                    fetchAllDataSidebarSub1Menu();
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error:', error);
+                            }
+                        });
+                    });
+                });
+            // Change Status_id In Sidebar Sub1 Menu End
         });
     </script>
 @endsection

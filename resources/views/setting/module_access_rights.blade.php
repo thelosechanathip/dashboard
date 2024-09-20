@@ -95,7 +95,7 @@
         {{-- Module End --}}
         {{-- Accessibility Start --}}
             <div class="modal fade" id="accessibility_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-dialog modal-dialog-centered modal-auto">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="accessibility_title"></h5>
@@ -111,7 +111,9 @@
                                     <select class="form-select" aria-label="Default select example" name="module_id_for_accessibility" id="module_id_for_accessibility">
                                         <option selected value="0">--------------</option>
                                         @foreach($module_model AS $mm)
-                                            <option value="{{ $mm->id }}">{{ $mm->module_name }}</option>
+                                            @if($mm->status_id != 2)
+                                                <option value="{{ $mm->id }}">{{ $mm->module_name }}</option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -126,9 +128,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="accessibility_name" class="form-label">Accessibility Name</label>
-                                    <select class="form-select" aria-label="Default select example" name="accessibility_name" id="accessibility_name">
-                                        <!-- <option selected value="0">**** กรุณาเลือก Type ก่อน ****</option> -->
-                                    </select>
+                                    <select class="form-select" aria-label="Default select example" name="accessibility_name" id="accessibility_name"></select>
                                 </div>
                                 <div class="mb-3" id="hide_status_id_for_accessibility">
                                     <label for="status_id_for_accessibility" class="form-label">Status</label>

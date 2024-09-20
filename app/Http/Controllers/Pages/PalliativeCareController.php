@@ -444,152 +444,154 @@ class PalliativeCareController extends Controller
 
     // หน้าแรกของ Palliative Care Start
         public function index(Request $request) {
-            // ดึงข้อมูล Session ที่มีการ Login เข้ามาภายในระบบ
-            $data = $request->session()->all();
+            $request->session()->put('error', 'ขณะนี้ทาง IT ยังไม่ได้เปิดให้ใช้บริการระบบนี้ ขออภัยในความไม่สะดวก');
+            return redirect()->route('dashboard');
+            // // ดึงข้อมูล Session ที่มีการ Login เข้ามาภายในระบบ
+            // $data = $request->session()->all();
 
-            $startTime_1 = microtime(true);
+            // $startTime_1 = microtime(true);
 
-            $query_1 = ModuleModel::where('module_name', 'Palliative Care');
+            // $query_1 = ModuleModel::where('module_name', 'Palliative Care');
 
-            $palliativeCareId = $query_1->first();
+            // $palliativeCareId = $query_1->first();
         
-            // ดึง SQL query_1 พร้อม bindings
-            $sql_1 = $query_1->toSql();
-            $bindings_1 = $query_1->getBindings();
-            $fullSql_1 = vsprintf(str_replace('?', "'%s'", $sql_1), $bindings_1);
+            // // ดึง SQL query_1 พร้อม bindings
+            // $sql_1 = $query_1->toSql();
+            // $bindings_1 = $query_1->getBindings();
+            // $fullSql_1 = vsprintf(str_replace('?', "'%s'", $sql_1), $bindings_1);
         
-            $endTime_1 = microtime(true);
-            $executionTime_1 = $endTime_1 - $startTime_1;
-            $formattedExecutionTime_1 = number_format($executionTime_1, 3);
+            // $endTime_1 = microtime(true);
+            // $executionTime_1 = $endTime_1 - $startTime_1;
+            // $formattedExecutionTime_1 = number_format($executionTime_1, 3);
 
-            // สร้างข้อมูลสำหรับบันทึกใน log
-            $module_log_data = [
-                'function' => 'Where module_name = Palliative Care',
-                'username' => $data['loginname'],
-                'command_sql' => $fullSql_1,
-                'query_time' => $formattedExecutionTime_1,
-                'operation' => 'SELECT'
-            ];
+            // // สร้างข้อมูลสำหรับบันทึกใน log
+            // $module_log_data = [
+            //     'function' => 'Where module_name = Palliative Care',
+            //     'username' => $data['loginname'],
+            //     'command_sql' => $fullSql_1,
+            //     'query_time' => $formattedExecutionTime_1,
+            //     'operation' => 'SELECT'
+            // ];
         
-            // บันทึกข้อมูลลงใน ModuleLogModel
-            ModuleLogModel::create($module_log_data);
+            // // บันทึกข้อมูลลงใน ModuleLogModel
+            // ModuleLogModel::create($module_log_data);
 
-            $startTime_2 = microtime(true);
+            // $startTime_2 = microtime(true);
 
-            // Query สถานบริการ Start
-            $query_2 = DB::table('zbm_rpst_name')
-                ->select('rpst_id', 'rpst_name')
-                ->whereIn('rpst_id', ['11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976', '00000']);
-            // Query สถานบริการ End
+            // // Query สถานบริการ Start
+            // $query_2 = DB::table('zbm_rpst_name')
+            //     ->select('rpst_id', 'rpst_name')
+            //     ->whereIn('rpst_id', ['11098', '05532', '05533', '05534', '05535', '05536', '05537', '05538', '05539', '05540', '05541', '13976', '00000']);
+            // // Query สถานบริการ End
 
-            // ดึงข้อมูลจาก Query (ดึงหลายแถว)
-            $zbm_rpst_name = $query_2->get();
+            // // ดึงข้อมูลจาก Query (ดึงหลายแถว)
+            // $zbm_rpst_name = $query_2->get();
         
-            // ดึง SQL query พร้อม bindings
-            $sql_2 = $query_2->toSql();
-            $bindings_2 = $query_2->getBindings();
-            $fullSql_2 = vsprintf(str_replace('?', "'%s'", $sql_2), $bindings_2);
+            // // ดึง SQL query พร้อม bindings
+            // $sql_2 = $query_2->toSql();
+            // $bindings_2 = $query_2->getBindings();
+            // $fullSql_2 = vsprintf(str_replace('?', "'%s'", $sql_2), $bindings_2);
         
-            $endTime_2 = microtime(true);
-            $executionTime_2 = $endTime_2 - $startTime_2;
-            $formattedExecutionTime_2 = number_format($executionTime_2, 3);
+            // $endTime_2 = microtime(true);
+            // $executionTime_2 = $endTime_2 - $startTime_2;
+            // $formattedExecutionTime_2 = number_format($executionTime_2, 3);
         
-            // ดึง username จาก method someMethod
-            // $username = $this->someMethod($request);
+            // // ดึง username จาก method someMethod
+            // // $username = $this->someMethod($request);
         
-            // สร้างข้อมูลสำหรับบันทึกใน log
-            $palliative_care_log_data = [
-                'function' => 'Come to the Palliative Care page AND SELECT DATA',
-                'username' => $data['loginname'],
-                'command_sql' => $fullSql_2,
-                'query_time' => $formattedExecutionTime_2,
-                'operation' => 'SELECT'
-            ];
+            // // สร้างข้อมูลสำหรับบันทึกใน log
+            // $palliative_care_log_data = [
+            //     'function' => 'Come to the Palliative Care page AND SELECT DATA',
+            //     'username' => $data['loginname'],
+            //     'command_sql' => $fullSql_2,
+            //     'query_time' => $formattedExecutionTime_2,
+            //     'operation' => 'SELECT'
+            // ];
         
-            // บันทึกข้อมูลลงใน PalliativeCareLogModel
-            PalliativeCareLogModel::create($palliative_care_log_data);
+            // // บันทึกข้อมูลลงใน PalliativeCareLogModel
+            // PalliativeCareLogModel::create($palliative_care_log_data);
 
-            if($palliativeCareId->status_id === 1) {
-                $startTime_3 = microtime(true);
+            // if($palliativeCareId->status_id === 1) {
+            //     $startTime_3 = microtime(true);
 
-                $query_3 = AccessibilityModel::where('accessibility_name', $data['groupname'])->where('module_id', $palliativeCareId->id);
+            //     $query_3 = AccessibilityModel::where('accessibility_name', $data['groupname'])->where('module_id', $palliativeCareId->id);
 
-                // ดึงข้อมูลจาก Query (ดึงหลายแถว)
-                $accessibility_groupname_model = $query_3->first();
+            //     // ดึงข้อมูลจาก Query (ดึงหลายแถว)
+            //     $accessibility_groupname_model = $query_3->first();
             
-                // ดึง SQL query พร้อม bindings
-                $sql_3 = $query_3->toSql();
-                $bindings_3 = $query_3->getBindings();
-                $fullSql_3 = vsprintf(str_replace('?', "'%s'", $sql_3), $bindings_3);
+            //     // ดึง SQL query พร้อม bindings
+            //     $sql_3 = $query_3->toSql();
+            //     $bindings_3 = $query_3->getBindings();
+            //     $fullSql_3 = vsprintf(str_replace('?', "'%s'", $sql_3), $bindings_3);
             
-                $endTime_3 = microtime(true);
-                $executionTime_3 = $endTime_3 - $startTime_3;
-                $formattedExecutionTime_3 = number_format($executionTime_3, 3);
+            //     $endTime_3 = microtime(true);
+            //     $executionTime_3 = $endTime_3 - $startTime_3;
+            //     $formattedExecutionTime_3 = number_format($executionTime_3, 3);
             
-                // ดึง username จาก method someMethod
-                // $username = $this->someMethod($request);
+            //     // ดึง username จาก method someMethod
+            //     // $username = $this->someMethod($request);
             
-                // สร้างข้อมูลสำหรับบันทึกใน log
-                $accessibility_log_data = [
-                    'function' => 'Where accessibility_name = [groupname]',
-                    'username' => $data['loginname'],
-                    'command_sql' => $fullSql_3,
-                    'query_time' => $formattedExecutionTime_3,
-                    'operation' => 'SELECT'
-                ];
+            //     // สร้างข้อมูลสำหรับบันทึกใน log
+            //     $accessibility_log_data = [
+            //         'function' => 'Where accessibility_name = [groupname]',
+            //         'username' => $data['loginname'],
+            //         'command_sql' => $fullSql_3,
+            //         'query_time' => $formattedExecutionTime_3,
+            //         'operation' => 'SELECT'
+            //     ];
             
-                // บันทึกข้อมูลลงใน AccessibilityLogModel
-                AccessibilityLogModel::create($accessibility_log_data);
+            //     // บันทึกข้อมูลลงใน AccessibilityLogModel
+            //     AccessibilityLogModel::create($accessibility_log_data);
                 
-                if($accessibility_groupname_model !== null && $accessibility_groupname_model->status_id === 1) {
-                    // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data Start
-                    return view('pages.palliativeCare', compact('data', 'zbm_rpst_name'));
-                    // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data End
-                } else {
-                    $startTime_4 = microtime(true);
+            //     if($accessibility_groupname_model !== null && $accessibility_groupname_model->status_id === 1) {
+            //         // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data Start
+            //         return view('pages.palliativeCare', compact('data', 'zbm_rpst_name'));
+            //         // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data End
+            //     } else {
+            //         $startTime_4 = microtime(true);
 
-                    $query_4 = AccessibilityModel::where('accessibility_name', $data['name'])->where('module_id', $palliativeCareId->id);
+            //         $query_4 = AccessibilityModel::where('accessibility_name', $data['name'])->where('module_id', $palliativeCareId->id);
 
-                    // ดึงข้อมูลจาก Query (ดึงหลายแถว)
-                    $accessibility_name_model = $query_4->first();
+            //         // ดึงข้อมูลจาก Query (ดึงหลายแถว)
+            //         $accessibility_name_model = $query_4->first();
                 
-                    // ดึง SQL query พร้อม bindings
-                    $sql_4 = $query_4->toSql();
-                    $bindings_4 = $query_4->getBindings();
-                    $fullSql_4 = vsprintf(str_replace('?', "'%s'", $sql_4), $bindings_4);
+            //         // ดึง SQL query พร้อม bindings
+            //         $sql_4 = $query_4->toSql();
+            //         $bindings_4 = $query_4->getBindings();
+            //         $fullSql_4 = vsprintf(str_replace('?', "'%s'", $sql_4), $bindings_4);
                 
-                    $endTime_4 = microtime(true);
-                    $executionTime_4 = $endTime_4 - $startTime_4;
-                    $formattedExecutionTime_4 = number_format($executionTime_4, 3);
+            //         $endTime_4 = microtime(true);
+            //         $executionTime_4 = $endTime_4 - $startTime_4;
+            //         $formattedExecutionTime_4 = number_format($executionTime_4, 3);
                 
-                    // ดึง username จาก method someMethod
-                    // $username = $this->someMethod($request);
+            //         // ดึง username จาก method someMethod
+            //         // $username = $this->someMethod($request);
                 
-                    // สร้างข้อมูลสำหรับบันทึกใน log
-                    $accessibility_log_data = [
-                        'function' => 'Where accessibility_name = [name]',
-                        'username' => $data['loginname'],
-                        'command_sql' => $fullSql_4,
-                        'query_time' => $formattedExecutionTime_4,
-                        'operation' => 'SELECT'
-                    ];
+            //         // สร้างข้อมูลสำหรับบันทึกใน log
+            //         $accessibility_log_data = [
+            //             'function' => 'Where accessibility_name = [name]',
+            //             'username' => $data['loginname'],
+            //             'command_sql' => $fullSql_4,
+            //             'query_time' => $formattedExecutionTime_4,
+            //             'operation' => 'SELECT'
+            //         ];
                 
-                    // บันทึกข้อมูลลงใน AccessibilityLogModel
-                    AccessibilityLogModel::create($accessibility_log_data);
+            //         // บันทึกข้อมูลลงใน AccessibilityLogModel
+            //         AccessibilityLogModel::create($accessibility_log_data);
 
-                    if($accessibility_name_model !== null && $accessibility_name_model->status_id === 1) {
-                        // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data Start
-                        return view('pages.palliativeCare', compact('data', 'zbm_rpst_name'));
-                        // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data End
-                    } else {
-                        $request->session()->put('error', 'ไม่มีสิทธิ์เข้าใช้งานระบบ Palliative Care หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
-                        return redirect()->route('dashboard');
-                    }
-                }
-            } else {
-                $request->session()->put('error', 'ขณะนี้ระบบ Palliative Care ไม่ได้เปิดใช้งาน กรุณาแจ้ง Admin หากต้องการใช้งาน!');
-                return redirect()->route('dashboard');
-            }
+            //         if($accessibility_name_model !== null && $accessibility_name_model->status_id === 1) {
+            //             // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data Start
+            //             return view('pages.palliativeCare', compact('data', 'zbm_rpst_name'));
+            //             // ส่งค่าคืนกลับไปยังหน้า palliative care พร้อมกับ Data End
+            //         } else {
+            //             $request->session()->put('error', 'ไม่มีสิทธิ์เข้าใช้งานระบบ Palliative Care หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
+            //             return redirect()->route('dashboard');
+            //         }
+            //     }
+            // } else {
+            //     $request->session()->put('error', 'ขณะนี้ระบบ Palliative Care ไม่ได้เปิดใช้งาน กรุณาแจ้ง Admin หากต้องการใช้งาน!');
+            //     return redirect()->route('dashboard');
+            // }
         }
     // หน้าแรกของ Palliative Care End
 
