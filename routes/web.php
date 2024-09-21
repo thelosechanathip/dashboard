@@ -104,7 +104,7 @@ Route::middleware(['check.something'])->group(function() {
         // Ward End
 
         // Palliative Care Start
-            Route::get('palliative_care', [PalliativeCareController::class, 'index'])->name('palliative_care');
+            Route::get('palliative_care/{id}', [PalliativeCareController::class, 'index'])->name('palliative_care');
             Route::get('getPalliativeCareSelectData', [PalliativeCareController::class, 'getPalliativeCareSelectData'])->name('getPalliativeCareSelectData');
             Route::get('getPalliativeCareFetchListName', [PalliativeCareController::class, 'getPalliativeCareFetchListName'])->name('getPalliativeCareFetchListName');
             Route::get('getHomeVisitingInformation', [PalliativeCareController::class, 'getHomeVisitingInformation'])->name('getHomeVisitingInformation');
@@ -140,6 +140,11 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('findOneDataType', [ModuleAccessRightsController::class, 'findOneDataType'])->name('findOneDataType');
             Route::post('updateDataType', [ModuleAccessRightsController::class, 'updateDataType'])->name('updateDataType');
             Route::delete('deleteDataType', [ModuleAccessRightsController::class, 'deleteDataType'])->name('deleteDataType');
+            Route::get('fetchAllDataTypeAccessibility', [ModuleAccessRightsController::class, 'fetchAllDataTypeAccessibility'])->name('fetchAllDataTypeAccessibility');
+            Route::post('insertDataTypeAccessibility', [ModuleAccessRightsController::class, 'insertDataTypeAccessibility'])->name('insertDataTypeAccessibility');
+            Route::get('findOneDataTypeAccessibility', [ModuleAccessRightsController::class, 'findOneDataTypeAccessibility'])->name('findOneDataTypeAccessibility');
+            Route::post('updateDataTypeAccessibility', [ModuleAccessRightsController::class, 'updateDataTypeAccessibility'])->name('updateDataTypeAccessibility');
+            Route::delete('deleteDataTypeAccessibility', [ModuleAccessRightsController::class, 'deleteDataTypeAccessibility'])->name('deleteDataTypeAccessibility');
             Route::get('fetchAllDataStatus', [ModuleAccessRightsController::class, 'fetchAllDataStatus'])->name('fetchAllDataStatus');
             Route::post('insertDataStatus', [ModuleAccessRightsController::class, 'insertDataStatus'])->name('insertDataStatus');
             Route::get('findOneDataStatus', [ModuleAccessRightsController::class, 'findOneDataStatus'])->name('findOneDataStatus');
@@ -155,6 +160,8 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('fetchAllDataAccessibility', [ModuleAccessRightsController::class, 'fetchAllDataAccessibility'])->name('fetchAllDataAccessibility');
             Route::post('insertDataAccessibility', [ModuleAccessRightsController::class, 'insertDataAccessibility'])->name('insertDataAccessibility');
             Route::get('findOneDataAccessibility', [ModuleAccessRightsController::class, 'findOneDataAccessibility'])->name('findOneDataAccessibility');
+            Route::get('findSelectForModule', [ModuleAccessRightsController::class, 'findSelectForModule'])->name('findSelectForModule');
+            Route::get('findSelectForSidebarSub1Menu', [ModuleAccessRightsController::class, 'findSelectForSidebarSub1Menu'])->name('findSelectForSidebarSub1Menu');
             Route::post('updateDataAccessibility', [ModuleAccessRightsController::class, 'updateDataAccessibility'])->name('updateDataAccessibility');
             Route::post('ChangeStatusIdInAccessibilityRealtime', [ModuleAccessRightsController::class, 'ChangeStatusIdInAccessibilityRealtime'])->name('ChangeStatusIdInAccessibilityRealtime');
             Route::delete('deleteDataAccessibility', [ModuleAccessRightsController::class, 'deleteDataAccessibility'])->name('deleteDataAccessibility');

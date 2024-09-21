@@ -27,4 +27,8 @@ class SidebarSub1MenuModel extends Model
     public function status() {
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');
     }
+
+    public function accessibilities() {
+        return $this->hasMany(AccessibilityModel::class, 'type_accessibility_id', 'id');
+    }
 }

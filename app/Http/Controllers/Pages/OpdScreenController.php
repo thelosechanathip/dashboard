@@ -301,8 +301,8 @@ class OpdScreenController extends Controller
                     if($accessibility_name_model !== null && $accessibility_name_model->status_id === 1) {
                         return view('pages.opdscreen', compact('data', 'year'));
                     } else {
-                        // $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ Opdscreen หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
-                        $request->session()->put('error', 'ขณะนี้ระบบ ผู้ป่วยนอก ยังไม่ได้เปิดให้ใช้งาน!');
+                        $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ Opdscreen หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
+                        // $request->session()->put('error', 'ขณะนี้ระบบ ผู้ป่วยนอก ยังไม่ได้เปิดให้ใช้งาน!');
                         return redirect()->route('dashboard');
                     }
                 }

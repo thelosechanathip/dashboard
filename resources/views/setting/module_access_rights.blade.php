@@ -93,6 +93,32 @@
                 </div>
             </div>
         {{-- Module End --}}
+        {{-- Type Accessibility Start --}}
+            <div class="modal fade" id="type_accessibility_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="type_accessibility_title"></h5>
+                            <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="type_accessibility_form" method="POST">
+                                @csrf
+                                <input type="hidden" id="mode" mode="">
+                                <input type="hidden" id="type_accessibility_id_find_one" name="type_accessibility_id_find_one">
+                                <div class="mb-3">
+                                    <label for="type_accessibility_name" class="form-label">ชื่อ Type Accessibility</label>
+                                    <input type="text" class="form-control" id="type_accessibility_name" name="type_accessibility_name">
+                                </div>
+                                <div class="mb-3 d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary zoom-card" id="type_accessibility_submit">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{-- Type Accessibility End --}}
         {{-- Accessibility Start --}}
             <div class="modal fade" id="accessibility_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-auto">
@@ -107,20 +133,26 @@
                                 <input type="hidden" id="mode" mode="">
                                 <input type="hidden" id="accessibility_id_find_one" name="accessibility_id_find_one">
                                 <div class="mb-3">
-                                    <label for="module_id_for_accessibility" class="form-label">Module</label>
-                                    <select class="form-select" aria-label="Default select example" name="module_id_for_accessibility" id="module_id_for_accessibility">
-                                        <option selected value="0">--------------</option>
-                                        @foreach($module_model AS $mm)
-                                            @if($mm->status_id != 2)
-                                                <option value="{{ $mm->id }}">{{ $mm->module_name }}</option>
-                                            @endif
+                                    <label for="type_accessibility_id_for_accessibility" class="form-label">Type Accessibility</label>
+                                    <select class="form-select" aria-label="Default select example" name="type_accessibility_id_for_accessibility" id="type_accessibility_id_for_accessibility">
+                                        <option selected value="0">กรุณาเลือกรายการ Type Accessibility</option>
+                                        @foreach($type_accessibility_model AS $tam)
+                                            <option value="{{ $tam->id }}">{{ $tam->type_accessibility_name }}</option>
                                         @endforeach
                                     </select>
+                                </div>
+                                <div class="mb-3" id="module_access">
+                                    <label for="module_id_for_accessibility" class="form-label">Module</label>
+                                    <select class="form-select" aria-label="Default select example" name="module_id_for_accessibility" id="module_id_for_accessibility"></select>
+                                </div>
+                                <div class="mb-3" id="sidebar_sub1_menu_access">
+                                    <label for="sidebar_sub1_menu_id_for_accessibility" class="form-label">Sidebar Sub1 Menu</label>
+                                    <select class="form-select" aria-label="Default select example" name="sidebar_sub1_menu_id_for_accessibility" id="sidebar_sub1_menu_id_for_accessibility"></select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="type_id_for_accessibility" class="form-label">Type</label>
                                     <select class="form-select" aria-label="Default select example" name="type_id_for_accessibility" id="type_id_for_accessibility">
-                                        <option selected value="0">--------------</option>
+                                        <option selected value="0">กรุณาเลือกรายการ Type</option>
                                         @foreach($type_model AS $tm)
                                             <option value="{{ $tm->id }}">{{ $tm->type_name }}</option>
                                         @endforeach
@@ -133,7 +165,7 @@
                                 <div class="mb-3" id="hide_status_id_for_accessibility">
                                     <label for="status_id_for_accessibility" class="form-label">Status</label>
                                     <select class="form-select" aria-label="Default select example" name="status_id_for_accessibility" id="status_id_for_accessibility">
-                                        <option selected value="0">--------------</option>
+                                        <option selected value="0">กรุณาเลือกรายการ Status</option>
                                         @foreach($status_model AS $sm)
                                             <option value="{{ $sm->id }}">{{ $sm->status_name }}</option>
                                         @endforeach
@@ -160,6 +192,7 @@
                     <div class="d-flex justify-content-start align-items-center">
                         <ul class="text-white">
                             <li class="my-2 zoom-text"><a href="#type_setting_page" id="btn_type_setting" class="text-white text-decoration-none p-2">ตั้งค่า Type</a></li>
+                            <li class="my-2 zoom-text"><a href="#type_accessibility_setting_page" id="btn_type_accessibility_setting" class="text-white text-decoration-none p-2">ตั้งค่า Type Accessibility</a></li>
                             <li class="my-2 zoom-text"><a href="#status_setting_page" id="btn_status_setting" class="text-white text-decoration-none p-2">ตั้งค่า Status</a></li>
                             <li class="my-2 zoom-text"><a href="#module_setting_page" id="btn_module_setting" class="text-white text-decoration-none p-2">ตั้งค่า Module</a></li>
                             <li class="my-2 zoom-text"><a href="#accessibility_setting_page" id="btn_accessibility_setting" class="text-white text-decoration-none p-2">ตั้งค่า Accessibility</a></li>
@@ -177,6 +210,16 @@
                         <div class="" id="type_show_data_all"></div>
                     </div>
                     {{-- Type Page End --}}
+                    {{-- Type Accessibility Page Start --}}
+                    <div class="my-1" id="type_accessibility_setting_page">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="fw-bold">ตั้งค่า Type Accessibility &nbsp;<i class="bi bi-sliders"></i></h3>
+                            <button type="button" class="btn btn-success zoom-card type_accessibility_modal_add" id="type_accessibility_modal_add" data-bs-toggle="modal" data-bs-target="#type_accessibility_modal">Add Type Accessibility</button>
+                        </div>
+                        <hr>
+                        <div class="" id="type_accessibility_show_data_all"></div>
+                    </div>
+                    {{-- Type Accessibility Page End --}}
                     {{-- <hr> --}}
                     {{-- Status Page Start --}}
                     <div class="my-1" id="status_setting_page">
@@ -222,6 +265,7 @@
             // Default Menu Start
                 $('#accessibility_setting_page').show();
                 $('#type_setting_page').hide();
+                $('#type_accessibility_setting_page').hide();
                 $('#status_setting_page').hide();
                 $('#module_setting_page').hide();
             // Default Menu End
@@ -232,6 +276,15 @@
                     $('#accessibility_setting_page').hide();
                     $('#status_setting_page').hide();
                     $('#module_setting_page').hide();
+                    $('#type_accessibility_setting_page').hide();
+                });
+
+                $('#btn_type_accessibility_setting').on('click', function() {
+                    $('#type_accessibility_setting_page').show();
+                    $('#type_setting_page').hide();
+                    $('#accessibility_setting_page').hide();
+                    $('#status_setting_page').hide();
+                    $('#module_setting_page').hide();
                 });
 
                 $('#btn_status_setting').on('click', function() {
@@ -239,6 +292,7 @@
                     $('#accessibility_setting_page').hide();
                     $('#status_setting_page').show();
                     $('#module_setting_page').hide();
+                    $('#type_accessibility_setting_page').hide();
                 });
 
                 $('#btn_module_setting').on('click', function() {
@@ -246,6 +300,7 @@
                     $('#accessibility_setting_page').hide();
                     $('#status_setting_page').hide();
                     $('#module_setting_page').show();
+                    $('#type_accessibility_setting_page').hide();
                 });
 
                 $('#btn_accessibility_setting').on('click', function() {
@@ -253,6 +308,7 @@
                     $('#accessibility_setting_page').show();
                     $('#status_setting_page').hide();
                     $('#module_setting_page').hide();
+                    $('#type_accessibility_setting_page').hide();
                 });
             // onClick Change Menu End
 
@@ -271,6 +327,20 @@
                         $('#type_submit').text('Update Data');
                     });
                 // Type End
+                // Type Accessibility Start
+                    $('.type_accessibility_modal_add').on('click', function() {
+                        $('#mode').attr('mode', 'add');
+                        $('#type_accessibility_title').text('เพิ่มข้อมูล');
+                        $('#type_accessibility_submit').text('Add Data');
+                        $("#type_accessibility_form")[0].reset();
+                    });
+
+                    $(document).on('click', '.type_accessibility_modal_find', function() {
+                        $('#mode').attr('mode', 'update');
+                        $('#type_accessibility_title').text('แก้ไขข้อมูล');
+                        $('#type_accessibility_submit').text('Update Data');
+                    });
+                // Type Accessibility End
                 // Status Start
                     $('.status_modal_add').on('click', function() {
                         $('#mode').attr('mode', 'add');
@@ -322,6 +392,13 @@
             // Reset Form Start
                 $('.btn-close').on('click', function() {
                     $("#type_form")[0].reset();
+                    $("#accessibility_form")[0].reset();
+                    $('#sidebar_sub1_menu_access').hide()
+                    $('#module_access').hide()
+                    $('#sidebar_sub1_menu_id_for_accessibility').empty();
+                    $('#module_id_for_accessibility').empty();
+                    $('#accessibility_name').empty();
+                    $('#accessibility_name').append('<option selected value="0">**** กรุณาเลือก Type ก่อน ****</option>');
                 });
             // Reset Form End
 
@@ -475,6 +552,157 @@
                     })
                 });
             // Delete Data Type End
+
+            // Fetch All Data Type Accessibility Start
+                fetchAllDataTypeAccessibility();
+
+                function fetchAllDataTypeAccessibility() {
+                    $.ajax({
+                        url: '{{ route('fetchAllDataTypeAccessibility') }}',
+                        method: 'get',
+                        success: function(response) {
+                            $("#type_accessibility_show_data_all").html(response);
+                            $("#type_accessibility_table").DataTable({
+                                // order: [0, 'ASC']
+                            });
+                        }
+                    });
+                }
+            // Fetch All Data Type Accessibility End
+
+            // Insert && Update Data Type Accessibility Start
+                $("#type_accessibility_form").submit(function(e) {
+                    const mode = $('#mode').attr('mode');
+                    if(mode === 'add') {
+                        e.preventDefault();
+                        const fd = new FormData(this);
+                        $.ajax({
+                            url: '{{ route('insertDataTypeAccessibility') }}',
+                            method: 'post',
+                            data: fd,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            success: function(response) {
+                                if(response.status === 400) {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                } else {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                    fetchAllDataTypeAccessibility();
+                                    $("#type_accessibility_form")[0].reset();
+                                    $("#type_accessibility_modal").modal('hide');
+                                }
+                            }
+                        });
+                    } else if(mode === 'update') {
+                        e.preventDefault();
+                        const fd = new FormData(this);
+                        $.ajax({
+                            url: '{{ route('updateDataTypeAccessibility') }}',
+                            method: 'post',
+                            data: fd,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            success: function(response) {
+                                if(response.status === 400) {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                } else {
+                                    swal.fire(
+                                        response.title,
+                                        response.message,
+                                        response.icon
+                                    )
+                                    fetchAllDataTypeAccessibility();
+                                    $("#type_accessibility_form")[0].reset();
+                                    $("#type_accessibility_modal").modal('hide');
+                                }
+                            }
+                        });
+                    } else {
+                        console.log('Mode ไม่ถูกต้อง');
+                    }
+                });
+            // Insert && Update Data Type Accessibility End
+
+            // Find One Data Type Accessibility Start
+                $(document).on('click', '.type_accessibility_modal_find', function(e) {
+                    e.preventDefault();
+                    let id = $(this).attr('id');
+                    $.ajax({
+                        url: '{{ route('findOneDataTypeAccessibility') }}',
+                        method: 'get',
+                        data: {
+                            id: id,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            $("#type_accessibility_name").val(response.type_accessibility_name);
+                            $("#type_accessibility_id_find_one").val(response.id);
+                        }
+                    });
+                });
+            // Find One Data Type Accessibility End
+
+            // Delete Data Type Accessibility Start
+                $(document).on('click', '.type_accessibility_delete', function(e) {
+                    e.preventDefault();
+                    let id = $(this).attr('id');
+                    // console.log(id);
+                    let csrf = '{{ csrf_token() }}';
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: '{{ route('deleteDataTypeAccessibility') }}',
+                                method: 'delete',
+                                data: {
+                                    id: id,
+                                    _token: csrf
+                                },
+                                success: function(response) {
+                                    if(response.status === 400) {
+                                        swal.fire(
+                                            response.title,
+                                            response.message,
+                                            response.icon
+                                        )
+                                    } else {
+                                        swal.fire(
+                                            response.title,
+                                            response.message,
+                                            response.icon
+                                        )
+                                        fetchAllDataTypeAccessibility();
+                                    }
+                                    // console.log(response);
+                                }
+                            });
+                        }
+                    })
+                });
+            // Delete Data Type Accessibility End
 
             // Fetch All Data Status Start
                 fetchAllDataStatus();
@@ -831,6 +1059,60 @@
                 });
             // Change Status_id In Module End
 
+            // Find Module || Sidebar Sub1 Menu Start
+                $('#module_access').hide()
+                $('#sidebar_sub1_menu_access').hide()
+                $('#type_accessibility_id_for_accessibility').change(function() {
+                    var type_accessibility_id_for_accessibility = $(this).val();
+
+                    if(type_accessibility_id_for_accessibility == 1) {
+                        $('#module_access').show()
+                        $('#sidebar_sub1_menu_access').hide()
+                        $('#module_id_for_accessibility').append('<option selected value="0">**** กรุณาเลือกรายการ Module ****</option>');
+                        $.ajax({
+                            url: '{{ route('findSelectForModule') }}',
+                            method: 'GET',
+                            data: {
+                                type_accessibility_id_for_accessibility: type_accessibility_id_for_accessibility,
+                            },
+                            success: function(response) {
+                                $('#module_id_for_accessibility').empty();
+                                $('#module_id_for_accessibility').append('<option selected value="0">**** กรุณาเลือก Menu ****</option>');
+                                $.each(response, function(key, value) {
+                                    if(value.status_id != 2) {
+                                        $('#module_id_for_accessibility').append('<option value="'+ value.id +'">'+ value.module_name +'</option>');
+                                    }
+                                });
+                            }
+                        })
+                    } else if(type_accessibility_id_for_accessibility == 2) {
+                        $('#module_access').hide()
+                        $('#sidebar_sub1_menu_access').show()
+                        $('#sidebar_sub1_menu_id_for_accessibility').append('<option selected value="0">**** กรุณาเลือกรายการ Type Accessibility ****</option>');
+                        $.ajax({
+                            url: '{{ route('findSelectForSidebarSub1Menu') }}',
+                            method: 'GET',
+                            data: {
+                                type_accessibility_id_for_accessibility: type_accessibility_id_for_accessibility,
+                            },
+                            success: function(response) {
+                                $('#sidebar_sub1_menu_id_for_accessibility').empty();
+                                $('#sidebar_sub1_menu_id_for_accessibility').append('<option selected value="0">**** กรุณาเลือก Menu ****</option>');
+                                $.each(response, function(key, value) {
+                                    if(value.status_id != 2) {
+                                        $('#sidebar_sub1_menu_id_for_accessibility').append('<option value="'+ value.id +'">'+ value.sidebar_sub1_menu_name +'</option>');
+                                    }
+                                });
+                            }
+                        })
+                    } else {
+                        $('#sidebar_sub1_menu_access').hide()
+                        $('#module_access').hide()
+                        alert('กรุณาเลือก Type Accessibility ก่อนครับ');
+                    }
+                });
+            // Find Module || Sidebar Sub1 Menu End
+
             // Find User || Group Accessibility Start
                 $('#accessibility_name').append('<option selected value="0">**** กรุณาเลือก Type ก่อน ****</option>');
                 $('#type_id_for_accessibility').change(function(){
@@ -917,6 +1199,7 @@
                                     $("#accessibility_form")[0].reset();
                                     $("#accessibility_modal").modal('hide');
                                 }
+                                // console.log(response);
                             }
                         });
                     } else if(mode === 'update') {
@@ -969,9 +1252,18 @@
                         success: function(response) {
                             $('#accessibility_name').empty();
                             $('#accessibility_name').append('<option value="'+ response.accessibility_name +'">'+ response.accessibility_name +'</option>');
-                            $("#module_id_for_accessibility").val(response.module_id);
                             $("#type_id_for_accessibility").val(response.type_id);
                             $("#accessibility_id_find_one").val(response.id);
+                            const checkTypeAccessibility = $("#type_accessibility_id_for_accessibility").val(response.type_accessibility_id);
+                            if(checkTypeAccessibility == 1) {
+                                $('#sidebar_sub1_menu_acccess').hide();
+                                $('#module_acccess').show();
+                                $("#module_id_for_accessibility").val(response.module_id);
+                            } else if(checkTypeAccessibility == 2) {
+                                $('#module_acccess').hide();
+                                $('#sidebar_sub1_menu_acccess').show();
+                                $("#sidebar_sub1_menu_id_for_accessibility").val(response.sidebar_sub1_menu_id);
+                            }
                         }
                     });
                 });
