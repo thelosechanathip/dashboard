@@ -14,9 +14,7 @@ use App\Models\Log\HealthMedServiceLogModel;
 use App\Models\Log\ModuleLogModel;
 use App\Models\Log\AccessibilityLogModel;
 
-use Carbon\Carbon;
-
-class HealthMedServiceController extends Controller
+class HealthMedServiceDetailController extends Controller
 {
     // Function ในการเรียกใช้งาน Username ที่เข้ามาใช้งาน SomeMethod Start
         private function someMethod(Request $request) {
@@ -42,7 +40,8 @@ class HealthMedServiceController extends Controller
     // นำปีมาแก้ไขเพื่อนำไปใช้ในปีงบประมาณ Check_year End
 
     // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง GetYear Start
-        private function getYear($year_old, $year_new, $request) {
+        private function getYear($year_old, $year_new, $request, $type) {
+
             $startTime = microtime(true);
 
             $query = DB::table('health_med_service as hms')
@@ -60,11 +59,14 @@ class HealthMedServiceController extends Controller
                     DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_new}-08-01' AND '{$year_new}-08-31' THEN 1 END) AS august"),
                     DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_new}-09-01' AND '{$year_new}-09-30' THEN 1 END) AS september")
                 )
-                ->join('health_med_service_diagnosis as hmsd', 'hms.health_med_service_id', '=', 'hmsd.health_med_service_id')
-                ->join('icd10_health_med as ihm', 'hmsd.icd10', '=', 'ihm.icd10')
-                ->join('patient as pt', 'hms.hn', '=', 'pt.hn')
             ;
-            
+
+            if($type == 'OPD') {
+                $query->whereNotNull('hms.vn');
+            } else if($type == 'IPD') {
+                $query->whereNotNull('hms.an');
+            }
+
             // ดึงข้อมูลจาก Query
             $health_med_service_count = $query->first();
         
@@ -200,28 +202,15 @@ class HealthMedServiceController extends Controller
         }
     // แปลงเดือนที่เป็น Int ไปเป็น Text GetMonthName End
 
-    // หน้าแรกของ Health Med Service Index Start
+    // หน้าแรกของ Health Med Service Detail Index Start
         public function index(Request $request) {
-            $data = $request->session()->all();
-            $year = date('Y');
+            $type = $request->type;
 
-            $health_med_service_data = [
-                'opd_health_med_service' => [
-                    'id' => '1',
-                    'title' => 'OPD แพทย์แผนไทย',
-                    'type' => 'OPD',
-                    'key_word' => 'OPD Health Med Service Detail'
-                ],
-                'ipd_health_med_service' => [
-                    'id' => '2',
-                    'title' => 'IPD แพทย์แผนไทย',
-                    'type' => 'IPD',
-                    'key_word' => 'IPD Health Med Service Detail'
-                ],
-            ];            
+            $data = $request->session()->all();
+            $year = date('Y');           
 
             $health_med_service_log_data = [
-                'function' => 'Come to the Health Med Service page',
+                'function' => 'Come to the Health Med Service Detail page',
                 'username' => $data['loginname'],
                 'command_sql' => '',
                 'query_time' => '',
@@ -233,7 +222,7 @@ class HealthMedServiceController extends Controller
 
             $startTime_1 = microtime(true);
 
-            $query_1 = ModuleModel::where('module_name', 'Health Med Service');
+            $query_1 = ModuleModel::where('module_name', 'Health Med Service Detail');
 
             $healthMedServiceId = $query_1->first();
         
@@ -248,7 +237,7 @@ class HealthMedServiceController extends Controller
 
             // สร้างข้อมูลสำหรับบันทึกใน log
             $module_log_data = [
-                'function' => 'Where module_name = Health Med Service',
+                'function' => "Where module_name = {$type} {$healthMedServiceId->module_name}",
                 'username' => $data['loginname'],
                 'command_sql' => $fullSql_1,
                 'query_time' => $formattedExecutionTime_1,
@@ -275,7 +264,7 @@ class HealthMedServiceController extends Controller
 
                 // สร้างข้อมูลสำหรับบันทึกใน log
                 $accessibility_log_data = [
-                    'function' => 'Where accessibility_name = {groupname} AND {module_id}',
+                    'function' => "Where accessibility_name = {$data['groupname']} AND {$accessibility_groupname_model->module_id}",
                     'username' => $data['loginname'],
                     'command_sql' => $fullSql_2,
                     'query_time' => $formattedExecutionTime_2,
@@ -286,7 +275,7 @@ class HealthMedServiceController extends Controller
                 AccessibilityLogModel::create($accessibility_log_data);
 
                 if($accessibility_groupname_model !== null && $accessibility_groupname_model->status_id === 1) {
-                    return view('pages.health_med_service', compact('data', 'year', 'health_med_service_data'));
+                    return view('pages.health_med_service_detail', compact('data', 'year', 'type'));
                 } else {
                     $startTime_3 = microtime(true);
 
@@ -304,7 +293,7 @@ class HealthMedServiceController extends Controller
 
                     // สร้างข้อมูลสำหรับบันทึกใน log
                     $accessibility_log_data = [
-                        'function' => 'Where accessibility_name = {name} AND {module_id}',
+                        'function' => "Where accessibility_name = {$data['name']} AND {$accessibility_groupname_model->module_id}",
                         'username' => $data['loginname'],
                         'command_sql' => $fullSql_3,
                         'query_time' => $formattedExecutionTime_3,
@@ -315,26 +304,27 @@ class HealthMedServiceController extends Controller
                     AccessibilityLogModel::create($accessibility_log_data);
 
                     if($accessibility_name_model !== null && $accessibility_name_model->status_id === 1) {
-                        return view('pages.health_med_service', compact('data', 'year', 'health_med_service_data'));
+                        return view('pages.health_med_service_detail', compact('data', 'year', 'type'));
                     } else {
-                        $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ แพทย์แผนไทย หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
+                        $request->session()->put('error', "คุณไม่มีสิทธิ์เข้าใช้งานระบบ {$type} แพทย์แผนไทย หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!");
                         return redirect()->route('dashboard');
                     }
                 }
             } else {
-                $request->session()->put('error', 'ขณะนี้ระบบ แพทย์แผนไทย ไม่ได้เปิดใช้งาน กรุณาแจ้ง Admin หากต้องการใช้งาน!');
+                $request->session()->put('error', "ขณะนี้ระบบ {$type} แพทย์แผนไทย ไม่ได้เปิดใช้งาน กรุณาแจ้ง Admin หากต้องการใช้งาน!");
                 return redirect()->route('dashboard');
             }
         }
-    // หน้าแรกของ Health Med Service Index Start
+    // หน้าแรกของ Health Med Service Detail Index Start
 
-    // GetHealthMedServiceData Start
-        public function getHealthMedServiceData(Request $request) {
+    // GetHealthMedServiceDetailData Start
+        public function getHealthMedServiceDetailData(Request $request) {
             $year = $request->input('year');
+            $type = $request->type;
 
             $years = $this->check_year($year);
 
-            $response_year = $this->getYear($years['year_old'], $years['year_new'], $request);
+            $response_year = $this->getYear($years['year_old'], $years['year_new'], $request, $type);
 
             $chartDataYear = $this->getChartYear($response_year);
 
@@ -342,16 +332,18 @@ class HealthMedServiceController extends Controller
                 'chartDataYear' => $chartDataYear
             ]);
         }
-    // GetHealthMedServiceData End
+    // GetHealthMedServiceDetailData End
 
-    // GetHealthMedServiceDailyData Start
-        public function getHealthMedServiceDailyData(Request $request) {
+    // GetHealthMedServiceDetailDailyData Start
+        public function getHealthMedServiceDetailDailyData(Request $request) {
             try {
                 $year = $request->input('year');
                 $years = $this->check_year($year);
 
                 $month = $request->input('month');
                 $month_int = $this->getMonthNumber($month);
+
+                $type = $request->input('type');
 
                 if($month_int == 10 || $month_int == 11 || $month_int == 12) {
                     $start_date = $years['year_old'] . '-' . $month_int . '-01';
@@ -370,6 +362,12 @@ class HealthMedServiceController extends Controller
                     ->orderBy('date')
                 ;
 
+                if($type == 'OPD') {
+                    $daily_count->whereNotNull('vn');
+                } else if($type == 'IPD') {
+                    $daily_count->whereNotNull('an');
+                }
+
                 $health_med_service_count = $daily_count->get(); // ดึงข้อมูลออกมา
 
                 // ดึง SQL query พร้อม bindings
@@ -386,7 +384,7 @@ class HealthMedServiceController extends Controller
                 
                 // สร้างข้อมูลสำหรับบันทึกใน log
                 $health_med_service_log_data = [
-                    'function' => 'getHealthMedServiceDailyData',
+                    'function' => 'getHealthMedServiceDetailDailyData',
                     'username' => $username,
                     'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
                     'query_time' => $formattedExecutionTime,
@@ -423,13 +421,14 @@ class HealthMedServiceController extends Controller
                 return response()->json(['error' => 'Server Error'], 500);
             }
         }
-    // GetHealthMedServiceDailyData End
+    // GetHealthMedServiceDetailDailyData End
 
-    // GetHealthMedServiceSelectData Start
-        public function getHealthMedServiceSelectData(Request $request) {
+    // GetHealthMedServiceDetailSelectData Start
+        public function getHealthMedServiceDetailSelectData(Request $request) {
             try {
-                $minDate = $request->min_date;
-                $maxDate = $request->max_date;
+                $minDate = $request->input('min_date');
+                $maxDate = $request->input('max_date');
+                $type = $request->input('type');
 
                 if ($minDate != $maxDate) {
                     $startTime = microtime(true);
@@ -440,6 +439,12 @@ class HealthMedServiceController extends Controller
                         ->groupBy(DB::raw('DATE(service_date)'))
                         ->orderBy('date')
                     ;
+
+                    if($type == 'OPD') {
+                        $daily_count_query->whereNotNull('vn');
+                    } else if($type == 'IPD') {
+                        $daily_count_query->whereNotNull('an');
+                    }
 
                     $daily_count = $daily_count_query->get();
                     // ดึง SQL query พร้อม bindings
@@ -456,7 +461,7 @@ class HealthMedServiceController extends Controller
                     
                     // สร้างข้อมูลสำหรับบันทึกใน log
                     $health_med_service_log_data = [
-                        'function' => 'getHealthMedServiceSelectData',
+                        'function' => 'getHealthMedServiceDetailSelectData',
                         'username' => $username,
                         'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
                         'query_time' => $formattedExecutionTime,
@@ -474,6 +479,12 @@ class HealthMedServiceController extends Controller
                         ->groupBy(DB::raw('DATE(service_date)'))
                         ->orderBy('date')
                     ;
+
+                    if($type == 'OPD') {
+                        $daily_count_query->whereNotNull('vn');
+                    } else if($type == 'IPD') {
+                        $daily_count_query->whereNotNull('an');
+                    }
                     
                     $daily_count = $daily_count_query->get();
                     // ดึง SQL query พร้อม bindings
@@ -490,7 +501,7 @@ class HealthMedServiceController extends Controller
                     
                     // สร้างข้อมูลสำหรับบันทึกใน log
                     $health_med_service_log_data = [
-                        'function' => 'getHealthMedServiceSelectData',
+                        'function' => 'getHealthMedServiceDetailSelectData',
                         'username' => $username,
                         'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
                         'query_time' => $formattedExecutionTime,
@@ -549,133 +560,5 @@ class HealthMedServiceController extends Controller
                 ]);
             }
         }
-    // GetHealthMedServiceSelectData End
-
-    // CheckStatusHealthMedService Start
-        public function checkStatusHealthMedService(Request $request) {
-            $healthMedServiceName = $request->healthMedServiceName;
-
-            $startTime = microtime(true);
-
-            $query = ModuleModel::select('status_id')->where('module_name', '=', $healthMedServiceName);
-
-            $module_model = $query->first();
-
-            // ดึง SQL query พร้อมกับ bindings
-            $sql = $query->toSql();
-            $bindings = $query->getBindings();
-
-            // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
-            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
-
-            $endTime = microtime(true);
-
-            $executionTime = $endTime - $startTime;
-            $formattedExecutionTime = number_format($executionTime, 3);
-
-            $username = $this->someMethod($request);    
-
-            $health_med_service_log_data = [
-                'function' => 'checkStatusWard',
-                'username' => $username,
-                'command_sql' => $fullSql,
-                'query_time' => $formattedExecutionTime,
-                'operation' => 'SELECT'
-            ];
-
-            HealthMedServiceLogModel::create($health_med_service_log_data);
-
-            return response()->json($module_model);
-        }
-    // CheckStatusHealthMedService End
-
-    // GetResultHealthMedService Start
-        public function getResultHealthMedService(Request $request) {
-            $healthMedServiceType = $request->healthMedServiceType;
-
-            if($healthMedServiceType == 'OPD') {
-                $startTime = microtime(true);
-
-                $query = DB::table('health_med_service as hms')
-                    ->whereDate('hms.service_date', Carbon::today())
-                ; // ใช้ count โดยตรงแทนการใช้ select
-
-                $count = $query->count('hms.vn');
-
-                // ดึง SQL query พร้อมกับ bindings
-                $sql = $query->toSql();
-                $bindings = $query->getBindings();
-
-                // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
-                $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
-
-                $endTime = microtime(true);
-
-                $executionTime = $endTime - $startTime;
-                $formattedExecutionTime = number_format($executionTime, 3);
-
-                $username = $this->someMethod($request);    
-
-                $health_med_service_log_data = [
-                    'function' => 'getResultHealthMedService',
-                    'username' => $username,
-                    'command_sql' => $fullSql,
-                    'query_time' => $formattedExecutionTime,
-                    'operation' => 'SELECT'
-                ];
-
-                HealthMedServiceLogModel::create($health_med_service_log_data);
-        
-                return response()->json([
-                    'count' => $count, // ส่งค่า count กลับ
-                    'healthMedServiceType' => $healthMedServiceType
-                ]);
-                
-            } else if($healthMedServiceType == 'IPD') {
-                $startTime = microtime(true);
-
-                $query = DB::table('health_med_service as hms')
-                    ->whereDate('hms.service_date', Carbon::today())
-                ; // ใช้ count โดยตรงแทนการใช้ select
-
-                $count = $query->count('hms.an');
-
-                // ดึง SQL query พร้อมกับ bindings
-                $sql = $query->toSql();
-                $bindings = $query->getBindings();
-
-                // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
-                $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
-
-                $endTime = microtime(true);
-
-                $executionTime = $endTime - $startTime;
-                $formattedExecutionTime = number_format($executionTime, 3);
-
-                $username = $this->someMethod($request);    
-
-                $health_med_service_log_data = [
-                    'function' => 'getResultHealthMedService',
-                    'username' => $username,
-                    'command_sql' => $fullSql,
-                    'query_time' => $formattedExecutionTime,
-                    'operation' => 'SELECT'
-                ];
-
-                HealthMedServiceLogModel::create($health_med_service_log_data);
-        
-                return response()->json([
-                    'count' => $count, // ส่งค่า count กลับ
-                    'healthMedServiceType' => $healthMedServiceType
-                ]);
-            }
-
-            $startTime = microtime(true);
-        
-            // นับจำนวนข้อมูลที่ตรงกับเงื่อนไข
-            $query = DB::table('ipt')
-                ->whereDate('regdate', Carbon::today()) // เปรียบเทียบ regdate กับวันที่ปัจจุบัน
-                ->where('ward', $ward);
-        }
-    // GetResultHealthMedService End
+    // GetHealthMedServiceDetailSelectData End
 }

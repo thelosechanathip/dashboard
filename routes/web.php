@@ -13,6 +13,7 @@ use App\Http\Controllers\Pages\PalliativeCareController;
 use App\Http\Controllers\Pages\OpdScreenController;
 use App\Http\Controllers\Pages\WardController;
 use App\Http\Controllers\Pages\HealthMedServiceController;
+use App\Http\Controllers\Pages\HealthMedServiceDetailController;
 use App\Http\Controllers\Reportes\AuthenCodeController;
 use App\Http\Controllers\Setting\ModuleAccessRightsController;
 use App\Http\Controllers\Setting\SidebarMenuController;
@@ -131,6 +132,15 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('checkStatusHealthMedService', [HealthMedServiceController::class, 'checkStatusHealthMedService'])->name('checkStatusHealthMedService');
             Route::get('getResultHealthMedService', [HealthMedServiceController::class, 'getResultHealthMedService'])->name('getResultHealthMedService');
         // Health Med Service End
+
+        // Health Ned Server Detail Start
+            Route::get('IndexHealthMedServiceDetail', [HealthMedServiceDetailController::class, 'index'])->name('IndexHealthMedServiceDetail');
+            Route::get('showHealthMedServiceDetail', [HealthMedServiceDetailController::class, 'showHealthMedServiceDetail'])->name('showHealthMedServiceDetail');
+            Route::get('getHealthMedServiceDetailData', [HealthMedServiceDetailController::class, 'getHealthMedServiceDetailData'])->name('getHealthMedServiceDetailData');
+            Route::get('getHealthMedServiceDetailDailyData', [HealthMedServiceDetailController::class, 'getHealthMedServiceDetailDailyData'])->name('getHealthMedServiceDetailDailyData');
+            Route::get('getHealthMedServiceDetailSelectData', [HealthMedServiceDetailController::class, 'getHealthMedServiceDetailSelectData'])->name('getHealthMedServiceDetailSelectData');
+        // Health Ned Server Detail End
+
     // Pages End
 
     // Reportes Start

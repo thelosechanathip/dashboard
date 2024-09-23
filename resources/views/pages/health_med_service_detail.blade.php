@@ -1,7 +1,7 @@
 @extends('layout.dashboard_template')
 
 @section('title')
-    <title>Health Med Service</title>
+    <title>Health Med Service Detail</title>
 @endsection
 
 @section('content')
@@ -10,29 +10,13 @@
         <div
             class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
             <div class="">
-                <h1 class="h2">แพทย์แผนไทย</h1>
+                <h1 class="h2">{{ $type }} แพทย์แผนไทย</h1>
             </div>
             <div class="d-flex">
                 <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
                 <p>&nbsp;&nbsp;&nbsp;</p>
                 <p> <span class="fw-bold">แผนก :</span> {{ $data['groupname'] }}</p>
             </div>
-        </div>
-        <div class="row gy-4 mt-2 pb-3 border-bottom">
-            @foreach($health_med_service_data as $key => $hmsd)
-                <div class="col-12 col-sm-6 col-md-4 mb-3 health_med_service_card" data-value="{{ $hmsd['key_word'] }}">
-                    <div class="card shadow-lg rounded-2 zoom-card">
-                        <a href="" class="text-decoration-none text-dark health_med_service" data-value="{{ $hmsd['type'] }}">
-                            <div class="card-body d-flex justify-content-center align-items-center">
-                                <h5 class="card-title fw-bold">{{ $hmsd['title'] }}</h5>
-                            </div>
-                            <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
-                                <p class="card-text"><span>ภายในวันนี้ : </span><span class="health_med_service_count"></span> <span>ราย</span></p>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            @endforeach
         </div>
         <div class="mt-2 d-flex justify-content-end align-items-center">
             <div class="d-flex">
@@ -136,70 +120,21 @@
                     $('#setText').text('');
                     $('#setCount').text('ไม่มีผู้มารับบริการหรือไม่มีข้อมูลในระบบ');
                 } else {
-                    $('#setText').text('จำนวนผู้ป่วย แพทย์แผนไทย : ');
+                    $('#setText').text("จำนวนผู้ป่วย {{$type}} แพทย์แผนไทย : ");
                     $('#setCount').text(request, ' Visit');
                 }
             }
 
-            $('.health_med_service_card').each(function() {
-                var healthMedServiceCard = $(this); // เก็บ reference ของ card ปัจจุบัน
-                var healthMedServiceType = healthMedServiceCard.find('.health_med_service').data('value'); // ดึง wardId จากลิงก์
-                var healthMedServiceName = healthMedServiceCard.attr('data-value'); // ดึง wardName จาก card โดยตรง
-
-                $.ajax({
-                    url: '{{ route('checkStatusHealthMedService') }}',
-                    method: 'GET',
-                    data: {
-                        'healthMedServiceName': healthMedServiceName, // ส่ง healthMedServiceName
-                    },
-                    success: function(response) {
-                        if (response && response.status_id === 1) { // ตรวจสอบค่า status_id
-                            healthMedServiceCard.show(); // แสดง card
-                            $.ajax({
-                                url: '{{ route('getResultHealthMedService') }}',
-                                method: 'GET',
-                                data: {
-                                    'healthMedServiceType': healthMedServiceType, // ส่ง healthMedServiceId
-                                },
-                                success: function(response) {
-                                    if(response.healthMedServiceType === 'OPD') {
-                                        healthMedServiceCard.find('.health_med_service_count').text(response.count);
-
-                                        // อัปเดต href ของ <a> tag
-                                        var healthMedServiceLink = healthMedServiceCard.find('a.health_med_service');
-                                        var newUrl = "{{ route('IndexHealthMedServiceDetail') }}" + "?type=" + response.healthMedServiceType;
-                                        healthMedServiceLink.attr('href', newUrl); // ตั้งค่า href ใหม่
-
-                                    } else if(response.healthMedServiceType === 'IPD') {
-                                        healthMedServiceCard.find('.health_med_service_count').text(response.count);
-
-                                        // อัปเดต href ของ <a> tag
-                                        var healthMedServiceLink = healthMedServiceCard.find('a.health_med_service');
-                                        var newUrl = "{{ route('IndexHealthMedServiceDetail') }}" + "?type=" + response.healthMedServiceType;
-                                        healthMedServiceLink.attr('href', newUrl); // ตั้งค่า href ใหม่
-                                    }
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error('Error:', error);
-                                }
-                            });
-                        } else {
-                            healthMedServiceCard.hide(); // ซ่อน card หาก status_id ไม่เท่ากับ 1
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error:', error);
-                    }
-                });
-            });
-
             function fetch_one_year(year) {
+                const type = "{{ $type }}";
+
                 showLoadingIcon();
                 $.ajax({
-                    url: '{{ route('getHealthMedServiceData') }}',
+                    url: '{{ route('getHealthMedServiceDetailData') }}',
                     type: 'GET',
                     data: {
-                        year: year
+                        year: year,
+                        type: type,
                     },
                     success: function(response) {
                         hideLoadingIcon();
@@ -274,12 +209,14 @@
 
             function fetch_daily_data(year, month) {
                 showLoadingIcon();
+                const type = "{{ $type }}";
                 $.ajax({
-                    url: '{{ route('getHealthMedServiceDailyData') }}',
+                    url: '{{ route('getHealthMedServiceDetailDailyData') }}',
                     type: 'GET',
                     data: {
                         year: year,
-                        month: month
+                        month: month,
+                        type: type
                     },
                     success: function(response) {
                         hideLoadingIcon();
@@ -310,15 +247,25 @@
             }
 
             $('#submitAll').click(function() {
-                var formData = $('#allForm').serialize();
+                var formData = $('#allForm').serializeArray();
+                var requestData = {};
+                formData.forEach(function(item) {
+                    requestData[item.name] = item.value;
+                });
+
                 showLoadingIcon();
+                const type = "{{ $type }}";
+
                 $.ajax({
-                    url: '{{ route('getHealthMedServiceSelectData') }}',
+                    url: '{{ route('getHealthMedServiceDetailSelectData') }}',
                     type: 'GET',
-                    data: formData,
+                    data: {
+                        ...requestData, // ส่งค่าฟอร์มแต่ละฟิลด์
+                        type: type      // เพิ่ม type เข้าไปในข้อมูลที่ส่ง
+                    },
                     success: function(response) {
                         hideLoadingIcon();
-                        if(response.status === 500) {
+                        if (response.status === 500) {
                             alert(response.error);
                         } else {
                             var chartDataDaily = response.chartDataDaily;
@@ -340,12 +287,11 @@
                                 }
                             });
 
-
                             var total = chartDataDaily.datasets[0].data.reduce(function(sum, value) {
                                 return sum + value;
                             }, 0).toLocaleString();
 
-                            if(parseInt(total) == 0) {
+                            if (parseInt(total) == 0) {
                                 $('#budgetYear').hide();
                                 setText(total);
                             } else {
@@ -353,6 +299,10 @@
                                 setText(total);
                             }
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        hideLoadingIcon();
+                        console.error('Error:', error);
                     }
                 });
             });
