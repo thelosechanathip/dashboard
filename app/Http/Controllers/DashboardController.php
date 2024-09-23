@@ -22,6 +22,7 @@ class DashboardController extends Controller
         $referOutStatusId = ModuleModel::where('module_name', 'Refer Out')->first();
         $erStatusId = ModuleModel::where('module_name', 'ER')->first();
         $opdscreenStatusId = ModuleModel::where('module_name', 'Opdscreen')->first();
+        $healthMedServiceStatusId = ModuleModel::where('module_name', 'Health Med Service')->first();
 
         $counts = DB::table('ovst')
             ->select([
@@ -31,6 +32,7 @@ class DashboardController extends Controller
                 DB::raw("(SELECT COUNT(*) FROM referout WHERE refer_date = CURRENT_DATE()) as refer_out_count"),
                 DB::raw("(SELECT COUNT(*) FROM referin WHERE refer_date = CURRENT_DATE()) as refer_in_count"),
                 DB::raw("(SELECT COUNT(*) FROM ipt WHERE regdate = CURRENT_DATE() AND dchdate IS NULL) as ipt_count"),
+                DB::raw("(SELECT COUNT(*) FROM health_med_service WHERE service_date = CURRENT_DATE()) as health_med_service_count"),
             ])->first()
         ;
 
@@ -42,6 +44,7 @@ class DashboardController extends Controller
             'referOutStatusId', 
             'erStatusId', 
             'opdscreenStatusId',
+            'healthMedServiceStatusId',
             'counts',
         ));
     }

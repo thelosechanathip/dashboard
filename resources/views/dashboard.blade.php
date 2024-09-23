@@ -5,21 +5,6 @@
 @endsection
 
 @section('content')
-    {{-- ประกาศ Start --}}
-        <div class="modal" id="announce_modal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered modal-auto">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">ประกาศ</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>เนื่องจากทีม IT จะปิดปรับปรุงระบบ Admit เพื่อเพิ่ม Ward ขออภัยในความไม่สะดวก</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {{-- ประกาศ End --}}
     <main class="main-content">
         {{-- Title Start --}}
         <div
@@ -115,6 +100,18 @@
                     </a>
                 </div>
             </div>
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="card shadow-lg rounded-2 zoom-card" id="health_med_service_card">
+                    <a href="{{ route('indexHealthMedService') }}" class="text-decoration-none text-dark" id="health_med_service" data-value="{{ $healthMedServiceStatusId->status_id }}">
+                        <div class="card-body d-flex justify-content-center align-items-center">
+                            <h5 class="card-title fw-bold">แพทย์แผนไทย</h5>
+                        </div>
+                        <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
+                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="health_med_service_count">{{ $counts->health_med_service_count }}</span> <span>ราย</span></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
         {{-- <div class="row mt-5">
 
@@ -124,19 +121,6 @@
 
 @section('script')
     <script>
-        $(document).ready(function() {
-
-            // function showLoadingIcon() {
-            //     $('#loadingIcon').show();
-            //     $('#all_dashboard').hide();
-            // }
-
-            // function hideLoadingIcon() {
-            //     $('#loadingIcon').hide();
-            //     $('#all_dashboard').show();
-            // }
-
-            $('#announce_modal').modal('hide');
-        });
+        
     </script>
 @endsection

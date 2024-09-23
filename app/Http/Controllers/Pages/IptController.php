@@ -889,43 +889,43 @@ class IptController extends Controller
     // CheckStatusWard End
 
     // GetResultWard Start
-    public function getResultWard(Request $request) {
-        $ward = $request->wardId;
+        public function getResultWard(Request $request) {
+            $ward = $request->wardId;
 
-        $startTime = microtime(true);
-    
-        // นับจำนวนข้อมูลที่ตรงกับเงื่อนไข
-        $query = DB::table('ipt')
-            ->whereDate('regdate', Carbon::today()) // เปรียบเทียบ regdate กับวันที่ปัจจุบัน
-            ->where('ward', $ward);
+            $startTime = microtime(true);
+        
+            // นับจำนวนข้อมูลที่ตรงกับเงื่อนไข
+            $query = DB::table('ipt')
+                ->whereDate('regdate', Carbon::today()) // เปรียบเทียบ regdate กับวันที่ปัจจุบัน
+                ->where('ward', $ward);
 
-        $count = $query->count();
+            $count = $query->count();
 
-        // ดึง SQL query พร้อมกับ bindings
-        $sql = $query->toSql();
-        $bindings = $query->getBindings();
+            // ดึง SQL query พร้อมกับ bindings
+            $sql = $query->toSql();
+            $bindings = $query->getBindings();
 
-        // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
-        $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+            // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
 
-        $endTime = microtime(true);
+            $endTime = microtime(true);
 
-        $executionTime = $endTime - $startTime;
-        $formattedExecutionTime = number_format($executionTime, 3);
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
 
-        $username = $this->someMethod($request);    
+            $username = $this->someMethod($request);    
 
-        $ipt_log_data = [
-            'function' => 'getResultWard',
-            'username' => $username,
-            'command_sql' => $fullSql,
-            'query_time' => $formattedExecutionTime,
-            'operation' => 'SELECT'
-        ];
+            $ipt_log_data = [
+                'function' => 'getResultWard',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
 
-        IptLogModel::create($ipt_log_data);
-    
-        return response()->json($count); // ส่งค่าจำนวนข้อมูลกลับไป
-    }
+            IptLogModel::create($ipt_log_data);
+        
+            return response()->json($count); // ส่งค่าจำนวนข้อมูลกลับไป
+        }
     // GetResultWard End
 }

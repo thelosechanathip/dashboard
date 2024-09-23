@@ -12,6 +12,7 @@ use App\Http\Controllers\Pages\IptController;
 use App\Http\Controllers\Pages\PalliativeCareController;
 use App\Http\Controllers\Pages\OpdScreenController;
 use App\Http\Controllers\Pages\WardController;
+use App\Http\Controllers\Pages\HealthMedServiceController;
 use App\Http\Controllers\Reportes\AuthenCodeController;
 use App\Http\Controllers\Setting\ModuleAccessRightsController;
 use App\Http\Controllers\Setting\SidebarMenuController;
@@ -120,6 +121,16 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('getPalliativeCarePatientsWithPainFiscalYears', [PalliativeCareController::class, 'getPalliativeCarePatientsWithPainFiscalYears'])->name('getPalliativeCarePatientsWithPainFiscalYears');
             Route::get('getPalliativeCarePatientsWithPainDateRangeSelect', [PalliativeCareController::class, 'getPalliativeCarePatientsWithPainDateRangeSelect'])->name('getPalliativeCarePatientsWithPainDateRangeSelect');
         // Palliative Care End
+
+        // Health Med Service Start
+            Route::get('indexHealthMedService', [HealthMedServiceController::class, 'index'])->name('indexHealthMedService');
+            Route::get('showHealthMedService', [HealthMedServiceController::class, 'showHealthMedService'])->name('showHealthMedService');
+            Route::get('getHealthMedServiceData', [HealthMedServiceController::class, 'getHealthMedServiceData'])->name('getHealthMedServiceData');
+            Route::get('getHealthMedServiceDailyData', [HealthMedServiceController::class, 'getHealthMedServiceDailyData'])->name('getHealthMedServiceDailyData');
+            Route::get('getHealthMedServiceSelectData', [HealthMedServiceController::class, 'getHealthMedServiceSelectData'])->name('getHealthMedServiceSelectData');
+            Route::get('checkStatusHealthMedService', [HealthMedServiceController::class, 'checkStatusHealthMedService'])->name('checkStatusHealthMedService');
+            Route::get('getResultHealthMedService', [HealthMedServiceController::class, 'getResultHealthMedService'])->name('getResultHealthMedService');
+        // Health Med Service End
     // Pages End
 
     // Reportes Start
