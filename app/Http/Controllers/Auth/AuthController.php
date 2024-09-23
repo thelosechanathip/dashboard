@@ -81,8 +81,8 @@ class AuthController extends Controller
                 return redirect()->intended('/dashboard');
             } else {
                 // รหัสผ่านไม่ถูกต้อง
-                // $request->session()->put('error', 'Username หรือ Password ไม่ถูกต้องกรุณากรอกใหม่!');
-                $request->session()->put('error', 'ทาง IT ขออนุญาติปิดปรับปรุงระบบ');
+                $request->session()->put('error', 'Username หรือ Password ไม่ถูกต้องกรุณากรอกใหม่!');
+                // $request->session()->put('error', 'ทาง IT ขออนุญาติปิดปรับปรุงระบบ');
                 return redirect()->intended('/');
             }
         }

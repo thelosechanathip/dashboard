@@ -232,7 +232,7 @@ class AuthenCodeController extends Controller
             } else {
                 $startTime_3 = microtime(true);
 
-                $query_2 = AccessibilityModel::where('accessibility_name', $data['groupname'])->where('sidebar_sub1_menu_id', $SidebarSub1MenuId->id);
+                $query_2 = AccessibilityModel::where('accessibility_name', $data['name'])->where('sidebar_sub1_menu_id', $SidebarSub1MenuId->id);
                 $accessibility_name_model = $query_3->first();
 
                 // ดึง SQL query_3 พร้อม bindings
@@ -246,7 +246,7 @@ class AuthenCodeController extends Controller
 
                 // สร้างข้อมูลสำหรับบันทึกใน log
                 $accessibility_log_data = [
-                    'function' => "Where accessibility_name = {$data['groupname']} AND sidebar_sub1_menu_id = {$SidebarSub1MenuId->id}",
+                    'function' => "Where accessibility_name = {$data['name']} AND sidebar_sub1_menu_id = {$SidebarSub1MenuId->id}",
                     'username' => $data['loginname'],
                     'command_sql' => $fullSql_3,
                     'query_time' => $formattedExecutionTime_3,

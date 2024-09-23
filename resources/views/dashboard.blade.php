@@ -26,9 +26,9 @@
             class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
             <div class="d-flex">
                 <h1 class="h2">Dashboard</h1>
-                <div class="spinner-border ms-3" id="loadingIcon" role="status">
+                {{-- <div class="spinner-border ms-3" id="loadingIcon" role="status">
                     <span class="visually-hidden">Loading...</span>
-                </div>
+                </div> --}}
             </div>
             <div class="d-flex">
                 <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
@@ -50,7 +50,7 @@
                             <h5 class="card-title fw-bold">ผู้เข้ามารับบริการ</h5>
                         </div>
                         <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
-                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="ovst_count"></span> <span>ราย</span></p>
+                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="ovst_count">{{ $counts->ovst_count }}</span> <span>ราย</span></p>
                         </div>
                     </a>
                 </div>
@@ -62,7 +62,7 @@
                             <h5 class="card-title fw-bold">ER</h5>
                         </div>
                         <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
-                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="er_regist_count"></span> <span>ราย</span></p>
+                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="er_regist_count">{{ $counts->er_regist_count }}</span> <span>ราย</span></p>
                         </div>
                     </a>
                 </div>
@@ -74,7 +74,7 @@
                             <h5 class="card-title fw-bold">Refer Out</h5>
                         </div>
                         <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
-                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="refer_out_count"></span> <span>ราย</span></p>
+                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="refer_out_count">{{ $counts->refer_out_count }}</span> <span>ราย</span></p>
                         </div>
                     </a>
                 </div>
@@ -86,7 +86,7 @@
                             <h5 class="card-title fw-bold">Refer In</h5>
                         </div>
                         <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
-                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="refer_in_count"></span> <span>ราย</span></p>
+                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="refer_in_count">{{ $counts->refer_in_count }}</span> <span>ราย</span></p>
                         </div>
                     </a>
                 </div>
@@ -98,7 +98,7 @@
                             <h5 class="card-title fw-bold">Admit</h5>
                         </div>
                         <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
-                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="ipt_count"></span> <span>ราย</span></p>
+                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="ipt_count">{{ $counts->ipt_count }}</span> <span>ราย</span></p>
                         </div>
                     </a>
                 </div>
@@ -110,7 +110,7 @@
                             <h5 class="card-title fw-bold">OPD</h5>
                         </div>
                         <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
-                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="opdscreen_count"></span> <span>ราย</span></p>
+                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="opdscreen_count">{{ $counts->opdscreen_count }}</span> <span>ราย</span></p>
                         </div>
                     </a>
                 </div>
@@ -126,34 +126,15 @@
     <script>
         $(document).ready(function() {
 
-            $('#all_dashboard').ready(function() {
-                showLoadingIcon();
-                $.ajax({
-                    url: '{{ route('query_all_count_data') }}',
-                    method: 'GET',
-                    success: function(response) {
-                        hideLoadingIcon()
-                        // อัพเดทข้อมูลที่ดึงมา
-                        $('#ovst_count').text(response.ovst_count);
-                        $('#er_regist_count').text(response.er_regist_count);
-                        $('#refer_out_count').text(response.refer_out_count);
-                        $('#refer_in_count').text(response.refer_in_count);
-                        $('#ipt_count').text(response.ipt_count);
-                        $('#opdscreen_count').text(response.opdscreen_count);
-                        $('#all_dashboard').show();  // แสดง Element เมื่อโหลดข้อมูลเสร็จแล้ว
-                    }
-                });
-            });
+            // function showLoadingIcon() {
+            //     $('#loadingIcon').show();
+            //     $('#all_dashboard').hide();
+            // }
 
-            function showLoadingIcon() {
-                $('#loadingIcon').show();
-                $('#all_dashboard').hide();
-            }
-
-            function hideLoadingIcon() {
-                $('#loadingIcon').hide();
-                $('#all_dashboard').show();
-            }
+            // function hideLoadingIcon() {
+            //     $('#loadingIcon').hide();
+            //     $('#all_dashboard').show();
+            // }
 
             $('#announce_modal').modal('hide');
         });

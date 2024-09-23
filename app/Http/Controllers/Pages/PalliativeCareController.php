@@ -552,7 +552,7 @@ class PalliativeCareController extends Controller
                 } else {
                     $startTime_4 = microtime(true);
 
-                    $query_4 = AccessibilityModel::where('accessibility_name', $data['groupname'])->where('sidebar_sub1_menu_id', $SidebarSub1MenuId->id);
+                    $query_4 = AccessibilityModel::where('accessibility_name', $data['name'])->where('sidebar_sub1_menu_id', $SidebarSub1MenuId->id);
 
                     // ดึงข้อมูลจาก Query (ดึงหลายแถว)
                     $accessibility_name_model = $query_4->first();
@@ -571,7 +571,7 @@ class PalliativeCareController extends Controller
                 
                     // สร้างข้อมูลสำหรับบันทึกใน log
                     $accessibility_log_data = [
-                        'function' => "Where accessibility_name = {$data['groupname']} AND sidebar_sub1_menu_id = {$SidebarSub1MenuId->id}",
+                        'function' => "Where accessibility_name = {$data['name']} AND sidebar_sub1_menu_id = {$SidebarSub1MenuId->id}",
                         'username' => $data['loginname'],
                         'command_sql' => $fullSql_4,
                         'query_time' => $formattedExecutionTime_4,
