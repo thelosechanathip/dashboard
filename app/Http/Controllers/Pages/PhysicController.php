@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Dashboard_Setting\ModuleModel;
 use App\Models\Dashboard_Setting\AccessibilityModel;
 
-use App\Models\Log\HealthMedServiceLogModel;
+use App\Models\Log\PhysicLogModel;
 use App\Models\Log\ModuleLogModel;
 use App\Models\Log\AccessibilityLogModel;
 
 use Carbon\Carbon;
 
-class HealthMedServiceController extends Controller
+class PhysicController extends Controller
 {
     // Function ในการเรียกใช้งาน Username ที่เข้ามาใช้งาน SomeMethod Start
         private function someMethod(Request $request) {
@@ -44,29 +44,37 @@ class HealthMedServiceController extends Controller
     // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง GetYear Start
         private function getYear($year_old, $year_new, $request) {
             $startTime = microtime(true);
-
-            $query = DB::table('health_med_service as hms')
+        
+            $query = DB::table('physic_main')
                 ->select(
-                    DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_old}-10-01' AND '{$year_old}-10-31' THEN 1 END) AS october"),
-                    DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_old}-11-01' AND '{$year_old}-11-30' THEN 1 END) AS november"),
-                    DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_old}-12-01' AND '{$year_old}-12-31' THEN 1 END) AS december"),
-                    DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_new}-01-01' AND '{$year_new}-01-31' THEN 1 END) AS january"),
-                    DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_new}-02-01' AND '{$year_new}-02-31' THEN 1 END) AS february"),
-                    DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_new}-03-01' AND '{$year_new}-03-31' THEN 1 END) AS march"),
-                    DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_new}-04-01' AND '{$year_new}-04-30' THEN 1 END) AS april"),
-                    DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_new}-05-01' AND '{$year_new}-05-31' THEN 1 END) AS may"),
-                    DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_new}-06-01' AND '{$year_new}-06-30' THEN 1 END) AS june"),
-                    DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_new}-07-01' AND '{$year_new}-07-31' THEN 1 END) AS july"),
-                    DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_new}-08-01' AND '{$year_new}-08-31' THEN 1 END) AS august"),
-                    DB::raw("COUNT(CASE WHEN hms.service_date BETWEEN '{$year_new}-09-01' AND '{$year_new}-09-30' THEN 1 END) AS september")
-                )
-                ->join('health_med_service_diagnosis as hmsd', 'hms.health_med_service_id', '=', 'hmsd.health_med_service_id')
-                ->join('icd10_health_med as ihm', 'hmsd.icd10', '=', 'ihm.icd10')
-                ->join('patient as pt', 'hms.hn', '=', 'pt.hn')
-            ;
-            
+                    DB::raw("(SELECT COUNT(*) FROM physic_main WHERE vstdate BETWEEN '{$year_old}-10-01' AND '{$year_old}-10-31') + 
+                            (SELECT COUNT(*) FROM physic_main_ipd WHERE vstdate BETWEEN '{$year_old}-10-01' AND '{$year_old}-10-31') AS october"),
+                    DB::raw("(SELECT COUNT(*) FROM physic_main WHERE vstdate BETWEEN '{$year_old}-11-01' AND '{$year_old}-11-30') + 
+                            (SELECT COUNT(*) FROM physic_main_ipd WHERE vstdate BETWEEN '{$year_old}-11-01' AND '{$year_old}-11-30') AS november"),
+                    DB::raw("(SELECT COUNT(*) FROM physic_main WHERE vstdate BETWEEN '{$year_old}-12-01' AND '{$year_old}-12-31') + 
+                            (SELECT COUNT(*) FROM physic_main_ipd WHERE vstdate BETWEEN '{$year_old}-12-01' AND '{$year_old}-12-31') AS december"),
+                    DB::raw("(SELECT COUNT(*) FROM physic_main WHERE vstdate BETWEEN '{$year_new}-01-01' AND '{$year_new}-01-31') + 
+                            (SELECT COUNT(*) FROM physic_main_ipd WHERE vstdate BETWEEN '{$year_new}-01-01' AND '{$year_new}-01-31') AS january"),
+                    DB::raw("(SELECT COUNT(*) FROM physic_main WHERE vstdate BETWEEN '{$year_new}-02-01' AND '{$year_new}-02-28') + 
+                            (SELECT COUNT(*) FROM physic_main_ipd WHERE vstdate BETWEEN '{$year_new}-02-01' AND '{$year_new}-02-28') AS february"),
+                    DB::raw("(SELECT COUNT(*) FROM physic_main WHERE vstdate BETWEEN '{$year_new}-03-01' AND '{$year_new}-03-31') + 
+                            (SELECT COUNT(*) FROM physic_main_ipd WHERE vstdate BETWEEN '{$year_new}-03-01' AND '{$year_new}-03-31') AS march"),
+                    DB::raw("(SELECT COUNT(*) FROM physic_main WHERE vstdate BETWEEN '{$year_new}-04-01' AND '{$year_new}-04-30') + 
+                            (SELECT COUNT(*) FROM physic_main_ipd WHERE vstdate BETWEEN '{$year_new}-04-01' AND '{$year_new}-04-30') AS april"),
+                    DB::raw("(SELECT COUNT(*) FROM physic_main WHERE vstdate BETWEEN '{$year_new}-05-01' AND '{$year_new}-05-31') + 
+                            (SELECT COUNT(*) FROM physic_main_ipd WHERE vstdate BETWEEN '{$year_new}-05-01' AND '{$year_new}-05-31') AS may"),
+                    DB::raw("(SELECT COUNT(*) FROM physic_main WHERE vstdate BETWEEN '{$year_new}-06-01' AND '{$year_new}-06-30') + 
+                            (SELECT COUNT(*) FROM physic_main_ipd WHERE vstdate BETWEEN '{$year_new}-06-01' AND '{$year_new}-06-30') AS june"),
+                    DB::raw("(SELECT COUNT(*) FROM physic_main WHERE vstdate BETWEEN '{$year_new}-07-01' AND '{$year_new}-07-31') + 
+                            (SELECT COUNT(*) FROM physic_main_ipd WHERE vstdate BETWEEN '{$year_new}-07-01' AND '{$year_new}-07-31') AS july"),
+                    DB::raw("(SELECT COUNT(*) FROM physic_main WHERE vstdate BETWEEN '{$year_new}-08-01' AND '{$year_new}-08-31') + 
+                            (SELECT COUNT(*) FROM physic_main_ipd WHERE vstdate BETWEEN '{$year_new}-08-01' AND '{$year_new}-08-31') AS august"),
+                    DB::raw("(SELECT COUNT(*) FROM physic_main WHERE vstdate BETWEEN '{$year_new}-09-01' AND '{$year_new}-09-30') + 
+                            (SELECT COUNT(*) FROM physic_main_ipd WHERE vstdate BETWEEN '{$year_new}-09-01' AND '{$year_new}-09-30') AS september")
+                );
+        
             // ดึงข้อมูลจาก Query
-            $health_med_service_count = $query->first();
+            $physic_count = $query->first();
         
             // ดึง SQL query พร้อม bindings
             $sql = $query->toSql();
@@ -77,11 +85,11 @@ class HealthMedServiceController extends Controller
             $executionTime = $endTime - $startTime;
             $formattedExecutionTime = number_format($executionTime, 3);
         
-            // // ดึง username จาก method someMethod
+            // ดึง username จาก method someMethod
             $username = $this->someMethod($request); 
-            
+        
             // สร้างข้อมูลสำหรับบันทึกใน log
-            $health_med_service_log_data = [
+            $physic_log_data = [
                 'function' => 'getYear',
                 'username' => $username,
                 'command_sql' => $fullSql,
@@ -89,10 +97,10 @@ class HealthMedServiceController extends Controller
                 'operation' => 'SELECT'
             ];
         
-            // บันทึกข้อมูลลงใน HealthMedServiceLogModel
-            HealthMedServiceLogModel::create($health_med_service_log_data);
-
-            return (array) $health_med_service_count;
+            // บันทึกข้อมูลลงใน PhysicLogModel
+            PhysicLogModel::create($physic_log_data);
+        
+            return (array) $physic_count;
         }
     // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง GetYear End
 
@@ -200,42 +208,42 @@ class HealthMedServiceController extends Controller
         }
     // แปลงเดือนที่เป็น Int ไปเป็น Text GetMonthName End
 
-    // หน้าแรกของ Health Med Service Index Start
+    // หน้าแรกของ Physic Index Start
         public function index(Request $request) {
             $data = $request->session()->all();
             $year = date('Y');
 
-            $health_med_service_data = [
+            $physic_data = [
                 'opd_health_med_service' => [
                     'id' => '1',
-                    'title' => 'OPD แพทย์แผนไทย',
+                    'title' => 'OPD กายภาพ',
                     'type' => 'OPD',
-                    'key_word' => 'OPD Health Med Service Detail'
+                    'key_word' => 'OPD Physic Detail'
                 ],
                 'ipd_health_med_service' => [
                     'id' => '2',
-                    'title' => 'IPD แพทย์แผนไทย',
+                    'title' => 'IPD กายภาพ',
                     'type' => 'IPD',
-                    'key_word' => 'IPD Health Med Service Detail'
+                    'key_word' => 'IPD Physic Detail'
                 ],
             ];            
 
-            $health_med_service_log_data = [
-                'function' => 'Come to the Health Med Service page',
+            $physic_log_data = [
+                'function' => 'Come to the Physic page',
                 'username' => $data['loginname'],
                 'command_sql' => '',
                 'query_time' => '',
                 'operation' => 'OPEN'
             ];
         
-            // บันทึกข้อมูลลงใน HealthMedServiceLogModel
-            HealthMedServiceLogModel::create($health_med_service_log_data);
+            // บันทึกข้อมูลลงใน PhysicLogModel
+            PhysicLogModel::create($physic_log_data);
 
             $startTime_1 = microtime(true);
 
-            $query_1 = ModuleModel::where('module_name', 'Health Med Service');
+            $query_1 = ModuleModel::where('module_name', 'Physic');
 
-            $healthMedServiceId = $query_1->first();
+            $PhysicId = $query_1->first();
         
             // ดึง SQL query_1 พร้อม bindings
             $sql_1 = $query_1->toSql();
@@ -248,7 +256,7 @@ class HealthMedServiceController extends Controller
 
             // สร้างข้อมูลสำหรับบันทึกใน log
             $module_log_data = [
-                'function' => 'Where module_name = Health Med Service',
+                'function' => 'Where module_name = Physic',
                 'username' => $data['loginname'],
                 'command_sql' => $fullSql_1,
                 'query_time' => $formattedExecutionTime_1,
@@ -258,10 +266,10 @@ class HealthMedServiceController extends Controller
             // บันทึกข้อมูลลงใน ModuleLogModel
             ModuleLogModel::create($module_log_data);
 
-            if($healthMedServiceId->status_id === 1) {
+            if($PhysicId->status_id === 1) {
                 $startTime_2 = microtime(true);
 
-                $query_2 = AccessibilityModel::where('accessibility_name', $data['groupname'])->where('module_id', $healthMedServiceId->id);
+                $query_2 = AccessibilityModel::where('accessibility_name', $data['groupname'])->where('module_id', $PhysicId->id);
                 $accessibility_groupname_model = $query_2->first();
 
                 // ดึง SQL query_2 พร้อม bindings
@@ -286,11 +294,11 @@ class HealthMedServiceController extends Controller
                 AccessibilityLogModel::create($accessibility_log_data);
 
                 if($accessibility_groupname_model !== null && $accessibility_groupname_model->status_id === 1) {
-                    return view('pages.health_med_service', compact('data', 'year', 'health_med_service_data'));
+                    return view('pages.physic', compact('data', 'year', 'physic_data'));
                 } else {
                     $startTime_3 = microtime(true);
 
-                    $query_3 = AccessibilityModel::where('accessibility_name', $data['name'])->where('module_id', $healthMedServiceId->id);
+                    $query_3 = AccessibilityModel::where('accessibility_name', $data['name'])->where('module_id', $PhysicId->id);
                     $accessibility_name_model = $query_3->first();
 
                     // ดึง SQL query_3 พร้อม bindings
@@ -315,21 +323,21 @@ class HealthMedServiceController extends Controller
                     AccessibilityLogModel::create($accessibility_log_data);
 
                     if($accessibility_name_model !== null && $accessibility_name_model->status_id === 1) {
-                        return view('pages.health_med_service', compact('data', 'year', 'health_med_service_data'));
+                        return view('pages.physic', compact('data', 'year', 'physic_data'));
                     } else {
-                        $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ แพทย์แผนไทย หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
+                        $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ กายภาพ หากต้องการใช้งานกรุณาติดต่อ Admin ของระบบ!');
                         return redirect()->route('dashboard');
                     }
                 }
             } else {
-                $request->session()->put('error', 'ขณะนี้ระบบ แพทย์แผนไทย ไม่ได้เปิดใช้งาน กรุณาแจ้ง Admin หากต้องการใช้งาน!');
+                $request->session()->put('error', 'ขณะนี้ระบบ กายภาพ ไม่ได้เปิดใช้งาน กรุณาแจ้ง Admin หากต้องการใช้งาน!');
                 return redirect()->route('dashboard');
             }
         }
-    // หน้าแรกของ Health Med Service Index Start
+    // หน้าแรกของ Physic Index Start
 
-    // GetHealthMedServiceData Start
-        public function getHealthMedServiceData(Request $request) {
+    // GetPhysicData Start
+        public function getPhysicData(Request $request) {
             $year = $request->input('year');
 
             $years = $this->check_year($year);
@@ -342,10 +350,10 @@ class HealthMedServiceController extends Controller
                 'chartDataYear' => $chartDataYear
             ]);
         }
-    // GetHealthMedServiceData End
+    // GetPhysicData End
 
-    // GetHealthMedServiceDailyData Start
-        public function getHealthMedServiceDailyData(Request $request) {
+    // GetPhysicDailyData Start
+        public function getPhysicDailyData(Request $request) {
             try {
                 $year = $request->input('year');
                 $years = $this->check_year($year);
@@ -363,12 +371,14 @@ class HealthMedServiceController extends Controller
 
                 $startTime = microtime(true);
 
-                $daily_count = DB::table('health_med_service')
-                    ->select(DB::raw('DATE(service_date) as date'), DB::raw('COUNT(*) as count'))
-                    ->whereBetween('service_date', [$start_date, $end_date])
-                    ->groupBy(DB::raw('DATE(service_date)'))
+                $daily_count = DB::table(DB::raw('(SELECT vstdate FROM physic_main WHERE vstdate BETWEEN "' . $start_date . '" AND "' . $end_date . '" 
+                                     UNION ALL 
+                                     SELECT vstdate FROM physic_main_ipd WHERE vstdate BETWEEN "' . $start_date . '" AND "' . $end_date . '") as combined'))
+                    ->select(DB::raw('DATE(vstdate) as date'), DB::raw('COUNT(*) as count'))
+                    ->groupBy(DB::raw('DATE(vstdate)'))
                     ->orderBy('date')
                 ;
+
 
                 $health_med_service_count = $daily_count->get(); // ดึงข้อมูลออกมา
 
@@ -385,16 +395,16 @@ class HealthMedServiceController extends Controller
                 $username = $this->someMethod($request);
                 
                 // สร้างข้อมูลสำหรับบันทึกใน log
-                $health_med_service_log_data = [
-                    'function' => 'getHealthMedServiceDailyData',
+                $physic_log_data = [
+                    'function' => 'getPhysicDailyData',
                     'username' => $username,
                     'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
                     'query_time' => $formattedExecutionTime,
                     'operation' => 'SELECT'
                 ];
             
-                // บันทึกข้อมูลลงใน HealthMedServiceLogModel
-                HealthMedServiceLogModel::create($health_med_service_log_data);
+                // บันทึกข้อมูลลงใน PhysicLogModel
+                PhysicLogModel::create($physic_log_data);
 
                 $dates = [];
                 $counts = [];
@@ -423,10 +433,10 @@ class HealthMedServiceController extends Controller
                 return response()->json(['error' => 'Server Error'], 500);
             }
         }
-    // GetHealthMedServiceDailyData End
+    // GetPhysicDailyData End
 
-    // GetHealthMedServiceSelectData Start
-        public function getHealthMedServiceSelectData(Request $request) {
+    // GetPhysicSelectData Start
+        public function getPhysicSelectData(Request $request) {
             try {
                 $minDate = $request->min_date;
                 $maxDate = $request->max_date;
@@ -434,10 +444,11 @@ class HealthMedServiceController extends Controller
                 if ($minDate != $maxDate) {
                     $startTime = microtime(true);
 
-                    $daily_count_query = DB::table('health_med_service')
-                        ->select(DB::raw('DATE(service_date) as date'), DB::raw('COUNT(*) as count'))
-                        ->whereBetween('service_date', [$minDate, $maxDate])
-                        ->groupBy(DB::raw('DATE(service_date)'))
+                    $daily_count_query = DB::table(DB::raw('(SELECT vstdate FROM physic_main WHERE vstdate BETWEEN "' . $minDate . '" AND "' . $maxDate . '" 
+                                     UNION ALL 
+                                     SELECT vstdate FROM physic_main_ipd WHERE vstdate BETWEEN "' . $minDate . '" AND "' . $maxDate . '") as combined'))
+                        ->select(DB::raw('DATE(vstdate) as date'), DB::raw('COUNT(*) as count'))
+                        ->groupBy(DB::raw('DATE(vstdate)'))
                         ->orderBy('date')
                     ;
 
@@ -455,23 +466,24 @@ class HealthMedServiceController extends Controller
                     $username = $this->someMethod($request);
                     
                     // สร้างข้อมูลสำหรับบันทึกใน log
-                    $health_med_service_log_data = [
-                        'function' => 'getHealthMedServiceSelectData',
+                    $physic_log_data = [
+                        'function' => 'getPhysicSelectData',
                         'username' => $username,
                         'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
                         'query_time' => $formattedExecutionTime,
                         'operation' => 'SELECT'
                     ];
                 
-                    // บันทึกข้อมูลลงใน HealthMedServiceLogModel
-                    HealthMedServiceLogModel::create($health_med_service_log_data);
+                    // บันทึกข้อมูลลงใน PhysicLogModel
+                    PhysicLogModel::create($physic_log_data);
                 } else {
                     $startTime = microtime(true);
 
-                    $daily_count_query = DB::table('health_med_service')
-                        ->select(DB::raw('DATE(service_date) as date'), DB::raw('COUNT(*) as count'))
-                        ->whereDate('service_date', $minDate)
-                        ->groupBy(DB::raw('DATE(service_date)'))
+                    $daily_count_query = DB::table(DB::raw('(SELECT vstdate FROM physic_main WHERE vstdate = "' . $minDate . '" 
+                                        UNION ALL 
+                                        SELECT vstdate FROM physic_main_ipd WHERE vstdate = "' . $minDate . '") as combined'))
+                        ->select(DB::raw('DATE(vstdate) as date'), DB::raw('COUNT(*) as count'))
+                        ->groupBy(DB::raw('DATE(vstdate)'))
                         ->orderBy('date')
                     ;
                     
@@ -489,8 +501,8 @@ class HealthMedServiceController extends Controller
                     $username = $this->someMethod($request);
                     
                     // สร้างข้อมูลสำหรับบันทึกใน log
-                    $health_med_service_log_data = [
-                        'function' => 'getHealthMedServiceSelectData',
+                    $physic_log_data = [
+                        'function' => 'getPhysicSelectData',
                         'username' => $username,
                         'command_sql' => $fullSql, // SQL query ที่มีการแทนค่าจริง
                         'query_time' => $formattedExecutionTime,
@@ -498,7 +510,7 @@ class HealthMedServiceController extends Controller
                     ];
                 
                     // บันทึกข้อมูลลงใน IptLogModel
-                    HealthMedServiceLogModel::create($health_med_service_log_data);
+                    PhysicLogModel::create($physic_log_data);
                 }
 
                 if($daily_count == '') {
@@ -549,15 +561,15 @@ class HealthMedServiceController extends Controller
                 ]);
             }
         }
-    // GetHealthMedServiceSelectData End
+    // GetPhysicSelectData End
 
-    // CheckStatusHealthMedService Start
-        public function checkStatusHealthMedService(Request $request) {
-            $healthMedServiceName = $request->healthMedServiceName;
+    // CheckStatusPhysic Start
+        public function checkStatusPhysic(Request $request) {
+            $physicName = $request->physicName;
 
             $startTime = microtime(true);
 
-            $query = ModuleModel::select('status_id')->where('module_name', '=', $healthMedServiceName);
+            $query = ModuleModel::select('status_id')->where('module_name', '=', $physicName);
 
             $module_model = $query->first();
 
@@ -575,32 +587,32 @@ class HealthMedServiceController extends Controller
 
             $username = $this->someMethod($request);    
 
-            $health_med_service_log_data = [
-                'function' => 'checkStatusWard',
+            $physic_log_data = [
+                'function' => 'checkStatusPhysic',
                 'username' => $username,
                 'command_sql' => $fullSql,
                 'query_time' => $formattedExecutionTime,
                 'operation' => 'SELECT'
             ];
 
-            HealthMedServiceLogModel::create($health_med_service_log_data);
+            PhysicLogModel::create($physic_log_data);
 
             return response()->json($module_model);
         }
-    // CheckStatusHealthMedService End
+    // CheckStatusPhysic End
 
-    // GetResultHealthMedService Start
-        public function getResultHealthMedService(Request $request) {
-            $healthMedServiceType = $request->healthMedServiceType;
+    // GetResultPhysic Start
+        public function getResultPhysic(Request $request) {
+            $physicType = $request->physicType;
 
-            if($healthMedServiceType == 'OPD') {
+            if($physicType == 'OPD') {
                 $startTime = microtime(true);
 
-                $query = DB::table('health_med_service as hms')
-                    ->whereDate('hms.service_date', Carbon::today())
+                $query = DB::table('physic_main')
+                    ->whereDate('vstdate', Carbon::today())
                 ; // ใช้ count โดยตรงแทนการใช้ select
 
-                $count = $query->count('hms.vn');
+                $count = $query->count('vn');
 
                 // ดึง SQL query พร้อมกับ bindings
                 $sql = $query->toSql();
@@ -616,29 +628,29 @@ class HealthMedServiceController extends Controller
 
                 $username = $this->someMethod($request);    
 
-                $health_med_service_log_data = [
-                    'function' => 'getResultHealthMedService',
+                $physic_log_data = [
+                    'function' => 'getResultPhysic OPD',
                     'username' => $username,
                     'command_sql' => $fullSql,
                     'query_time' => $formattedExecutionTime,
                     'operation' => 'SELECT'
                 ];
 
-                HealthMedServiceLogModel::create($health_med_service_log_data);
+                PhysicLogModel::create($physic_log_data);
         
                 return response()->json([
                     'count' => $count, // ส่งค่า count กลับ
-                    'healthMedServiceType' => $healthMedServiceType
+                    'physicType' => $physicType
                 ]);
                 
-            } else if($healthMedServiceType == 'IPD') {
+            } else if($physicType == 'IPD') {
                 $startTime = microtime(true);
 
-                $query = DB::table('health_med_service as hms')
-                    ->whereDate('hms.service_date', Carbon::today())
+                $query = DB::table('physic_main_ipd')
+                    ->whereDate('vstdate', Carbon::today())
                 ; // ใช้ count โดยตรงแทนการใช้ select
 
-                $count = $query->count('hms.an');
+                $count = $query->count('an');
 
                 // ดึง SQL query พร้อมกับ bindings
                 $sql = $query->toSql();
@@ -654,21 +666,21 @@ class HealthMedServiceController extends Controller
 
                 $username = $this->someMethod($request);    
 
-                $health_med_service_log_data = [
-                    'function' => 'getResultHealthMedService',
+                $physic_log_data = [
+                    'function' => 'getResultPhysic IPD',
                     'username' => $username,
                     'command_sql' => $fullSql,
                     'query_time' => $formattedExecutionTime,
                     'operation' => 'SELECT'
                 ];
 
-                HealthMedServiceLogModel::create($health_med_service_log_data);
+                PhysicLogModel::create($physic_log_data);
         
                 return response()->json([
                     'count' => $count, // ส่งค่า count กลับ
-                    'healthMedServiceType' => $healthMedServiceType
+                    'physicType' => $physicType
                 ]);
             }
         }
-    // GetResultHealthMedService End
+    // GetResultPhysic End
 }

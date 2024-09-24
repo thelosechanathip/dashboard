@@ -23,6 +23,7 @@ class DashboardController extends Controller
         $erStatusId = ModuleModel::where('module_name', 'ER')->first();
         $opdscreenStatusId = ModuleModel::where('module_name', 'Opdscreen')->first();
         $healthMedServiceStatusId = ModuleModel::where('module_name', 'Health Med Service')->first();
+        $physicStatusId = ModuleModel::where('module_name', 'Physic')->first();
 
         $counts = DB::table('ovst')
             ->select([
@@ -33,6 +34,7 @@ class DashboardController extends Controller
                 DB::raw("(SELECT COUNT(*) FROM referin WHERE refer_date = CURRENT_DATE()) as refer_in_count"),
                 DB::raw("(SELECT COUNT(*) FROM ipt WHERE regdate = CURRENT_DATE() AND dchdate IS NULL) as ipt_count"),
                 DB::raw("(SELECT COUNT(*) FROM health_med_service WHERE service_date = CURRENT_DATE()) as health_med_service_count"),
+                DB::raw("(SELECT COUNT(CASE WHEN vstdate = CURRENT_DATE() THEN 1 END) FROM physic_main) + (SELECT COUNT(CASE WHEN vstdate = CURRENT_DATE() THEN 1 END) FROM physic_main_ipd) AS physic_count"),
             ])->first()
         ;
 
@@ -45,6 +47,7 @@ class DashboardController extends Controller
             'erStatusId', 
             'opdscreenStatusId',
             'healthMedServiceStatusId',
+            'physicStatusId',
             'counts',
         ));
     }

@@ -109,6 +109,18 @@
                     </a>
                 </div>
             </div>
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="card shadow-lg rounded-2 zoom-card" id="physic_card">
+                    <a href="{{ route('indexPhysic') }}" class="text-decoration-none text-dark" id="physic" data-value="{{ $physicStatusId->status_id }}">
+                        <div class="card-body d-flex justify-content-center align-items-center">
+                            <h5 class="card-title fw-bold">กายภาพ</h5>
+                        </div>
+                        <div class="card-footer bg-success text-light d-flex justify-content-center align-items-center">
+                            <p class="card-text"><span>ภายในวันนี้ : </span><span id="physic_count">{{ $counts->physic_count }}</span> <span>ราย</span></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
         {{-- <div class="row mt-5">
 

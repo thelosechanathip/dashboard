@@ -14,6 +14,7 @@ use App\Http\Controllers\Pages\OpdScreenController;
 use App\Http\Controllers\Pages\WardController;
 use App\Http\Controllers\Pages\HealthMedServiceController;
 use App\Http\Controllers\Pages\HealthMedServiceDetailController;
+use App\Http\Controllers\Pages\PhysicController;
 use App\Http\Controllers\Reportes\AuthenCodeController;
 use App\Http\Controllers\Setting\ModuleAccessRightsController;
 use App\Http\Controllers\Setting\SidebarMenuController;
@@ -140,6 +141,24 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('getHealthMedServiceDetailDailyData', [HealthMedServiceDetailController::class, 'getHealthMedServiceDetailDailyData'])->name('getHealthMedServiceDetailDailyData');
             Route::get('getHealthMedServiceDetailSelectData', [HealthMedServiceDetailController::class, 'getHealthMedServiceDetailSelectData'])->name('getHealthMedServiceDetailSelectData');
         // Health Ned Server Detail End
+
+        // Physic Start
+            Route::get('indexPhysic', [PhysicController::class, 'index'])->name('indexPhysic');
+            Route::get('showPhysic', [PhysicController::class, 'showPhysic'])->name('showPhysic');
+            Route::get('getPhysicData', [PhysicController::class, 'getPhysicData'])->name('getPhysicData');
+            Route::get('getPhysicDailyData', [PhysicController::class, 'getPhysicDailyData'])->name('getPhysicDailyData');
+            Route::get('getPhysicSelectData', [PhysicController::class, 'getPhysicSelectData'])->name('getPhysicSelectData');
+            Route::get('checkStatusPhysic', [PhysicController::class, 'checkStatusPhysic'])->name('checkStatusPhysic');
+            Route::get('getResultPhysic', [PhysicController::class, 'getResultPhysic'])->name('getResultPhysic');
+        // Physic End
+
+        // Physic Detail Start
+            Route::get('IndexPhysicDetail', [PhysicDetailController::class, 'index'])->name('IndexPhysicDetail');
+            Route::get('showPhysicDetail', [PhysicDetailController::class, 'showPhysicDetail'])->name('showPhysicDetail');
+            Route::get('getPhysicDetailData', [PhysicDetailController::class, 'getPhysicDetailData'])->name('getPhysicDetailData');
+            Route::get('getPhysicDetailDailyData', [PhysicDetailController::class, 'getPhysicDetailDailyData'])->name('getPhysicDetailDailyData');
+            Route::get('getPhysicDetailSelectData', [PhysicDetailController::class, 'getPhysicDetailSelectData'])->name('getPhysicDetailSelectData');
+        // Physic Detail End
 
     // Pages End
 

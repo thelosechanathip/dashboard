@@ -15,7 +15,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>เนื่องจากทีม IT จะปิดปรับปรุงระบบ Admit เพื่อเพิ่ม Ward ขออภัยในความไม่สะดวก</p>
+                        <p>ทดสอบระบบ</p>
                     </div>
                 </div>
             </div>
@@ -36,7 +36,7 @@
 
     <!-- Modal Detail การ Update Version Start -->
         <div class="modal fade" id="DetailUpdateVersionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-auto">
+            <div class="modal-dialog modal-dialog-centered modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                     <h5 class="modal-title" id="DetailUpdateVersionTitle">รายการที่มีการ Update ของ Version 1.1</h5>
@@ -48,7 +48,7 @@
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. เพิ่ม Modal ในการดูว่ามีรายการอะไร Update บ้างใน Version นี้</span><br>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. เพิ่ม การดูข้อมูลแบบแยกของตึกผู้ป่วยในทั้งหมด และเพิ่ม Chart</span><br>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4. เพิ่ม การตั้งค่าของฝั่ง Admin เพื่อจัดการข้อมูลในส่วนของ Sidebar ที่สามารถเพิ่มเองได้</span><br>
-                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4. เพิ่ม การดูข้อมูลของแผนกแพทย์แผนไทย</span><br>
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5. เพิ่ม การดูข้อมูลของแผนกแพทย์แผนไทย</span><br>
                     </div>
                 </div>
             </div>
@@ -62,7 +62,13 @@
     <script>
         $(document).ready(function() {
             $(document).ready(function() {
+                // แสดง modal หลังจากหน้าโหลดเสร็จ
                 $('#announce_modal').modal('hide');
+                
+                // ซ่อน modal หลังจาก 5 วินาที
+                setTimeout(function() {
+                    $('#announce_modal').modal('hide');
+                }, 5000); // 5000 มิลลิวินาที (5 วินาที)
             });
 
             setUpStatus();
