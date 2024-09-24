@@ -7,20 +7,17 @@
 @section('content')
     <main class="main-content">
         {{-- Title Start --}}
-        <div
-            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
-            <div class="d-flex">
-                <h1 class="h2">Dashboard</h1>
-                {{-- <div class="spinner-border ms-3" id="loadingIcon" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div> --}}
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
+                <div class="d-flex">
+                    <h1 class="h2">Dashboard</h1>
+                </div>
+                <div class="d-flex">
+                    <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
+                    <p>&nbsp;&nbsp;&nbsp;</p>
+                    <p> <span class="fw-bold">Group :</span> {{ $data['groupname'] }}</p>
+                </div>
             </div>
-            <div class="d-flex">
-                <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
-                <p>&nbsp;&nbsp;&nbsp;</p>
-                <p> <span class="fw-bold">Group :</span> {{ $data['groupname'] }}</p>
-            </div>
-        </div>
         {{-- Title End --}}
         @if(isset($data['error']))
             <div class="alert alert-danger" role="alert">
