@@ -1,7 +1,7 @@
 @extends('layout.dashboard_template')
 
 @section('title')
-    <title>Health Med Service Detail</title>
+    <title>Physic Detail</title>
 @endsection
 
 @section('content')
@@ -11,7 +11,7 @@
             class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
             <div class="d-flex">
                 <button class="btn btn-outline-danger me-3" onclick="history.back()">Back</button>
-                <h1 class="h2">{{ $type }} แพทย์แผนไทย</h1>
+                <h1 class="h2">{{ $type }} กายภาพ</h1>
             </div>
             <div class="d-flex">
                 <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
@@ -121,7 +121,7 @@
                     $('#setText').text('');
                     $('#setCount').text('ไม่มีผู้มารับบริการหรือไม่มีข้อมูลในระบบ');
                 } else {
-                    $('#setText').text("จำนวนผู้ป่วย {{$type}} แพทย์แผนไทย : ");
+                    $('#setText').text("จำนวนผู้ป่วย {{$type}} กายภาพ : ");
                     $('#setCount').text(request, ' Visit');
                 }
             }
@@ -131,7 +131,7 @@
 
                 showLoadingIcon();
                 $.ajax({
-                    url: '{{ route('getHealthMedServiceDetailData') }}',
+                    url: '{{ route('getPhysicDetailData') }}',
                     type: 'GET',
                     data: {
                         year: year,
@@ -212,7 +212,7 @@
                 showLoadingIcon();
                 const type = "{{ $type }}";
                 $.ajax({
-                    url: '{{ route('getHealthMedServiceDetailDailyData') }}',
+                    url: '{{ route('getPhysicDetailDailyData') }}',
                     type: 'GET',
                     data: {
                         year: year,
@@ -258,7 +258,7 @@
                 const type = "{{ $type }}";
 
                 $.ajax({
-                    url: '{{ route('getHealthMedServiceDetailSelectData') }}',
+                    url: '{{ route('getPhysicDetailSelectData') }}',
                     type: 'GET',
                     data: {
                         ...requestData, // ส่งค่าฟอร์มแต่ละฟิลด์

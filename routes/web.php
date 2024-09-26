@@ -15,6 +15,7 @@ use App\Http\Controllers\Pages\WardController;
 use App\Http\Controllers\Pages\HealthMedServiceController;
 use App\Http\Controllers\Pages\HealthMedServiceDetailController;
 use App\Http\Controllers\Pages\PhysicController;
+use App\Http\Controllers\Pages\PhysicDetailController;
 use App\Http\Controllers\Reportes\AuthenCodeController;
 use App\Http\Controllers\Setting\ModuleAccessRightsController;
 use App\Http\Controllers\Setting\SidebarMenuController;
