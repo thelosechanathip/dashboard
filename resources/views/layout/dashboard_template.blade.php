@@ -44,11 +44,14 @@
                     </div>
                     <div class="modal-body">
                         <span class="fw-bold">รายละเอียดการ Update</span><br>
-                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. เพิ่มระบบ OPD( ผู้ป่วยนอกเข้ามา )</span><br>
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. เพิ่ม ระบบ OPD( ผู้ป่วยนอกเข้ามา )</span><br>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. เพิ่ม Modal ในการดูว่ามีรายการอะไร Update บ้างใน Version นี้</span><br>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. เพิ่ม การดูข้อมูลแบบแยกของตึกผู้ป่วยในทั้งหมด และเพิ่ม Chart</span><br>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4. เพิ่ม การตั้งค่าของฝั่ง Admin เพื่อจัดการข้อมูลในส่วนของ Sidebar ที่สามารถเพิ่มเองได้</span><br>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5. เพิ่ม การดูข้อมูลของแผนกแพทย์แผนไทย</span><br>
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6. เพิ่ม การดูข้อมูลของแผนกกายภาพ</span><br>
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7. เพิ่ม โปรแกรมส่ง Charts ให้แพทย์ - รับ Chart จากแพทย์ ( อ้างอิงจากรายการ Dischange ของระบบ HoSXP ) </span><br>
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8. เพิ่ม การจัดการข้อมูลของ Version ในฝั่งของ Admin  </span><br>
                     </div>
                 </div>
             </div>
