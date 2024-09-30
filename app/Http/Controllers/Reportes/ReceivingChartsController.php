@@ -600,7 +600,7 @@ class ReceivingChartsController extends Controller
               <tr>
                 <th style="width: auto;">ลำดับ</th>
                 <th style="width: auto;">ชื่อแพทย์</th>
-                <th style="width: auto;">จำนวน Charts ที่ส่งไปให้แพทย์</th>
+                <th style="width: auto;">จำนวน Charts ที่รับจากแพทย์</th>
               </tr>
             </thead>
             <tbody>';
