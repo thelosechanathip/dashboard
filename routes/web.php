@@ -17,6 +17,7 @@ use App\Http\Controllers\Pages\HealthMedServiceDetailController;
 use App\Http\Controllers\Pages\PhysicController;
 use App\Http\Controllers\Pages\PhysicDetailController;
 use App\Http\Controllers\Reportes\AuthenCodeController;
+use App\Http\Controllers\Reportes\ReceivingChartsController;
 use App\Http\Controllers\Setting\ModuleAccessRightsController;
 use App\Http\Controllers\Setting\SidebarMenuController;
 
@@ -171,6 +172,18 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('exportNotAuthenCode', [AuthenCodeController::class, 'exportNotAuthenCode'])->name('exportNotAuthenCode');
             Route::get('downloadAuthenCode', [AuthenCodeController::class, 'downloadAuthenCode'])->name('downloadAuthenCode');
         // Authen Code End
+        // Receiving Charts Start
+            Route::get('report_index_receiving_charts/{id}', [ReceivingChartsController::class, 'index'])->name('report_index_receiving_charts');
+            Route::get('dischangeDataFetchAll', [ReceivingChartsController::class, 'dischangeDataFetchAll'])->name('dischangeDataFetchAll');
+            Route::get('receivingChartsDataSendFetchAll', [ReceivingChartsController::class, 'receivingChartsDataSendFetchAll'])->name('receivingChartsDataSendFetchAll');
+            Route::get('receivingChartsDataReceiveFetchAll', [ReceivingChartsController::class, 'receivingChartsDataReceiveFetchAll'])->name('receivingChartsDataReceiveFetchAll');
+            Route::get('fetchAllCountDischange', [ReceivingChartsController::class, 'fetchAllCountDischange'])->name('fetchAllCountDischange');
+            Route::get('getDischangeDataSelectDate', [ReceivingChartsController::class, 'getDischangeDataSelectDate'])->name('getDischangeDataSelectDate');
+            Route::get('getReceivingChartsDataSelectDate', [ReceivingChartsController::class, 'getReceivingChartsDataSelectDate'])->name('getReceivingChartsDataSelectDate');
+            Route::get('getReceivingChartsDataReceiveSelectDate', [ReceivingChartsController::class, 'getReceivingChartsDataReceiveSelectDate'])->name('getReceivingChartsDataReceiveSelectDate');
+            Route::post('/report_index_receiving_charts/receivingChartsInsert', [ReceivingChartsController::class, 'receivingChartsInsert'])->name('receivingChartsInsert');
+            Route::post('/report_index_receiving_charts/receivingChartsUpdate', [ReceivingChartsController::class, 'receivingChartsUpdate'])->name('receivingChartsUpdate');
+        // Receiving Charts End
     // Reportes End
 
     // Setting Start
