@@ -373,6 +373,166 @@ class ReceivingChartsController extends Controller
         }
     }
 
+    private function query_count_receiving_charts_sending(Request $request, $date) {
+        
+        if(is_array($date)) {
+            $min_date = $date['min_date'];
+            $max_date = $date['max_date'];
+
+            $startTime_1 = microtime(true);
+
+            // สร้าง query ตามช่วงวันที่
+            $query_1 = ReceivingChartsModel::whereBetween('check_sending_chart_date_time', [$min_date, $max_date])
+                ->select('doctor', DB::raw('COUNT(*) as result'))
+                ->groupBy('doctor')
+            ;  // รับข้อมูลทั้งหมด
+
+            // ดึงผลลัพธ์ของ query_1
+            $count_receiving_charts_sending_report_1 = $query_1->get();
+        
+            $sql_1 = $query_1->toSql();
+            $bindings_1 = $query_1->getBindings();
+            $fullSql_1 = vsprintf(str_replace('?', "'%s'", $sql_1), $bindings_1);
+        
+            $endTime_1 = microtime(true);
+            $executionTime_1 = $endTime_1 - $startTime_1;
+            $formattedExecutionTime_1 = number_format($executionTime_1, 3);
+        
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+            
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $receiving_charts_log_data = [
+                'function' => 'query_count_receiving_charts_sending',
+                'username' => $username,
+                'command_sql' => $fullSql_1,  // เก็บ SQL ที่ถูกแทนค่าจริง
+                'query_time' => $formattedExecutionTime_1,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน ReceivingChartsLogModel
+            ReceivingChartsLogModel::create($receiving_charts_log_data);
+
+            return $count_receiving_charts_sending_report_1;  // คืนค่าผลลัพธ์จาก query
+        } else {
+            $startTime_2 = microtime(true);
+    
+            // สร้าง query ตามปกติ
+            $query_2 = ReceivingChartsModel::whereDate('check_sending_chart_date_time', '=', $date)
+                ->select('doctor', DB::raw('COUNT(*) as result'))
+                ->groupBy('doctor')
+            ;
+        
+            // ดึงผลลัพธ์ของ query_2
+            $count_receiving_charts_sending_report_2 = $query_2->get();
+        
+            $sql_2 = $query_2->toSql();
+            $bindings_2 = $query_2->getBindings();
+            $fullSql_2 = vsprintf(str_replace('?', "'%s'", $sql_2), $bindings_2);
+        
+            $endTime_2 = microtime(true);
+            $executionTime_2 = $endTime_2 - $startTime_2;
+            $formattedExecutionTime_2 = number_format($executionTime_2, 3);
+        
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+            
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $receiving_charts_log_data = [
+                'function' => 'query_count_receiving_charts_sending',
+                'username' => $username,
+                'command_sql' => $fullSql_2,  // เก็บ SQL ที่ถูกแทนค่าจริง
+                'query_time' => $formattedExecutionTime_2,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน ReceivingChartsLogModel
+            ReceivingChartsLogModel::create($receiving_charts_log_data);
+        
+            return $count_receiving_charts_sending_report_2;
+        }
+    }
+
+    private function query_count_receiving_charts_receive(Request $request, $date) {
+        
+        if(is_array($date)) {
+            $min_date = $date['min_date'];
+            $max_date = $date['max_date'];
+
+            $startTime_1 = microtime(true);
+
+            // สร้าง query ตามช่วงวันที่
+            $query_1 = ReceivingChartsModel::whereBetween('check_receipt_of_chart_date_time', [$min_date, $max_date])
+                ->select('doctor', DB::raw('COUNT(*) as result'))
+                ->groupBy('doctor')
+            ;  // รับข้อมูลทั้งหมด
+
+            // ดึงผลลัพธ์ของ query_1
+            $count_receiving_charts_receive_report_1 = $query_1->get();
+        
+            $sql_1 = $query_1->toSql();
+            $bindings_1 = $query_1->getBindings();
+            $fullSql_1 = vsprintf(str_replace('?', "'%s'", $sql_1), $bindings_1);
+        
+            $endTime_1 = microtime(true);
+            $executionTime_1 = $endTime_1 - $startTime_1;
+            $formattedExecutionTime_1 = number_format($executionTime_1, 3);
+        
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+            
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $receiving_charts_log_data = [
+                'function' => 'query_count_receiving_charts_receive',
+                'username' => $username,
+                'command_sql' => $fullSql_1,  // เก็บ SQL ที่ถูกแทนค่าจริง
+                'query_time' => $formattedExecutionTime_1,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน ReceivingChartsLogModel
+            ReceivingChartsLogModel::create($receiving_charts_log_data);
+
+            return $count_receiving_charts_receive_report_1;  // คืนค่าผลลัพธ์จาก query
+        } else {
+            $startTime_2 = microtime(true);
+    
+            // สร้าง query ตามปกติ
+            $query_2 = ReceivingChartsModel::whereDate('check_receipt_of_chart_date_time', '=', $date)
+                ->select('doctor', DB::raw('COUNT(*) as result'))
+                ->groupBy('doctor')
+            ;
+        
+            // ดึงผลลัพธ์ของ query_2
+            $count_receiving_charts_receive_report_2 = $query_2->get();
+        
+            $sql_2 = $query_2->toSql();
+            $bindings_2 = $query_2->getBindings();
+            $fullSql_2 = vsprintf(str_replace('?', "'%s'", $sql_2), $bindings_2);
+        
+            $endTime_2 = microtime(true);
+            $executionTime_2 = $endTime_2 - $startTime_2;
+            $formattedExecutionTime_2 = number_format($executionTime_2, 3);
+        
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+            
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $receiving_charts_log_data = [
+                'function' => 'query_count_receiving_charts_receive',
+                'username' => $username,
+                'command_sql' => $fullSql_2,  // เก็บ SQL ที่ถูกแทนค่าจริง
+                'query_time' => $formattedExecutionTime_2,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน ReceivingChartsLogModel
+            ReceivingChartsLogModel::create($receiving_charts_log_data);
+        
+            return $count_receiving_charts_receive_report_2;
+        }
+    }
+
     private function setting_table_count_dischange($count_dischange_report) {
         $output = '';
 
@@ -399,6 +559,64 @@ class ReceivingChartsController extends Controller
             return $output;           
         } else {
             return '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลคนไข้ที่ Dischange ภายในวันนี้!</h1>';
+        }
+    }
+
+    private function setting_table_count_receiving_chart_sending($receivingChartsSending) {
+        $output = '';
+
+        if(!$receivingChartsSending->isEmpty()) {
+            $output .= '<table id="table-list-count-receiving-charts-send" class="table table-striped align-middle dt-responsive nowrap" style="width: 100%">
+            <thead>
+              <tr>
+                <th style="width: auto;">ลำดับ</th>
+                <th style="width: auto;">ชื่อแพทย์</th>
+                <th style="width: auto;">จำนวน Charts ที่ส่งไปให้แพทย์</th>
+              </tr>
+            </thead>
+            <tbody>';
+            $id = 0;
+			foreach ($receivingChartsSending as $rcs) {
+                // ถ้าไม่พบข้อมูล
+                $output .= '<tr>
+                    <td>' . ++$id . '</td>
+                    <td>' . $rcs->doctor . '</td>
+                    <td>' . $rcs->result . '</td>
+                </tr>';
+            }
+            $output .= '</tbody></table>';
+            return $output;           
+        } else {
+            return '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลคน Charts ที่ส่งไปให้แพทย์ภายในวันนี้!</h1>';
+        }
+    }
+
+    private function setting_table_count_receiving_chart_receive($receivingChartsReceive) {
+        $output = '';
+
+        if(!$receivingChartsReceive->isEmpty()) {
+            $output .= '<table id="table-list-count-receiving-charts-receive" class="table table-striped align-middle dt-responsive nowrap" style="width: 100%">
+            <thead>
+              <tr>
+                <th style="width: auto;">ลำดับ</th>
+                <th style="width: auto;">ชื่อแพทย์</th>
+                <th style="width: auto;">จำนวน Charts ที่ส่งไปให้แพทย์</th>
+              </tr>
+            </thead>
+            <tbody>';
+            $id = 0;
+			foreach ($receivingChartsReceive as $rcr) {
+                // ถ้าไม่พบข้อมูล
+                $output .= '<tr>
+                    <td>' . ++$id . '</td>
+                    <td>' . $rcr->doctor . '</td>
+                    <td>' . $rcr->result . '</td>
+                </tr>';
+            }
+            $output .= '</tbody></table>';
+            return $output;           
+        } else {
+            return '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลคน Charts ที่รับจากแพทย์ภายในวันนี้!</h1>';
         }
     }
 
@@ -723,5 +941,70 @@ class ReceivingChartsController extends Controller
             echo $output;  // ส่งกลับ HTML แทน JSON
         }
     }
+
+    public function fetchAllCountReceivingChartsSending(Request $request) {
+        if ($request->has(['rdssdf_min_date', 'rdssdf_max_date'])) {
+            
+            // ดึงค่าจากฟิลด์
+            $minDate = $request->rdssdf_min_date;
+            $maxDate = $request->rdssdf_max_date;
     
+            // ตรวจสอบว่ามีค่าหรือไม่
+            if (empty($minDate) || empty($maxDate)) {
+                return response()->json(['error' => 'กรุณากรอกข้อมูลให้ครบถ้วน'], 400);
+            }
+
+            $date = [
+                'min_date' => $minDate,
+                'max_date' => $maxDate
+            ];
+    
+            $receivingChartsSending = $this->query_count_receiving_charts_sending($request, $date);
+        
+            $output = $this->setting_table_count_receiving_chart_sending($receivingChartsSending);
+        
+            echo $output;  // ส่งกลับ HTML แทน JSON
+        } else {
+            $date_now = date('Y-m-d');
+    
+            $receivingChartsSending = $this->query_count_receiving_charts_sending($request, $date_now);
+        
+            $output = $this->setting_table_count_receiving_chart_sending($receivingChartsSending);
+        
+            echo $output;  // ส่งกลับ HTML แทน JSON
+        }
+    }
+
+    public function fetchAllCountReceivingChartsReceive(Request $request) {
+        if ($request->has(['rcdsdf_min_date', 'rcdsdf_max_date'])) {
+            
+            // ดึงค่าจากฟิลด์
+            $minDate = $request->rcdsdf_min_date;
+            $maxDate = $request->rcdsdf_max_date;
+    
+            // ตรวจสอบว่ามีค่าหรือไม่
+            if (empty($minDate) || empty($maxDate)) {
+                return response()->json(['error' => 'กรุณากรอกข้อมูลให้ครบถ้วน'], 400);
+            }
+
+            $date = [
+                'min_date' => $minDate,
+                'max_date' => $maxDate
+            ];
+    
+            $receivingChartsReceive = $this->query_count_receiving_charts_receive($request, $date);
+        
+            $output = $this->setting_table_count_receiving_chart_receive($receivingChartsReceive);
+        
+            echo $output;  // ส่งกลับ HTML แทน JSON
+        } else {
+            $date_now = date('Y-m-d');
+    
+            $receivingChartsReceive = $this->query_count_receiving_charts_receive($request, $date_now);
+        
+            $output = $this->setting_table_count_receiving_chart_receive($receivingChartsReceive);
+        
+            echo $output;  // ส่งกลับ HTML แทน JSON
+        }
+    }
 }

@@ -16,17 +16,17 @@
 @section('content')
     <main class="main-content">
         {{-- Title Start --}}
-        <div
-            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
-            <div class="">
-                <h1 class="h2">รายงานการ ( รับ - ส่ง ) Chart ให้แพทย์</h1>
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
+                <div class="">
+                    <h1 class="h2">รายงานการ ( รับ - ส่ง ) Chart ให้แพทย์</h1>
+                </div>
+                <div class="d-flex">
+                    <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
+                    <p>&nbsp;&nbsp;&nbsp;</p>
+                    <p> <span class="fw-bold">แผนก :</span> {{ $data['groupname'] }}</p>
+                </div>
             </div>
-            <div class="d-flex">
-                <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
-                <p>&nbsp;&nbsp;&nbsp;</p>
-                <p> <span class="fw-bold">แผนก :</span> {{ $data['groupname'] }}</p>
-            </div>
-        </div>
         {{-- Title End --}}
 
         {{-- Modal Start --}}
@@ -46,20 +46,35 @@
                 </div>
             {{-- รายการสรุปคนไข้ Dischange End --}}
             {{-- รายการสรุป Chart ที่ส่งให้แพทย์ Start --}}
-            <div class="modal fade" id="count_receiving_charts_send_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- เพิ่ม modal-xl เพื่อทำให้ Modal ขนาดใหญ่ -->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="count_receiving_charts_send_title"></h5>
-                            <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div id="count_receiving_charts_send_show_all"></div>
+                <div class="modal fade" id="count_receiving_charts_send_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- เพิ่ม modal-xl เพื่อทำให้ Modal ขนาดใหญ่ -->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="count_receiving_charts_send_title"></h5>
+                                <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="count_receiving_charts_send_show_all"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        {{-- รายการสรุป Chart ที่ส่งให้แพทย์ End --}}
+            {{-- รายการสรุป Chart ที่ส่งให้แพทย์ End --}}
+             {{-- รายการสรุป Chart ที่รับจากแพทย์ Start --}}
+                <div class="modal fade" id="count_receiving_charts_receive_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- เพิ่ม modal-xl เพื่อทำให้ Modal ขนาดใหญ่ -->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="count_receiving_charts_receive_title"></h5>
+                                <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="count_receiving_charts_receive_show_all"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{-- รายการสรุป Chart ที่รับจากแพทย์ End --}}
         {{-- Modal End --}}
 
         <div class="border-bottom pb-3">  
@@ -148,7 +163,7 @@
 
         <div class="mt-3 card shadow-lg" id="receiving_charts_data_receive">
             <div class="p-5">
-                <div class="">
+                <div class="d-flex">
                     <form id="receiving_charts_data_receive_select_date_form" class="col ms-3">
                         @csrf
                         <div class="mb-3 d-flex align-items-center row gx-3">
@@ -172,6 +187,11 @@
                             </div>
                         </div>
                     </form>
+                    <div class="">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#count_receiving_charts_receive_modal" id="count_receiving_charts_receive_btn">
+                            สรุปรายการ Charts ที่รับจากแพทย์
+                        </button>
+                    </div>
                 </div>
                 <div class="mt-5" id="table-receiving-charts-data-receive"></div>
             </div>
@@ -193,11 +213,19 @@
             });
 
             $('#count_receiving_charts_send_btn').on('click', function() {
-                fetchAllCountReceivingChartsSend()
+                fetchAllCountReceivingChartsSending()
             });
 
             $('#count_receiving_charts_send_modal').on('hidden.bs.modal', function () {
                 $('#receiving_charts_data_select_date_form')[0].reset();
+            });
+
+            $('#count_receiving_charts_receive_btn').on('click', function() {
+                fetchAllCountReceivingChartsReceive()
+            });
+
+            $('#count_receiving_charts_receive_modal').on('hidden.bs.modal', function () {
+                $('#receiving_charts_data_receive_select_date_form')[0].reset();
             });
 
             function showLoadingIcon() {
@@ -610,7 +638,141 @@
                 }
             }
 
-            // ถึงตรงนี้นะ
+            function fetchAllCountReceivingChartsSending() {
+                showLoadingIcon();
+
+                var startDate = $('#rdssdf_min_date').val();
+                var endDate = $('#rdssdf_max_date').val();
+
+                if (startDate === '' || endDate === '') {
+                    $.ajax({
+                        url: '{{ route('fetchAllCountReceivingChartsSending') }}',
+                        method: 'GET',
+                        success: function(response) {
+                            hideLoadingIcon();
+                            // แสดงข้อมูลที่ได้รับใน element ที่ต้องการ
+                            var today = new Date();
+
+                            // แสดงวันที่ในรูปแบบ ปี-เดือน-วัน (YYYY-MM-DD)
+                            var formattedDate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+                            $('#count_receiving_charts_send_title').text('สรุป Chart ที่ส่งแพทย์ภายในวันที่ : ' + formattedDate);
+                            $("#count_receiving_charts_send_show_all").html(response);
+
+                            // เรียกใช้ DataTable หลังจากแทรกข้อมูลใน DOM แล้ว
+                            $("#table-list-count-receiving-charts-send").DataTable({
+                                responsive: true,
+                                destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                                language: {
+                                    emptyTable: "ไม่มี Charts คนไข้ที่ส่งไปให้แพทย์ภายในวัน!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error occurred: " + status + " - " + error);
+                            hideLoadingIcon();
+                        }
+                    });
+                } else {
+                    var formData = $('#receiving_charts_data_select_date_form').serialize();
+                    $.ajax({
+                        url: '{{ route('fetchAllCountReceivingChartsSending') }}',
+                        method: 'GET',
+                        data: formData,
+                        success: function(response) {
+                            hideLoadingIcon();
+                            // แสดงข้อมูลที่ได้รับใน element ที่ต้องการ
+                            var today = new Date();
+
+                            // แสดงวันที่ในรูปแบบ ปี-เดือน-วัน (YYYY-MM-DD)
+                            var formattedDate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+                            $('#count_receiving_charts_send_title').text('สรุปรายคนไข้ที่ Dischange ตั้งวันที่ : ' + startDate + ' ถึง ' + endDate);
+                            $("#count_receiving_charts_send_show_all").html(response);
+
+                            // เรียกใช้ DataTable หลังจากแทรกข้อมูลใน DOM แล้ว
+                            $("#table-list-count-receiving-charts-send").DataTable({
+                                responsive: true,
+                                destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                                language: {
+                                    emptyTable: "ไม่มี Charts คนไข้ที่ส่งไปให้แพทย์ภายในวัน!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error occurred: " + status + " - " + error);
+                            hideLoadingIcon();
+                        }
+                    });
+                }
+            }
+
+            function fetchAllCountReceivingChartsReceive() {
+                showLoadingIcon();
+
+                var startDate = $('#rcdsdf_min_date').val();
+                var endDate = $('#rcdsdf_max_date').val();
+
+                if (startDate === '' || endDate === '') {
+                    $.ajax({
+                        url: '{{ route('fetchAllCountReceivingChartsReceive') }}',
+                        method: 'GET',
+                        success: function(response) {
+                            hideLoadingIcon();
+                            // แสดงข้อมูลที่ได้รับใน element ที่ต้องการ
+                            var today = new Date();
+
+                            // แสดงวันที่ในรูปแบบ ปี-เดือน-วัน (YYYY-MM-DD)
+                            var formattedDate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+                            $('#count_receiving_charts_receive_title').text('สรุป Chart ที่รับจากแพทย์ภายในวันที่ : ' + formattedDate);
+                            $("#count_receiving_charts_receive_show_all").html(response);
+
+                            // เรียกใช้ DataTable หลังจากแทรกข้อมูลใน DOM แล้ว
+                            $("#table-list-count-receiving-charts-receive").DataTable({
+                                responsive: true,
+                                destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                                language: {
+                                    emptyTable: "ไม่มี Charts คนไข้ที่รับจากแพทย์ภายในวัน!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error occurred: " + status + " - " + error);
+                            hideLoadingIcon();
+                        }
+                    });
+                } else {
+                    var formData = $('#receiving_charts_data_receive_select_date_form').serialize();
+                    $.ajax({
+                        url: '{{ route('fetchAllCountReceivingChartsReceive') }}',
+                        method: 'GET',
+                        data: formData,
+                        success: function(response) {
+                            hideLoadingIcon();
+                            // แสดงข้อมูลที่ได้รับใน element ที่ต้องการ
+                            var today = new Date();
+
+                            // แสดงวันที่ในรูปแบบ ปี-เดือน-วัน (YYYY-MM-DD)
+                            var formattedDate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+                            $('#count_receiving_charts_receive_title').text('สรุป Charts ที่รับจากแพทย์ตั้งวันที่ : ' + startDate + ' ถึง ' + endDate);
+                            $("#count_receiving_charts_receive_show_all").html(response);
+
+                            // เรียกใช้ DataTable หลังจากแทรกข้อมูลใน DOM แล้ว
+                            $("#table-list-count-receiving-charts-receive").DataTable({
+                                responsive: true,
+                                destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                                language: {
+                                    emptyTable: "ไม่มี Charts คนไข้ที่รับจากแพทย์ภายในวัน!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error occurred: " + status + " - " + error);
+                            hideLoadingIcon();
+                        }
+                    });
+                }
+            }
         });
     </script>
 @endsection

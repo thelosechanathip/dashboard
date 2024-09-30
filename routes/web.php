@@ -20,6 +20,7 @@ use App\Http\Controllers\Reportes\AuthenCodeController;
 use App\Http\Controllers\Reportes\ReceivingChartsController;
 use App\Http\Controllers\Setting\ModuleAccessRightsController;
 use App\Http\Controllers\Setting\SidebarMenuController;
+use App\Http\Controllers\Setting\AnnouncementAndVersionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -178,6 +179,8 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('receivingChartsDataSendFetchAll', [ReceivingChartsController::class, 'receivingChartsDataSendFetchAll'])->name('receivingChartsDataSendFetchAll');
             Route::get('receivingChartsDataReceiveFetchAll', [ReceivingChartsController::class, 'receivingChartsDataReceiveFetchAll'])->name('receivingChartsDataReceiveFetchAll');
             Route::get('fetchAllCountDischange', [ReceivingChartsController::class, 'fetchAllCountDischange'])->name('fetchAllCountDischange');
+            Route::get('fetchAllCountReceivingChartsSending', [ReceivingChartsController::class, 'fetchAllCountReceivingChartsSending'])->name('fetchAllCountReceivingChartsSending');
+            Route::get('fetchAllCountReceivingChartsReceive', [ReceivingChartsController::class, 'fetchAllCountReceivingChartsReceive'])->name('fetchAllCountReceivingChartsReceive');
             Route::get('getDischangeDataSelectDate', [ReceivingChartsController::class, 'getDischangeDataSelectDate'])->name('getDischangeDataSelectDate');
             Route::get('getReceivingChartsDataSelectDate', [ReceivingChartsController::class, 'getReceivingChartsDataSelectDate'])->name('getReceivingChartsDataSelectDate');
             Route::get('getReceivingChartsDataReceiveSelectDate', [ReceivingChartsController::class, 'getReceivingChartsDataReceiveSelectDate'])->name('getReceivingChartsDataReceiveSelectDate');
@@ -240,8 +243,16 @@ Route::middleware(['check.something'])->group(function() {
             Route::post('updateDataSidebarSub1Menu', [SidebarMenuController::class, 'updateDataSidebarSub1Menu'])->name('updateDataSidebarSub1Menu');
             Route::delete('deleteDataSidebarSub1Menu', [SidebarMenuController::class, 'deleteDataSidebarSub1Menu'])->name('deleteDataSidebarSub1Menu');
             Route::post('ChangeStatusIdInSidebarSub1MenuRealtime', [SidebarMenuController::class, 'ChangeStatusIdInSidebarSub1MenuRealtime'])->name('ChangeStatusIdInSidebarSub1MenuRealtime');
-
         // Sidebar Sub1 Menu End
+
+        // Announcement And Version Start
+            Route::get('announcement_and_version_index', [AnnouncementAndVersionController::class, 'index'])->name('announcement_and_version_index');
+            Route::get('fetchAllDataVersion', [AnnouncementAndVersionController::class, 'fetchAllDataVersion'])->name('fetchAllDataVersion');
+            Route::post('insertDataVersion', [AnnouncementAndVersionController::class, 'insertDataVersion'])->name('insertDataVersion');
+            Route::get('findOneDataVersion', [AnnouncementAndVersionController::class, 'findOneDataVersion'])->name('findOneDataVersion');
+            Route::post('updateDataVersion', [AnnouncementAndVersionController::class, 'updateDataVersion'])->name('updateDataVersion');
+            Route::delete('deleteDataVersion', [AnnouncementAndVersionController::class, 'deleteDataVersion'])->name('deleteDataVersion');
+        // Announcement And Version End
     // Setting End
 });
 

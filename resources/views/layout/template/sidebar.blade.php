@@ -30,28 +30,6 @@
                         @endif
                     @endif
                 @endforeach
-            {{-- <li class="nav-item">
-                <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('palliative_care') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#pcu" aria-expanded="{{ request()->routeIs('palliative_care') ? 'true' : 'false' }}" aria-controls="pcu">
-                    <span>PCU</span>
-                    <i class="bi bi-chevron-down rotate-icon text-success"></i>
-                </a>
-                <div class="collapse ms-5 {{ request()->routeIs('palliative_care') ? 'show' : '' }}" id="pcu">
-                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                        <li class="mb-1 sub-menu-custom"><a href="{{ route('palliative_care') }}" id="palliative_care" data-value="{{ $palliativeCareStatusId->status_id }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('palliative_care') ? 'active text-success fw-bold' : 'text-dark' }}">Palliative Care</a></li>
-                    </ul>
-                </div>
-            </li> --}}
-            {{-- <li class="nav-item">
-                <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('report_index_authen_code') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#test" aria-expanded="{{ request()->routeIs('report_index_authen_code') ? 'true' : 'false' }}" aria-controls="test">
-                    <span>ห้องบัตร</span>
-                    <i class="bi bi-chevron-down rotate-icon text-success"></i>
-                </a>
-                <div class="collapse ms-5 {{ request()->routeIs('report_index_authen_code') ? 'show' : '' }}" id="test">
-                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                        <li class="mb-1 sub-menu-custom"><a href="{{ route('report_index_authen_code') }}" id="report_index_authen_code" data-value="{{ $authenCodeStatusId->status_id }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('report_index_authen_code') ? 'active text-success fw-bold' : 'text-dark' }}">Authen Code</a></li>
-                    </ul>
-                </div>
-            </li> --}}
             @if($data['groupname'] == 'ผู้ดูแลระบบ')
                 <li class="nav-item" id="menu_setting_admin">
                     <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('mcarc_index', 'sm_index') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#menu_setting" aria-expanded="{{ request()->routeIs('mcarc_index', 'sm_index') ? 'true' : 'false' }}" aria-controls="menu_setting">
@@ -62,6 +40,7 @@
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                             <li class="mb-1 sub-menu-custom"><a href="{{ route('mcarc_index') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('mcarc_index') ? 'active text-success fw-bold' : 'text-dark' }}">Module access rights</a></li>
                             <li class="mb-1 sub-menu-custom"><a href="{{ route('sm_index') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('sm_index') ? 'active text-success fw-bold' : 'text-dark' }}">Sidebar Menu</a></li>
+                            <li class="mb-1 sub-menu-custom"><a href="{{ route('announcement_and_version_index') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('announcement_and_version_index') ? 'active text-success fw-bold' : 'text-dark' }}">ประกาศ & Version</a></li>
                         </ul>
                     </div>
                 </li>
