@@ -32,11 +32,11 @@
                 @endforeach
             @if($data['groupname'] == 'ผู้ดูแลระบบ')
                 <li class="nav-item" id="menu_setting_admin">
-                    <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('mcarc_index', 'sm_index') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#menu_setting" aria-expanded="{{ request()->routeIs('mcarc_index', 'sm_index') ? 'true' : 'false' }}" aria-controls="menu_setting">
+                    <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('mcarc_index', 'sm_index', 'announcement_and_version_index') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#menu_setting" aria-expanded="{{ request()->routeIs('mcarc_index', 'sm_index') ? 'true' : 'false' }}" aria-controls="menu_setting">
                         <span>Setting</span>
                         <i class="bi bi-chevron-down rotate-icon text-success"></i>
                     </a>
-                    <div class="collapse ms-5 {{ request()->routeIs('mcarc_index', 'sm_index') ? 'show' : '' }}" id="menu_setting">
+                    <div class="collapse ms-5 {{ request()->routeIs('mcarc_index', 'sm_index', 'announcement_and_version_index') ? 'show' : '' }}" id="menu_setting">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                             <li class="mb-1 sub-menu-custom"><a href="{{ route('mcarc_index') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('mcarc_index') ? 'active text-success fw-bold' : 'text-dark' }}">Module access rights</a></li>
                             <li class="mb-1 sub-menu-custom"><a href="{{ route('sm_index') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('sm_index') ? 'active text-success fw-bold' : 'text-dark' }}">Sidebar Menu</a></li>
