@@ -60,7 +60,7 @@
                     </div>
                 </div>
             {{-- รายการสรุป Chart ที่ส่งให้แพทย์ End --}}
-             {{-- รายการสรุป Chart ที่รับจากแพทย์ Start --}}
+            {{-- รายการสรุป Chart ที่รับจากแพทย์ Start --}}
                 <div class="modal fade" id="count_receiving_charts_receive_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- เพิ่ม modal-xl เพื่อทำให้ Modal ขนาดใหญ่ -->
                         <div class="modal-content">
@@ -75,6 +75,35 @@
                     </div>
                 </div>
             {{-- รายการสรุป Chart ที่รับจากแพทย์ End --}}
+            {{-- ค้นหาข้อมูลผ่าน AN Start --}}
+                <div class="modal fade" id="search_data_from_an_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered "> <!-- เพิ่ม modal-xl เพื่อทำให้ Modal ขนาดใหญ่ -->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="search_data_from_an_title"></h5>
+                                <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body ">
+                                <div class="modal-body d-flex justify-content-center align-items-center" style="height: 100%;">
+                                    <form id="search_data_from_an_form" class="col-6">
+                                        @csrf
+                                        <div class="mb-3 d-flex align-items-center row gx-3">
+                                            <div class="col-md-12 d-flex justify-content-center">
+                                                <div class="mb-3">
+                                                    <input type="text" class="form-control" id="search_an" name="search_an" placeholder="กรุณากรอก AN" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 d-flex justify-content-center">
+                                                <button type="submit" id="search_data_from_an_submit" class="btn btn-primary btn-sm">ค้นหา</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{-- ค้นหาข้อมูลผ่าน AN End --}}
         {{-- Modal End --}}
 
         <div class="border-bottom pb-3">  
@@ -82,6 +111,7 @@
                 <a type="button" class="btn btn-outline-success" href="#dischange_data" id="dischange_data_setting">ข้อมูลคนไข้ Dischange</a>
                 <a type="button" class="btn btn-outline-success" href="#receiving_charts_data_send" id="receiving_charts_data_send_setting">ข้อมูล Chart คนไข้ที่ส่งแพทย์</a>
                 <a type="button" class="btn btn-outline-success" href="#receiving_charts_data_receive" id="receiving_charts_data_receive_setting">ข้อมูล Chart คนไข้ที่รับจากแพทย์</a>
+                <a type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#search_data_from_an_modal" id="search_data_from_an_btn">ค้นหาข้อมูลจาก AN</a>
                 <div class="spinner-border loadingIcon ms-3" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
@@ -204,6 +234,10 @@
     <script>
         $(document).ready(function() {
 
+            $('#search_data_from_an_btn').on('click', function() {
+                $('#search_data_from_an_title').text('ค้นหาข้อมูลจาก AN');
+            });
+
             $('#count_dischange_btn').on('click', function() {
                 fetchAllCountDischange()
             });
@@ -242,6 +276,7 @@
                 $('#dischange_data').hide();
                 $('#receiving_charts_data_send').hide();
                 $('#receiving_charts_data_receive').hide();
+                $('#search_data_from_an').hide();
                 hideLoadingIcon();
             }
 
@@ -262,6 +297,8 @@
                 $('#dischange_data_setting').removeClass('active');
                 $('#receiving_charts_data_receive').hide();
                 $('#receiving_charts_data_receive_setting').removeClass('active');
+                $('#search_data_from_an').hide();
+                $('#search_data_from_an_setting').removeClass('active');
                 fetchAllReceivingChartsDataSend();
             });
 
@@ -773,6 +810,43 @@
                     });
                 }
             }
+
+            $('#search_data_from_an_submit').on('click', function(e) {
+                showLoadingIcon();
+                e.preventDefault();
+                let formData = $('#search_data_from_an_form').serialize();
+                
+                $.ajax({
+                    url: '{{ route('searchDataFromAn') }}',
+                    data: formData,
+                    method: 'GET',
+                    success: function(response) {
+                        hideLoadingIcon();
+                        // console.log(response);
+                        if(response.status === 200) {
+                            swal.fire(
+                                response.title,
+                                response.message,
+                                response.icon
+                            );
+                            $('#search_data_from_an_modal').modal('hide');
+                            $('#search_data_from_an_form')[0].reset();
+                        } else {
+                            swal.fire(
+                                response.title,
+                                response.message,
+                                response.icon
+                            );
+                            $('#search_data_from_an_modal').modal('hide');
+                            $('#search_data_from_an_form')[0].reset();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error occurred: " + status + " - " + error);
+                        hideLoadingIcon();
+                    }
+                });
+            });
         });
     </script>
 @endsection

@@ -535,6 +535,57 @@ class ReceivingChartsController extends Controller
         }
     }
 
+    private function query_get_data_from_an_ipt(Request $request, $an) {
+
+        $startTime_1 = microtime(true);
+
+        // สร้าง query ตามช่วงวันที่
+        $query_1 = DB::table('ipt as i')
+            ->join('patient as pt', 'i.hn', '=', 'pt.hn')
+            ->join('doctor as dt', 'i.admdoctor', '=', 'dt.code')
+            ->join('ward as w', 'i.ward', '=', 'w.ward')
+            ->select(
+                'i.an as an',
+                'i.hn as hn',
+                DB::raw("CONCAT(pt.pname, pt.fname, ' ', pt.lname) as fullname"),
+                'w.name as ward',
+                'i.dchdate as dchdate',
+                'dt.name as doctor',
+                'i.receive_chart_date_time',
+                'i.receive_chart_staff'
+            )
+            ->where('i.an', '=', $an)
+        ;  // รับข้อมูลทั้งหมด
+
+        // ดึงผลลัพธ์ของ query_1
+        $get_data_from_an_ipt = $query_1->first();
+    
+        $sql_1 = $query_1->toSql();
+        $bindings_1 = $query_1->getBindings();
+        $fullSql_1 = vsprintf(str_replace('?', "'%s'", $sql_1), $bindings_1);
+    
+        $endTime_1 = microtime(true);
+        $executionTime_1 = $endTime_1 - $startTime_1;
+        $formattedExecutionTime_1 = number_format($executionTime_1, 3);
+    
+        // ดึง username จาก method someMethod
+        $username = $this->someMethod($request);
+        
+        // สร้างข้อมูลสำหรับบันทึกใน log
+        $receiving_charts_log_data = [
+            'function' => 'query_get_data_from_an',
+            'username' => $username,
+            'command_sql' => $fullSql_1,  // เก็บ SQL ที่ถูกแทนค่าจริง
+            'query_time' => $formattedExecutionTime_1,
+            'operation' => 'SELECT'
+        ];
+    
+        // บันทึกข้อมูลลงใน ReceivingChartsLogModel
+        ReceivingChartsLogModel::create($receiving_charts_log_data);
+
+        return $get_data_from_an_ipt;  // คืนค่าผลลัพธ์จาก query
+    }
+
     private function setting_table_count_dischange($count_dischange_report) {
         $output = '';
 
@@ -1017,5 +1068,50 @@ class ReceivingChartsController extends Controller
         
             echo $output;  // ส่งกลับ HTML แทน JSON
         }
+    }
+
+    public function searchDataFromAn(Request $request) {
+        $an = $request->search_an;
+
+        $query_data_1 = $this->query_get_data_from_an_ipt($request, $an);
+        $query_data_2 = ReceivingChartsModel::where('an', $an)->first();
+
+        if($query_data_1->receive_chart_staff == Null && $query_data_1->receive_chart_date_time == Null) {
+            return response()->json([
+                'status' => 400,
+                'title' => 'Error',
+                'message' => 'ยังไม่มีการรับ Chart จากตึก',
+                'icon' => 'error'
+            ]);
+        } else if($query_data_1->receive_chart_staff != Null && $query_data_1->receive_chart_date_time != Null && $query_data_2 == Null) {
+            return response()->json([
+                'status' => 200,
+                'title' => 'Success',
+                'message' => 'ข้อมูลคนไข้อยู่ในหน้า ( ข้อมูลคนไข้ Dischange ) วันที่คนไข้ Dischange : ' . $query_data_1->dchdate,
+                'icon' => 'success'
+            ]);
+        } else if($query_data_1->receive_chart_staff != Null && $query_data_1->receive_chart_date_time != Null && $query_data_2->check_sending_chart_date_time != Null && $query_data_2->check_receipt_of_chart_date_time == Null) {
+            return response()->json([
+                'status' => 200,
+                'title' => 'Success',
+                'message' => 'ข้อมูลคนไข้อยู่ในหน้า ( ข้อมูล Chart คนไข้ที่ส่งแพทย์ ) วันที่ส่ง Chart ให้แพทย์ : ' . $query_data_2->check_sending_chart_date_time,
+                'icon' => 'success'
+            ]);
+        } else if($query_data_1->receive_chart_staff != Null && $query_data_1->receive_chart_date_time != Null && $query_data_2->check_sending_chart_date_time != Null && $query_data_2->check_receipt_of_chart_date_time != Null) {
+            return response()->json([
+                'status' => 200,
+                'title' => 'Success',
+                'message' => 'ข้อมูลคนไข้อยู่ในหน้า ( ข้อมูล Chart คนไข้ที่รับจากแพทย์ ) วันที่รับ Chart จากแพทย์ : ' . $query_data_2->check_receipt_of_chart_date_time,
+                'icon' => 'success'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 400,
+                'title' => 'Error',
+                'message' => 'เกิดข้อผิดพลาดกรุณาแจ้งทีม IT เพื่อแก้ไขปัญหาโดยด่วน!',
+                'icon' => 'error'
+            ]);
+        }
+        
     }
 }

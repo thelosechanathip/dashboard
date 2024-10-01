@@ -184,6 +184,7 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('getDischangeDataSelectDate', [ReceivingChartsController::class, 'getDischangeDataSelectDate'])->name('getDischangeDataSelectDate');
             Route::get('getReceivingChartsDataSelectDate', [ReceivingChartsController::class, 'getReceivingChartsDataSelectDate'])->name('getReceivingChartsDataSelectDate');
             Route::get('getReceivingChartsDataReceiveSelectDate', [ReceivingChartsController::class, 'getReceivingChartsDataReceiveSelectDate'])->name('getReceivingChartsDataReceiveSelectDate');
+            Route::get('searchDataFromAn', [ReceivingChartsController::class, 'searchDataFromAn'])->name('searchDataFromAn');
             Route::post('/report_index_receiving_charts/receivingChartsInsert', [ReceivingChartsController::class, 'receivingChartsInsert'])->name('receivingChartsInsert');
             Route::post('/report_index_receiving_charts/receivingChartsUpdate', [ReceivingChartsController::class, 'receivingChartsUpdate'])->name('receivingChartsUpdate');
         // Receiving Charts End
