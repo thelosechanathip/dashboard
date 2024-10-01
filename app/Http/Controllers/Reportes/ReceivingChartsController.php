@@ -49,8 +49,10 @@ class ReceivingChartsController extends Controller
                     'w.name as ward',
                     'i.dchdate as dchdate',
                     'dt.name as doctor',
-                    DB::raw("IFNULL(i.receive_chart_date_time, 'ยังไม่ได้รับ  Chart จาก Ward') as receive_chart_date_time"),
-                    DB::raw("IFNULL(i.receive_chart_staff, 'ยังไม่มีเจ้าหน้าที่รับ  Chart จาก Ward') as receive_chart_staff")
+                    'i.receive_chart_date_time',
+                    'i.receive_chart_staff'
+                    // DB::raw("IFNULL(i.receive_chart_date_time, 'ยังไม่ได้รับ  Chart จาก Ward') as receive_chart_date_time"),
+                    // DB::raw("IFNULL(i.receive_chart_staff, 'ยังไม่มีเจ้าหน้าที่รับ  Chart จาก Ward') as receive_chart_staff")
                 )
                 ->whereBetween('i.dchdate', [$min_date, $max_date])
             ;  // รับข้อมูลทั้งหมด
@@ -790,33 +792,42 @@ class ReceivingChartsController extends Controller
         $receive_chart_staff = $request->input('receive_chart_staff');
         $isChecked = $request->input('isChecked');
 
-        $receiving_charts_data = [
-            'an' => $an,
-            'hn' => $hn,
-            'name' => $fullname,
-            'ward' => $ward,
-            'dch_date' => $dchdate,
-            'doctor' => $doctor,
-            'receive_chart_date_time' => $receive_chart_date_time,
-            'receive_chart_staff' => $receive_chart_staff,
-            'check_sending_chart' => $isChecked,
-            'check_sending_chart_date_time' => date('Y-m-d H:i:s')
-        ];
-
-        if(ReceivingChartsModel::create($receiving_charts_data)) {
-            return response()->json([
-                'status' => 200,
-                'title' => 'Success',
-                'message' => 'ส่งข้อมูล Chart ให้แพทย์เรียบร้อย',
-                'icon' => 'success'
-            ]);
-        } else {
+        if($receive_chart_staff == Null && $receive_chart_date_time == Null) {
             return response()->json([
                 'status' => 400,
                 'title' => 'Error',
-                'message' => 'ไม่สามารถส่งข้อมูล Chart ให้แพทย์ได้',
+                'message' => 'ไม่สามารถบันทึกข้อมูลได้เนื่องจากยังไม่มีการรับ Chart จากตึก!',
                 'icon' => 'error'
             ]);
+        } else {
+            $receiving_charts_data = [
+                'an' => $an,
+                'hn' => $hn,
+                'name' => $fullname,
+                'ward' => $ward,
+                'dch_date' => $dchdate,
+                'doctor' => $doctor,
+                'receive_chart_date_time' => $receive_chart_date_time,
+                'receive_chart_staff' => $receive_chart_staff,
+                'check_sending_chart' => $isChecked,
+                'check_sending_chart_date_time' => date('Y-m-d H:i:s')
+            ];
+
+            if(ReceivingChartsModel::create($receiving_charts_data)) {
+                return response()->json([
+                    'status' => 200,
+                    'title' => 'Success',
+                    'message' => 'ส่งข้อมูล Chart ให้แพทย์เรียบร้อย',
+                    'icon' => 'success'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 400,
+                    'title' => 'Error',
+                    'message' => 'ไม่สามารถส่งข้อมูล Chart ให้แพทย์ได้',
+                    'icon' => 'error'
+                ]);
+            }
         }
     }  
 
