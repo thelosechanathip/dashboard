@@ -52,6 +52,7 @@
                             <option value="2022">ปีงบ 2565</option>
                             <option value="2023">ปีงบ 2566</option>
                             <option value="2024">ปีงบ 2567</option>
+                            <option value="2025">ปีงบ 2568</option>
                         </select>
                         <button type="button" id="submitYear" class="btn btn-primary">ยืนยัน</button>
                     </div>

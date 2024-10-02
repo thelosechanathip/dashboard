@@ -83,6 +83,7 @@
                             <option value="2022">ปีงบ 2565</option>
                             <option value="2023">ปีงบ 2566</option>
                             <option value="2024">ปีงบ 2567</option>
+                            <option value="2025">ปีงบ 2568</option>
                         </select>
                         <button type="button" id="submitYear" class="btn btn-primary">ยืนยัน</button>
                     </div>
@@ -166,7 +167,7 @@
             $('#yearForm').hide();
             $('#allForm').hide();
 
-            $('#result_count_btn').text("สรุป Admin ประจำปี");
+            $('#result_count_btn').text("สรุป Admit ประจำปี");
             $('#result_count_btn').attr('mode', 'years');
 
             function showLoadingIcon() {
@@ -242,19 +243,19 @@
                                         if(parseInt(year) == 0) {
                                             var defaultYear = '{{ $year }}';
                                             if(parseInt(month_count) == 0) {
-                                                $('#budgetYear').show();
+                                                $('#budgetYear').hide();
                                                 setText(month_count);
                                             } else {
-                                                $('#budgetYear').show();
+                                                $('#budgetYear').hide();
                                                 setText(month_count);
                                             }
                                             fetch_daily_data(defaultYear, month);
                                         } else {
                                             if(parseInt(month_count) == 0) {
-                                                $('#budgetYear').show();
+                                                $('#budgetYear').hide();
                                                 setText(month_count);
                                             } else {
-                                                $('#budgetYear').show();
+                                                $('#budgetYear').hide();
                                                 setText(month_count);
                                             }
                                             fetch_daily_data(year, month);
@@ -296,7 +297,7 @@
                     success: function(response) {
                         hideLoadingIcon();
 
-                        $('#result_count_btn').text("สรุป Admin ประจำเดือน");
+                        $('#result_count_btn').text("สรุป Admit ประจำเดือน");
                         $('#result_count_btn').attr('mode', 'month');
 
                         $('#result_count_btn').attr('data-month', month);
@@ -320,7 +321,7 @@
                                 onClick: function(evt, elements) {
                                     if (elements.length > 0) {
 
-                                        $('#result_count_btn').text("สรุป Admin ประจำวัน");
+                                        $('#result_count_btn').text("สรุป Admit ประจำวัน");
                                         $('#result_count_btn').attr('mode', 'date');
 
                                         var index = elements[0]._index;
@@ -332,10 +333,10 @@
 
                                         // console.log(date);
                                         if(parseInt(date_count) == 0) {
-                                            $('#budgetYear').show();
+                                            $('#budgetYear').hide();
                                             setText(date_count);
                                         } else {
-                                            $('#budgetYear').show();
+                                            $('#budgetYear').hide();
                                             setText(date_count);
                                         }
                                         fetch_name_doctor_data(date);
@@ -426,10 +427,10 @@
 
                                             // console.log(date);
                                             if(parseInt(date_count) == 0) {
-                                                $('#budgetYear').show();
+                                                $('#budgetYear').hide();
                                                 setText(date_count);
                                             } else {
-                                                $('#budgetYear').show();
+                                                $('#budgetYear').hide();
                                                 setText(date_count);
                                             }
                                             fetch_name_doctor_data(date);

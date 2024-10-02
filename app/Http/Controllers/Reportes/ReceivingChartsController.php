@@ -99,8 +99,10 @@ class ReceivingChartsController extends Controller
                     'w.name as ward',
                     'i.dchdate as dchdate',
                     'dt.name as doctor',
-                    DB::raw("IFNULL(i.receive_chart_date_time, 'ยังไม่ได้รับ  Chart จาก Ward') as receive_chart_date_time"),
-                    DB::raw("IFNULL(i.receive_chart_staff, 'ยังไม่มีเจ้าหน้าที่รับ  Chart จาก Ward') as receive_chart_staff")
+                    'i.receive_chart_date_time',
+                    'i.receive_chart_staff'
+                    // DB::raw("IFNULL(i.receive_chart_date_time, 'ยังไม่ได้รับ  Chart จาก Ward') as receive_chart_date_time"),
+                    // DB::raw("IFNULL(i.receive_chart_staff, 'ยังไม่มีเจ้าหน้าที่รับ  Chart จาก Ward') as receive_chart_staff")
                 )
                 ->where('i.dchdate', '=', $date)
             ;
@@ -158,10 +160,23 @@ class ReceivingChartsController extends Controller
             $id = 0;
 			foreach ($dischange_data_report as $ddr) {
                 // ค้นหา hn ใน database อื่น
-                $existing_hns = $receivingChartsModel->pluck('hn')->toArray();
+                $existing_hns = $receivingChartsModel->pluck('an')->toArray();
             
                 // ตรวจสอบว่าพบข้อมูลหรือไม่
-                if (in_array($ddr->hn, $existing_hns)) {
+                if (in_array($ddr->an, $existing_hns)) {
+                    // ถ้าไม่พบข้อมูล
+                    // $output .= '<tr>
+                    //     <td>' . ++$id . '</td>
+                    //     <td>' . $ddr->an . '</td>
+                    //     <td>' . $ddr->hn . '</td>
+                    //     <td>' . $ddr->fullname . '</td>
+                    //     <td>' . $ddr->ward . '</td>
+                    //     <td>' . $ddr->dchdate . '</td>
+                    //     <td>' . $ddr->doctor . '</td>
+                    //     <td>' . $ddr->receive_chart_date_time . '</td>
+                    //     <td>' . $ddr->receive_chart_staff . '</td>
+                    //     <td class="text-center align-middle">มีการส่งให้แพทย์เรียบร้อยแล้ว</td>
+                    // </tr>';
                 } else {
                     // ถ้าไม่พบข้อมูล
                     $output .= '<tr>
@@ -191,7 +206,7 @@ class ReceivingChartsController extends Controller
                 }
             }
             $output .= '</tbody></table>';
-            return $output;            
+            return $output; 
         } else {
             return '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูลคนไข้ที่ Dischange ภายในวันนี้!</h1>';
         }
