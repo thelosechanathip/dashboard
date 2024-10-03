@@ -202,7 +202,14 @@ class OpdScreenController extends Controller
     // หน้าแรกของ Opdscreen Index Start
         public function index(Request $request) {
             $data = $request->session()->all();
-            $year = date('Y');
+           
+            $month = date('m');
+
+            if($month != 10) {
+                $year = date('Y');
+            } else {
+                $year = date('Y') + 1;
+            }
 
             $opdscreen_log_data = [
                 'function' => 'Come to the Opdscreen page',

@@ -207,7 +207,14 @@ class HealthMedServiceDetailController extends Controller
             $type = $request->type;
 
             $data = $request->session()->all();
-            $year = date('Y');           
+            
+            $month = date('m');
+
+            if($month != 10) {
+                $year = date('Y');
+            } else {
+                $year = date('Y') + 1;
+            }          
 
             $health_med_service_log_data = [
                 'function' => 'Come to the Health Med Service Detail page',

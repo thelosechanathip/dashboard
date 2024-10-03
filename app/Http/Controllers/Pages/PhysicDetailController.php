@@ -205,7 +205,14 @@ class PhysicDetailController extends Controller
             $type = $request->type;
 
             $data = $request->session()->all();
-            $year = date('Y');           
+            
+            $month = date('m');
+
+            if($month != 10) {
+                $year = date('Y');
+            } else {
+                $year = date('Y') + 1;
+            }
 
             $physic_log_data = [
                 'function' => 'Come to the Physic Detail page',

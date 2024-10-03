@@ -106,7 +106,6 @@
                 </form>
             </div>
             <div class="d-flex align-items-center justify-content-end">
-                <!-- <button class="btn btn-success" id="result_count_btn"></button> -->
                 <button type="button" class="btn btn-success zoom-card type_modal_add" id="result_count_btn" data-bs-toggle="modal" data-bs-target="#result_count_modal"></button>
             </div>
         </div>
@@ -167,8 +166,8 @@
             $('#yearForm').hide();
             $('#allForm').hide();
 
-            $('#result_count_btn').text("สรุป Admit ประจำปี");
-            $('#result_count_btn').attr('mode', 'years');
+            // $('#result_count_btn').text("สรุป Admit ประจำปี");
+            // $('#result_count_btn').attr('mode', 'years');
 
             function showLoadingIcon() {
                 $('#loadingIcon').show();
@@ -217,6 +216,10 @@
                         hideLoadingIcon();
 
                         var chartDataYear = response.chartDataYear;
+
+                        $('#result_count_btn').text("สรุป Admit ประจำปี");
+                        $('#result_count_btn').attr('mode', 'years');
+                        $('#result_count_btn').attr('data-year', year);
 
                         if (chart) {
                             chart.destroy();
@@ -300,6 +303,7 @@
                         $('#result_count_btn').text("สรุป Admit ประจำเดือน");
                         $('#result_count_btn').attr('mode', 'month');
 
+                        $('#result_count_btn').attr('data-year', year);
                         $('#result_count_btn').attr('data-month', month);
 
                         var chartDataDaily = response.chartDataDaily;
@@ -455,9 +459,9 @@
                 });
             });
 
-            // Load default data for the year 2023 Start
+            // Load default data for the year 2025 Start
             fetch_one_year('{{ $year }}');
-            // Load default data for the year 2023 End
+            // Load default data for the year 2025 End
 
             $('#submitYear').click(function() {
                 var year = $('#yearSelect').val();
@@ -472,8 +476,8 @@
             $('#result_count_btn').on('click', function() {
                 let mode = $(this).attr('mode');
                 if(mode === 'years') {
-                    let years = '{{ $year }}';
-                    $('#result_count_title').text('สรุปรายงานการ Admit ของแพทย์ประจำปี: ' + years);
+                    let years = $(this).attr('data-year');
+                    $('#result_count_title').text('สรุปรายงานการ Admit ของแพทย์ประจำปี: ' + (parseInt(years) + 543) );
                     $.ajax({
                         url: '{{ route('getResultCountYearsDoctor') }}',
                         data: { years: years },
@@ -491,8 +495,16 @@
                         }
                     });
                 } else if(mode === 'month') {
-                    let years = '{{ $year }}';
+                    
                     let month = $(this).attr('data-month');
+                    let years; // ประกาศตัวแปร years ข้างนอก if-else
+
+                    if (month === 'ตุลาคม' || month === 'พฤศจิกายน' || month === 'ธันวาคม') {
+                        years = $(this).attr('data-year') - 1; // กำหนดค่าตัวแปร years โดยไม่ต้องใช้ let
+                    } else {
+                        years = $(this).attr('data-year'); // กำหนดค่าตัวแปร years โดยไม่ต้องใช้ let
+                    }
+
                     $('#result_count_title').text('สรุปรายงานการ Admit ของแพทย์ประจำเดือน: ' + month);
                     $.ajax({
                         url: '{{ route('getResultCountMonthDoctor') }}',
@@ -524,7 +536,6 @@
                         success: function(response) {
                             $("#result_count_show_all").html(response);
                             $("#result_count_table").DataTable();
-                            // console.log(response);
                         }
                     });
                 }

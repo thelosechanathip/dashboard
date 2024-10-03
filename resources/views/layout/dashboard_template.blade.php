@@ -15,7 +15,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>ทดสอบระบบ</p>
+                        <p>ประกาศ ขณะนี้สามารถใช้งานโปรแกรม Admit ได้แล้วนะครับ ขอบคุณครับ</p>
                     </div>
                 </div>
             </div>
@@ -52,6 +52,7 @@
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6. เพิ่ม การดูข้อมูลของแผนกกายภาพ</span><br>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7. เพิ่ม โปรแกรมส่ง Charts ให้แพทย์ - รับ Chart จากแพทย์ ( อ้างอิงจากรายการ Dischange ของระบบ HoSXP ) </span><br>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8. เพิ่ม การจัดการข้อมูลของ Version ในฝั่งของ Admin  </span><br>
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9. แก้ไข Bug ของ Admit ในส่วนของปีงบประมาณและในการดูข้อมูลของแพทย์  </span><br>
                     </div>
                 </div>
             </div>
@@ -66,7 +67,7 @@
         $(document).ready(function() {
             $(document).ready(function() {
                 // แสดง modal หลังจากหน้าโหลดเสร็จ
-                $('#announce_modal').modal('hide');
+                $('#announce_modal').modal('show');
                 
                 // ซ่อน modal หลังจาก 5 วินาที
                 setTimeout(function() {

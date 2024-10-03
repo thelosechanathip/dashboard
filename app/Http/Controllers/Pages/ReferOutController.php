@@ -198,7 +198,14 @@ class ReferOutController extends Controller
     // หน้าแรกของ Refer Out Index Start
         public function index(Request $request) {
             $data = $request->session()->all();
-            $year = date('Y');
+            
+            $month = date('m');
+
+            if($month != 10) {
+                $year = date('Y');
+            } else {
+                $year = date('Y') + 1;
+            }
 
             $refer_out_log_data = [
                 'function' => 'Come to the Refer Out page',

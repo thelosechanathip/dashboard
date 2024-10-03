@@ -200,7 +200,14 @@ class OvstController extends Controller
     // หน้าแรกของ Ovst Index Start
         public function index(Request $request) {
             $data = $request->session()->all();
-            $year = date('Y');
+            
+            $month = date('m');
+
+            if($month != 10) {
+                $year = date('Y');
+            } else {
+                $year = date('Y') + 1;
+            }
 
             $ovst_log_data = [
                 'function' => 'Come to the Ovst page',

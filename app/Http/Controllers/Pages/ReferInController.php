@@ -204,7 +204,14 @@ class ReferInController extends Controller
     // หน้าแรกของ Refer In Index Start
         public function index(Request $request) {
             $data = $request->session()->all();
-            $year = date('Y');
+            
+            $month = date('m');
+
+            if($month != 10) {
+                $year = date('Y');
+            } else {
+                $year = date('Y') + 1;
+            }
 
             $refer_in_log_data = [
                 'function' => 'Come to the Refer In page',

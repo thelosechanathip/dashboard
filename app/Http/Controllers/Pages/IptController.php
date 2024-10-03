@@ -201,7 +201,14 @@ class IptController extends Controller
     // หน้าแรกของ IPT Index Start
         public function index(Request $request) {
             $data = $request->session()->all();
-            $year = date('Y');
+            
+            $month = date('m');
+
+            if($month != 10) {
+                $year = date('Y');
+            } else {
+                $year = date('Y') + 1;
+            }
 
             $startTime = microtime(true);
 
@@ -716,6 +723,8 @@ class IptController extends Controller
     // GetResultCountMonthDoctor Start
         public function getResultCountMonthDoctor(Request $request) {
             $year = $request->years;
+
+
             $month = $request->month;
 
             $month_int = $this->getMonthNumber($month);

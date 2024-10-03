@@ -203,7 +203,14 @@ class HealthMedServiceController extends Controller
     // หน้าแรกของ Health Med Service Index Start
         public function index(Request $request) {
             $data = $request->session()->all();
-            $year = date('Y');
+            
+            $month = date('m');
+
+            if($month != 10) {
+                $year = date('Y');
+            } else {
+                $year = date('Y') + 1;
+            }
 
             $health_med_service_data = [
                 'opd_health_med_service' => [
