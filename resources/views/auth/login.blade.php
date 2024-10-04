@@ -20,12 +20,12 @@
 
 <body style="background-color: rgb(142, 24, 245);">
     <div class="d-flex justify-content-center align-items-center vh-100">
-        <div class="w-25 shadow-lg p-3 mb-5 bg-body rounded-3 p-5">
+        <div class="col-10 col-md-6 col-lg-4 shadow-lg p-3 mb-5 bg-body rounded-3 p-5">
             <div class="d-flex justify-content-center align-items-center">
-                <img src="https://co-vaccine.moph.go.th/assets/images/moph-logo.gif" class="img-fluid shadow-lg bg-body rounded-circle" width="200px" alt="">
+                <img src="http://akathospital.com/assets/images/moph-sm.png" class="img-fluid shadow-lg bg-body rounded-circle" width="150px" alt="">
             </div>
             <div class="d-flex justify-content-center align-items-center mt-3">
-                <h1 class="fw-bold">Dashboard</h1>
+                <h1 class="fw-bold text-center">Dashboard</h1>
             </div>
             <form method="POST" action="{{ route('login') }}">
                 @csrf

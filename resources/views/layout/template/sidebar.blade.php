@@ -31,8 +31,20 @@
                     @endif
                 @endforeach
             @if($data['groupname'] == 'ผู้ดูแลระบบ')
+                <li class="nav-item" id="menu_setting_admin_it">
+                    <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('it_index') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#menu_it" aria-expanded="{{ request()->routeIs('it_index') ? 'true' : 'false' }}" aria-controls="menu_it">
+                        <span>IT</span>
+                        <i class="bi bi-chevron-down rotate-icon text-success"></i>
+                    </a>
+                    <div class="collapse ms-5 {{ request()->routeIs('it_index') ? 'show' : '' }}" id="menu_it">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li class="mb-1 sub-menu-custom"><a href="{{ route('it_index') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('it_index') ? 'active text-success fw-bold' : 'text-dark' }}">ระบบแจ้งซ่อม</a></li>
+                            {{-- <li class="mb-1 sub-menu-custom"><a href="{{ route('') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('') ? 'active text-success fw-bold' : 'text-dark' }}">ระบบเก็บข้อมูลการซ่อมระบบ</a></li> --}}
+                        </ul>
+                    </div>
+                </li>
                 <li class="nav-item" id="menu_setting_admin">
-                    <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('mcarc_index', 'sm_index', 'announcement_and_version_index') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#menu_setting" aria-expanded="{{ request()->routeIs('mcarc_index', 'sm_index') ? 'true' : 'false' }}" aria-controls="menu_setting">
+                    <a class="nav-link dropdown-toggle text-dark {{ request()->routeIs('mcarc_index', 'sm_index', 'announcement_and_version_index') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#menu_setting" aria-expanded="{{ request()->routeIs('mcarc_index', 'sm_index', 'announcement_and_version_index') ? 'true' : 'false' }}" aria-controls="menu_setting">
                         <span>Setting</span>
                         <i class="bi bi-chevron-down rotate-icon text-success"></i>
                     </a>

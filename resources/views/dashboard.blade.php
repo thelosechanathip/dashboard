@@ -24,7 +24,7 @@
                 {{ $data['error'] }}
             </div>
         @endif
-        <div class="row gy-5 mt-2" id="all_dashboard">
+        <div class="row gy-4 mt-2" id="all_dashboard">
             <div class="col-12 col-sm-6 col-md-4" id="ovst_card">
                 <div class="card shadow-lg rounded-2 zoom-card">
                     <a href="{{ route('indexOvst') }}" class="text-decoration-none text-dark" id="ovst" data-value="{{ $ovstStatusId->status_id }}">

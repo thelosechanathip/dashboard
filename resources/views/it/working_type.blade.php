@@ -1,122 +1,40 @@
 @extends('layout.dashboard_template')
 
 @section('title')
-    <title>Setting Announcement And Version</title>
+    <title>Setting Working Type</title>
 @endsection
 
 @section('content')
-    {{-- Modal Start --}}
-    {{-- Version Start --}}
-    <div class="modal fade" id="version_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="version_title">เพิ่มข้อมูล Version</h5>
-                    <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="version_form" method="POST">
-                        @csrf
-                        <input type="hidden" id="mode" mode="">
-                        <input type="hidden" id="version_id_find_one" name="version_id_find_one">
-                        <div class="mb-3">
-                            <label for="version_name" class="form-label">เพิ่ม Version</label>
-                            <input type="text" class="form-control" id="version_name" name="version_name">
-                        </div>
-                        <div class="mb-3 d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary zoom-card" id="version_submit">ยืนยัน</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    {{-- Version End --}}
-
-    {{-- Version Detail Start --}}
-    <div class="modal fade" id="version_detail_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="version_detail_title">เพิ่มข้อมูล Version Detail</h5>
-                    <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="version_detail_form" method="POST">
-                        @csrf
-                        <input type="hidden" id="mode" mode="">
-                        <input type="hidden" id="version_detail_id_find_one" name="version_detail_id_find_one">
-                        <div class="mb-3">
-                            <label for="version_detail_name" class="form-label">รายการที่ Update</label>
-                            <input type="text" class="form-control" id="version_detail_name" name="version_detail_name">
-                        </div>
-                        <div class="mb-3 d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary zoom-card" id="version_detail_submit">ยืนยัน</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    {{-- Version Detail End --}}
-    {{-- Modal End --}}
-
     <main class="main-content">
         <div class="">
-            <div class="my-1">
-                <h1>Announcement And Version Page</h1>
+            <div class="my-1 d-flex justify-content-between">
+                <button class="btn btn-outline-danger zoom-card" onclick="history.back()">
+                    <i class="bi bi-arrow-left-circle-fill"></i>
+                    Back
+                </button>
+                <h1>Working Type Page</h1>
             </div>
             <hr>
-            <div class="row">
-                <!-- Sidebar -->
-                <div class="col-12 col-md-3 bg-success p-3 rounded rounded mb-3 mb-md-0" style="min-height: 700px;">
-                    <div class="d-flex justify-content-start align-items-center">
-                        <ul class="text-white">
-                            <li class="my-2 zoom-text"><a href="#version_setting_page" id="btn_version_setting" class="text-white text-decoration-none p-2">ตั้งค่า Version</a></li>
-                            <li class="my-2 zoom-text"><a href="#version_detail_setting_page" id="btn_version_detail_setting" class="text-white text-decoration-none p-2">ตั้งค่า Version Detail</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- Content Area -->
-                <div class="col-12 col-md-9 bg-white p-3" id="sidebar-menu-page" style="min-height: 700px; overflow-y: auto;">
-                    {{-- Version Page Start --}}
-                    <div class="my-1" id="version_setting_page">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap">
-                            <h3 class="fw-bold">ตั้งค่า Version &nbsp;
-                                <i class="bi bi-sliders"></i>&nbsp;
-                                <div class="spinner-border" id="loadingIconVersionMenu" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </h3>
-                            <button type="button" class="btn btn-success zoom-card version_modal_add mt-2 mt-md-0" id="version_modal_add" data-bs-toggle="modal" data-bs-target="#version_modal">Add Version</button>
+            {{-- Version Page Start --}}
+            <div class="my-1" id="version_setting_page">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    {{-- <h3 class="fw-bold">ตั้งค่า Version &nbsp;
+                        <i class="bi bi-sliders"></i>&nbsp;
+                        <div class="spinner-border" id="loadingIconVersionMenu" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
-                        <hr>
-                        <div class="" id="version_show_data_all"></div>
-                    </div>
-                    {{-- Version Page End --}}
-                    
-                    {{-- Version Detail Page Start --}}
-                    <div class="my-1" id="version_detail_setting_page">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap">
-                            <h3 class="fw-bold">ตั้งค่า Version Detail &nbsp;
-                                <i class="bi bi-sliders"></i>&nbsp;
-                                <div class="spinner-border" id="loadingIconVersionDetailMenu" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </h3>
-                            <button type="button" class="btn btn-success zoom-card version_detail_modal_add mt-2 mt-md-0" id="version_detail_modal_add" data-bs-toggle="modal" data-bs-target="#version_detail_modal">Add Version Detail</button>
-                        </div>
-                        <hr>
-                        <div class="" id="version_detail_show_data_all"></div>
-                    </div>
-                    {{-- Version Detail Page End --}}
+                    </h3> --}}
+                    <button type="button" class="btn btn-success zoom-card version_modal_add mt-2 mt-md-0 " id="version_modal_add" data-bs-toggle="modal" data-bs-target="#version_modal">Add Working Type</button>
                 </div>
+                <hr>
+                <div class="" id="working_type_show_data_all"></div>
             </div>
+            {{-- Version Page End --}}
         </div>
     </main>
 @endsection
 
-@section('script')
+{{-- @section('script')
     <script>
         $(document).ready(function() {
             // Function Icon Download Start
@@ -348,4 +266,4 @@
             // Delete Data Version End
         }); 
     </script>
-@endsection
+@endsection --}}

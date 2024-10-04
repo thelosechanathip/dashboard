@@ -18,6 +18,8 @@ use App\Http\Controllers\Pages\PhysicController;
 use App\Http\Controllers\Pages\PhysicDetailController;
 use App\Http\Controllers\Reportes\AuthenCodeController;
 use App\Http\Controllers\Reportes\ReceivingChartsController;
+use App\Http\Controllers\IT\RepairNotificationSystemController;
+use App\Http\Controllers\IT\WorkingTypeController;
 use App\Http\Controllers\Setting\ModuleAccessRightsController;
 use App\Http\Controllers\Setting\SidebarMenuController;
 use App\Http\Controllers\Setting\AnnouncementAndVersionController;
@@ -189,6 +191,16 @@ Route::middleware(['check.something'])->group(function() {
             Route::post('/report_index_receiving_charts/receivingChartsUpdate', [ReceivingChartsController::class, 'receivingChartsUpdate'])->name('receivingChartsUpdate');
         // Receiving Charts End
     // Reportes End
+
+    // IT Start
+        // Repair Notification System Start
+            Route::get('/it_index', [RepairNotificationSystemController::class, 'index'])->name('it_index');
+        // Repair Notification System End
+
+        // Working Type Start
+            Route::get('/working_type_index', [WorkingTypeController::class, 'index'])->name('working_type_index');
+        // Working Type End
+    // IT End
 
     // Setting Start
         // Module Access Rights Start

@@ -65,15 +65,29 @@
 
     <script>
         $(document).ready(function() {
-            $(document).ready(function() {
-                // แสดง modal หลังจากหน้าโหลดเสร็จ
-                $('#announce_modal').modal('show');
+            // $(document).ready(function() {
+            //     // แสดง modal หลังจากหน้าโหลดเสร็จ
+            //     $('#announce_modal').modal('show');
                 
-                // ซ่อน modal หลังจาก 5 วินาที
-                setTimeout(function() {
-                    $('#announce_modal').modal('hide');
-                }, 5000); // 5000 มิลลิวินาที (5 วินาที)
-            });
+            //     // ซ่อน modal หลังจาก 5 วินาที
+            //     setTimeout(function() {
+            //         $('#announce_modal').modal('hide');
+            //     }, 5000); // 5000 มิลลิวินาที (5 วินาที)
+            // });
+
+            // function checkAnnouncement() {
+
+            //     // แสดง Modal
+            //     $('#announce_modal').modal('show');
+
+            //     // ซ่อน Modal หลังจาก 5 วินาที
+            //     setTimeout(function() {
+            //         $('#announce_modal').modal('hide');
+            //     }, 5000);
+            // }
+
+            // // ตรวจสอบประกาศใหม่ทุก ๆ 10 วินาที
+            // setInterval(checkAnnouncement, 10000); // 10000 มิลลิวินาที (10 วินาที)
 
             setUpStatus();
 
