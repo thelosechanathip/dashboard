@@ -391,7 +391,30 @@
                         $("#table-dischange-data").html(response);
                         $("#table-list-dischange-data").DataTable({
                             responsive: true,
-                            destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                            order: [0, 'asc'],
+                            autoWidth: false,
+                            buttons: ['excel'],
+                            columnDefs: [
+                                {
+                                    targets: "_all",
+                                    className: "dt-head-center dt-body-center"
+                                }
+                            ],
+                            dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                            buttons: [
+                                {
+                                    extend: 'copyHtml5',
+                                    text: 'Copy'
+                                },
+                                {
+                                    extend: 'csvHtml5',
+                                    text: 'CSV'
+                                },
+                                {
+                                    extend: 'excelHtml5',
+                                    text: 'Excel'
+                                }
+                            ],
                             language: {
                                 emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
                             }
@@ -428,7 +451,30 @@
                             $("#table-dischange-data").html(response);
                             $("#table-list-dischange-data").DataTable({
                                 responsive: true,
-                                destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
                                 language: {
                                     emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
                                 }
@@ -449,7 +495,30 @@
                         $("#table-receiving-charts-data-send").html(response);
                         $("#table-list-receiving-charts-data-send").DataTable({
                             responsive: true,
-                            destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
                             language: {
                                 emptyTable: "Chart คนไข้ที่ส่งให้แพทย์ภายในวัน รับ Chartจากแพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
                             }
@@ -486,7 +555,30 @@
                             $("#table-receiving-charts-data-send").html(response);
                             $("#table-list-receiving-charts-data-send").DataTable({
                                 responsive: true,
-                                destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
                                 language: {
                                     emptyTable: "Chart คนไข้ที่ส่งให้แพทย์ภายในวัน รับ Chartจากแพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
                                 }
@@ -561,7 +653,30 @@
                         $("#table-receiving-charts-data-receive").html(response);
                         $("#table-list-receiving-charts-data-receive").DataTable({
                             responsive: true,
-                            destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
                             language: {
                                 emptyTable: "Chart คนไข้ที่ส่งให้แพทย์ภายในวัน รับ Chartจากแพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
                             }
@@ -598,7 +713,30 @@
                             $("#table-receiving-charts-data-receive").html(response);
                             $("#table-list-receiving-charts-data-receive").DataTable({
                                 responsive: true,
-                                destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
                                 // language: {
                                 //     emptyTable: "Chart คนไข้ที่ส่งให้แพทย์ภายในวัน รับ Chart จากแพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
                                 // }
@@ -631,7 +769,30 @@
                             // เรียกใช้ DataTable หลังจากแทรกข้อมูลใน DOM แล้ว
                             $("#table-list-count-dischange").DataTable({
                                 responsive: true,
-                                destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
                                 language: {
                                     emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
                                 }
@@ -699,7 +860,30 @@
                             // เรียกใช้ DataTable หลังจากแทรกข้อมูลใน DOM แล้ว
                             $("#table-list-count-receiving-charts-send").DataTable({
                                 responsive: true,
-                                destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
                                 language: {
                                     emptyTable: "ไม่มี Charts คนไข้ที่ส่งไปให้แพทย์ภายในวัน!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
                                 }
@@ -797,7 +981,30 @@
                             // เรียกใช้ DataTable หลังจากแทรกข้อมูลใน DOM แล้ว
                             $("#table-list-count-receiving-charts-receive").DataTable({
                                 responsive: true,
-                                destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
                                 language: {
                                     emptyTable: "ไม่มี Charts คนไข้ที่รับจากแพทย์ภายในวัน!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
                                 }
