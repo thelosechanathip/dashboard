@@ -5,141 +5,138 @@
 @endsection
 
 @section('content')
+    {{-- Working Modal Start --}}
+        <div class="modal fade" id="working_type_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="working_type_title"></h5>
+                        <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="working_type_form" method="POST">
+                            @csrf
+                            <input type="hidden" id="mode" mode="">
+                            <input type="hidden" id="working_type_id_find_one" name="working_type_id_find_one">
+                            <div class="mb-3">
+                                <label for="working_type_name" class="form-label">ชื่อประเภทของงาน</label>
+                                <input type="text" class="form-control" id="working_type_name" name="working_type_name">
+                            </div>
+                            <div class="mb-3 d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary zoom-card" id="working_type_submit"></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{-- Working Modal End --}}
     <main class="main-content">
         <div class="">
-            <div class="my-1 d-flex justify-content-between">
-                <button class="btn btn-outline-danger zoom-card" onclick="history.back()">
-                    <i class="bi bi-arrow-left-circle-fill"></i>
-                    Back
-                </button>
-                <h1>Working Type Page</h1>
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom full-width-bar">
+                <div class="d-flex">
+                    <button class="btn btn-outline-danger zoom-card me-3" onclick="history.back()">
+                        <i class="bi bi-arrow-left-circle-fill"></i>
+                        Back
+                    </button>
+                    <h1 class="h2">ระบบแจ้งซ่อม</h1>
+                </div>
+                <div class="d-flex">
+                    <p><span class="fw-bold">ชื่อผู้ใช้งาน :</span> {{ $data['name'] }} </p>
+                    <p>&nbsp;&nbsp;&nbsp;</p>
+                    <p> <span class="fw-bold">Group :</span> {{ $data['groupname'] }}</p>
+                </div>
             </div>
-            <hr>
-            {{-- Version Page Start --}}
-            <div class="my-1" id="version_setting_page">
+            {{-- <hr> --}}
+            {{-- Working Type Page Start --}}
+            <div class="my-1" id="working_type_setting_page">
                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                     {{-- <h3 class="fw-bold">ตั้งค่า Version &nbsp;
                         <i class="bi bi-sliders"></i>&nbsp;
-                        <div class="spinner-border" id="loadingIconVersionMenu" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
+                        
                     </h3> --}}
-                    <button type="button" class="btn btn-success zoom-card version_modal_add mt-2 mt-md-0 " id="version_modal_add" data-bs-toggle="modal" data-bs-target="#version_modal">Add Working Type</button>
+                    <span class="d-flex">
+                        <h2>ประเภทของงาน</h2>
+                        {{-- <div class="spinner-border" id="loadingIconWorkingType" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div> --}}
+                    </span>
+                    <button type="button" class="btn btn-success zoom-card working_type_modal_add mt-2 mt-md-0 " id="working_type_modal_add" data-bs-toggle="modal" data-bs-target="#working_type_modal">เพิ่มรายการประเภทของงาน</button>
                 </div>
                 <hr>
                 <div class="" id="working_type_show_data_all"></div>
             </div>
-            {{-- Version Page End --}}
+            {{-- Working Type Page End --}}
         </div>
     </main>
 @endsection
 
-{{-- @section('script')
+@section('script')
     <script>
         $(document).ready(function() {
             // Function Icon Download Start
-                // Version Start
-                function showLoadingIconVersion() {
-                        $('#loadingIconVersionMenu').show();
-                    }
-
-                    function hideLoadingIconVersion() {
-                        $('#loadingIconVersionMenu').hide();
-                    }
-                // Version End
                 // Version Detail Start
-                    function showLoadingIconVersionDetail() {
-                        $('#loadingIconVersion DetailMenu').show();
+                    function showLoadingIconWorkingType() {
+                        $('#loadingIconWorkingType').show();
                     }
 
-                    function hideLoadingIconVersionDetail() {
-                        $('#loadingIconVersion DetailMenu').hide();
+                    function hideLoadingIconWorkingType() {
+                        $('#loadingIconWorkingType').hide();
                     }
                 // Version Detail End
             // Function Icon Download End
 
-            // Default Menu Start
-                $('#version_setting_page').show();
-                $('#version_detail_setting_page').hide();
-            // Default Menu End
-
-            // onClick Change Menu Start
-                $('#btn_version_setting').on('click', function() {
-                    $('#version_setting_page').show();
-                    $('#version_detail_setting_page').hide();
-                });
-
-                $('#btn_version_detail_setting').on('click', function() {
-                    $('#version_detail_setting_page').show();
-                    $('#version_setting_page').hide();
-                });
-            // onClick Change Menu End
-
             // Change Mode add || update Start
-                // Version Start
-                    $('.version_modal_add').on('click', function() {
+                // Working Type Start
+                    $('.working_type_modal_add').on('click', function() {
                         $('#mode').attr('mode', 'add');
-                        $('#version_title').text('เพิ่มข้อมูล');
-                        $('#version_submit').text('Add Data');
-                        $("#version_form")[0].reset();
+                        $('#working_type_title').text('เพิ่มข้อมูล');
+                        $('#working_type_submit').text('Add Data');
+                        $("#working_type_form")[0].reset();
                     });
 
-                    $(document).on('click', '.version_modal_find', function() {
+                    $(document).on('click', '.working_type_modal_find', function() {
                         $('#mode').attr('mode', 'update');
-                        $('#version_title').text('แก้ไขข้อมูล');
-                        $('#version_submit').text('Update Data');
+                        $('#working_type_title').text('แก้ไขข้อมูล');
+                        $('#working_type_submit').text('Update Data');
                     });
-                // Version End
-                // Version Detail Start
-                    $('.version_detail_modal_add').on('click', function() {
-                        $('#mode').attr('mode', 'add');
-                        $('#version_detail_title').text('เพิ่มข้อมูล');
-                        $('#version_detail_submit').text('Add Data');
-                        $("#version_detail_form")[0].reset();
-                    });
-
-                    $(document).on('click', '.version_detail_modal_find', function() {
-                        $('#mode').attr('mode', 'update');
-                        $('#version_detail_title').text('แก้ไขข้อมูล');
-                        $('#version_detail_submit').text('Update Data');
-                    });
-                // Version Detail End
+                // Working Type End
             // Change Mode add || update End
 
             // Reset Form Start
                 $('.btn-close').on('click', function() {
-                    $("#version_form")[0].reset();
-                    $("#version_detail_form")[0].reset();
+                    $("#working_type_form")[0].reset();
                 });
             // Reset Form End
 
-            // Fetch All Data Version Start
-                fetchAllDataVersion();
+            // Fetch All Data Working Type Start
+                fetchAllDataWorkingType();
 
-                function fetchAllDataVersion() {
-                    showLoadingIconVersion();
+                function fetchAllDataWorkingType() {
+                    showLoadingIconWorkingType();
                     $.ajax({
-                        url: '{{ route('fetchAllDataVersion') }}',
+                        url: '{{ route('fetchAllDataWorkingType') }}',
                         method: 'get',
                         success: function(response) {
-                            hideLoadingIconVersion();
-                            $("#version_show_data_all").html(response);
-                            $("#version_table").DataTable({
+                            hideLoadingIconWorkingType();
+                            $("#working_type_show_data_all").html(response);
+                            $("#working_type_table").DataTable({
                                 // order: [0, 'ASC']
                             });
                         }
                     });
                 }
-            // Fetch All Data Version End
+            // Fetch All Data Working Type End
 
-            // Insert && Update Data Version Start
-                $("#version_form").submit(function(e) {
+            // Insert && Update Data Working Type Start
+                $("#working_type_form").submit(function(e) {
                     const mode = $('#mode').attr('mode');
                     if(mode === 'add') {
                         e.preventDefault();
                         const fd = new FormData(this);
                         $.ajax({
-                            url: '{{ route('insertDataVersion') }}',
+                            url: '{{ route('insertDataWorkingType') }}',
                             method: 'post',
                             data: fd,
                             cache: false,
@@ -159,9 +156,9 @@
                                         response.message,
                                         response.icon
                                     )
-                                    fetchAllDataVersion();
-                                    $("#version_form")[0].reset();
-                                    $("#version_modal").modal('hide');
+                                    fetchAllDataWorkingType();
+                                    $("#working_type_form")[0].reset();
+                                    $("#working_type_modal").modal('hide');
                                 }
                             }
                         });
@@ -169,7 +166,7 @@
                         e.preventDefault();
                         const fd = new FormData(this);
                         $.ajax({
-                            url: '{{ route('updateDataVersion') }}',
+                            url: '{{ route('updateDataWorkingType') }}',
                             method: 'post',
                             data: fd,
                             cache: false,
@@ -189,9 +186,9 @@
                                         response.message,
                                         response.icon
                                     )
-                                    fetchAllDataVersion();
-                                    $("#version_form")[0].reset();
-                                    $("#version_modal").modal('hide');
+                                    fetchAllDataWorkingType();
+                                    $("#working_type_form")[0].reset();
+                                    $("#working_type_modal").modal('hide');
                                 }
                             }
                         });
@@ -199,29 +196,29 @@
                         console.log('Mode ไม่ถูกต้อง');
                     }
                 });
-            // Insert && Update Data Version End
+            // Insert && Update Data Working Type End
 
-            // Find One Data Version Start
-                $(document).on('click', '.version_modal_find', function(e) {
+            // Find One Data Working Type Start
+                $(document).on('click', '.working_type_modal_find', function(e) {
                     e.preventDefault();
                     let id = $(this).attr('id');
                     $.ajax({
-                        url: '{{ route('findOneDataVersion') }}',
+                        url: '{{ route('findOneDataWorkingType') }}',
                         method: 'get',
                         data: {
                             id: id,
                             _token: '{{ csrf_token() }}'
                         },
                         success: function(response) {
-                            $("#version_name").val(response.version_name);
-                            $("#version_id_find_one").val(response.id);
+                            $("#working_type_name").val(response.working_type_name);
+                            $("#working_type_id_find_one").val(response.id);
                         }
                     });
                 });
-            // Find One Data Version End
+            // Find One Data Working Type End
 
-            // Delete Data Version Start
-                $(document).on('click', '.version_delete', function(e) {
+            // Delete Data Working Type Start
+                $(document).on('click', '.working_type_delete', function(e) {
                     e.preventDefault();
                     let id = $(this).attr('id');
                     console.log(id);
@@ -237,7 +234,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: '{{ route('deleteDataVersion') }}',
+                                url: '{{ route('deleteDataWorkingType') }}',
                                 method: 'delete',
                                 data: {
                                     id: id,
@@ -256,14 +253,14 @@
                                             response.message,
                                             response.icon
                                         )
-                                        fetchAllDataVersion();
+                                        fetchAllDataWorkingType();
                                     }
                                 }
                             });
                         }
                     })
                 });
-            // Delete Data Version End
+            // Delete Data Working Type End
         }); 
     </script>
-@endsection --}}
+@endsection

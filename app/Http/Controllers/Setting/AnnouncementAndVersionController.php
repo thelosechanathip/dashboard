@@ -37,13 +37,13 @@ class AnnouncementAndVersionController extends Controller
         public function index(Request $request) {
             $data = $request->session()->all();
 
-                if($data['groupname'] == 'ผู้ดูแลระบบ'){
-                    // Return the view with the necessary data
-                    return view('setting.announcement_and_version', compact('data'));
-                } else {
-                    $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ');
-                    return redirect()->route('dashboard');
-                }
+            if($data['groupname'] == 'ผู้ดูแลระบบ'){
+                // Return the view with the necessary data
+                return view('setting.announcement_and_version', compact('data'));
+            } else {
+                $request->session()->put('error', 'คุณไม่มีสิทธิ์เข้าใช้งานระบบ');
+                return redirect()->route('dashboard');
+            }
         }
     // Index Sidebar e Menu End
 

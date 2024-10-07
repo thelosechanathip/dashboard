@@ -38,7 +38,7 @@
                     </a>
                     <div class="collapse ms-5 {{ request()->routeIs('it_index') ? 'show' : '' }}" id="menu_it">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li class="mb-1 sub-menu-custom"><a href="{{ route('it_index') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('it_index') ? 'active text-success fw-bold' : 'text-dark' }}">ระบบแจ้งซ่อม</a></li>
+                            <li class="mb-1 sub-menu-custom"><a href="{{ route('it_index') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('it_index') ? 'active text-success fw-bold' : 'text-dark' }}">ระบบงาน IT</a></li>
                             {{-- <li class="mb-1 sub-menu-custom"><a href="{{ route('') }}" class="link-dark p-1 rounded text-decoration-none {{ request()->routeIs('') ? 'active text-success fw-bold' : 'text-dark' }}">ระบบเก็บข้อมูลการซ่อมระบบ</a></li> --}}
                         </ul>
                     </div>

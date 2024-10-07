@@ -4,6 +4,43 @@
     @include('layout.template.header')
     @yield('title')
     @yield('style')
+    {{-- ขนาดของ Select 2 && Modal Start --}}
+    <style>
+        .select2-container--default .select2-selection--single {
+            height: 38px !important; /* บังคับความสูง */
+            border: 1px solid #ced4da !important;
+            border-radius: 0.375rem !important;
+            padding: 0.375rem 0.75rem !important;
+            background-color: #fff !important;
+        }
+
+        .select2-container .select2-selection--single .select2-selection__rendered {
+            line-height: 28px !important;
+        }
+
+        .select2-container .select2-selection--single .select2-selection__arrow {
+            height: 38px !important;
+            top: 4px !important;
+        }
+
+        .select2-container {
+            width: 100% !important;
+        }
+
+        .modal-dialog {
+            transition: transform 0.1s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 1rem);
+        }
+
+        .modal-content {
+            margin-top: 1rem;  /* ปรับระยะห่างจากขอบบนของหน้าจอ */
+            margin-bottom: 1rem;  /* ปรับระยะห่างจากขอบล่างของหน้าจอ */
+        }
+    </style>
+    {{-- ขนาดของ Select 2 && Modal End --}}
 </head>
 <body>
     {{-- ประกาศ Start --}}

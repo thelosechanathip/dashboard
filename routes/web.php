@@ -18,6 +18,7 @@ use App\Http\Controllers\Pages\PhysicController;
 use App\Http\Controllers\Pages\PhysicDetailController;
 use App\Http\Controllers\Reportes\AuthenCodeController;
 use App\Http\Controllers\Reportes\ReceivingChartsController;
+use App\Http\Controllers\IT\ItHomeController;
 use App\Http\Controllers\IT\RepairNotificationSystemController;
 use App\Http\Controllers\IT\WorkingTypeController;
 use App\Http\Controllers\Setting\ModuleAccessRightsController;
@@ -193,12 +194,21 @@ Route::middleware(['check.something'])->group(function() {
     // Reportes End
 
     // IT Start
+        // IT Home Start
+            Route::get('/it_index', [ItHomeController::class, 'index'])->name('it_index');
+        // IT Home End
+
         // Repair Notification System Start
-            Route::get('/it_index', [RepairNotificationSystemController::class, 'index'])->name('it_index');
+            Route::get('/repair_notification_system_index', [RepairNotificationSystemController::class, 'index'])->name('repair_notification_system_index');
         // Repair Notification System End
 
         // Working Type Start
             Route::get('/working_type_index', [WorkingTypeController::class, 'index'])->name('working_type_index');
+            Route::get('fetchAllDataWorkingType', [WorkingTypeController::class, 'fetchAllDataWorkingType'])->name('fetchAllDataWorkingType');
+            Route::post('insertDataWorkingType', [WorkingTypeController::class, 'insertDataWorkingType'])->name('insertDataWorkingType');
+            Route::get('findOneDataWorkingType', [WorkingTypeController::class, 'findOneDataWorkingType'])->name('findOneDataWorkingType');
+            Route::post('updateDataWorkingType', [WorkingTypeController::class, 'updateDataWorkingType'])->name('updateDataWorkingType');
+            Route::delete('deleteDataWorkingType', [WorkingTypeController::class, 'deleteDataWorkingType'])->name('deleteDataWorkingType');
         // Working Type End
     // IT End
 

@@ -35,7 +35,7 @@ class SidebarMenuController extends Controller
         }
     // Message Error End
 
-    // Index Sidebar e Menu Start
+    // Index Sidebar Main Menu Start
         public function index(Request $request) {
             $data = $request->session()->all();
             $sidebar_main_menu_model = SidebarMainMenuModel::orderBy('id', 'desc')->get();
@@ -49,7 +49,7 @@ class SidebarMenuController extends Controller
                     return redirect()->route('dashboard');
                 }
         }
-    // Index Sidebar e Menu End
+    // Index Sidebar Main Menu End
 
     // Fetch All Data Sidebar Main Menu Start
         public function fetchAllDataSidebarMainMenu() {
