@@ -1,0 +1,389 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Switch Start */
+   /* จัดการให้ switch อยู่ตรงกลางในแนวนอนและแนวตั้ง */
+    td {
+        vertical-align: middle; /* จัดแนวให้ตรงกลางแนวตั้ง */
+    }
+
+    /* ทำให้ฟอร์มภายในเซลล์ใช้ flexbox เพื่อจัดให้อยู่ตรงกลาง */
+    .form-check.form-switch {
+        display: flex;
+        justify-content: center; /* จัดให้อยู่ตรงกลางแนวนอน */
+        align-items: center; /* จัดให้อยู่ตรงกลางแนวตั้ง */
+        height: 100%; /* ใช้ความสูงทั้งหมดของคอลัมน์ */
+    }
+
+    /* ปรับขนาดของ switch */
+    .status_checked_in_module {
+        transform: scale(1.2); /* ปรับขนาดให้ใหญ่ขึ้นเล็กน้อย */
+        margin: 0 auto; /* จัดให้อยู่ตรงกลาง */
+    }
+
+    /* เปลี่ยนสีเมื่อเปิด */
+    .status_checked_in_module:checked {
+        background-color: #4caf50; /* สีเขียวเมื่อเปิด */
+        border-color: #4caf50;
+    }
+
+    /* ปรับขนาดของปุ่มกลม (toggle) */
+    .status_checked_in_module::before {
+        width: 18px;
+        height: 18px;
+        top: 1px;
+        left: 1px;
+    }
+
+    /* การเคลื่อนไหวของปุ่มกลมเมื่อเปิด */
+    .status_checked_in_module:checked::before {
+        transform: translateX(20px);
+    }
+/* Switch End */
+
+/* SCROLL BAR START */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+#module-access-rights-page::-webkit-scrollbar {
+    display: none;
+}
+
+/* Table Start */
+table.dataTable th {
+    max-width: 150px !important;
+}
+table.dataTable td {
+    max-width: 150px !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+table tbody tr .death-yes {
+    background-color: red !important; /* เปลี่ยนสีพื้นหลังของแถว */
+    color: white !important; /* เปลี่ยนสีข้อความของแถว */
+}
+table tbody tr .death-no {
+    background-color: green !important;
+    color: white !important;
+}
+table tbody tr .death-unknown {
+    background-color: yellow !important;
+    color: black !important;
+}
+
+/* .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+} */
+
+#table-fetch-list-name {
+    width: 100% !important;
+    table-layout: auto !important; /* ช่วยให้ปรับขนาดคอลัมน์อัตโนมัติ */
+}
+
+/* จำกัดขนาดของ modal และบังคับให้ตารางเลื่อน */
+/* .modal-dialog {
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+} */
+
+.modal-body {
+    overflow-x: auto; /* เพิ่มการเลื่อนแนวนอนเมื่อเนื้อหาล้น */
+    max-width: 100%; /* ทำให้ตารางปรับขนาดให้พอดีกับ modal */
+}
+
+/* บังคับให้ตารางมีการเลื่อนเมื่อเนื้อหาล้น */
+.dataTables_wrapper {
+    width: 100%; /* ทำให้ตารางปรับขนาดให้พอดีกับ modal */
+    overflow-x: auto; /* เพิ่มการเลื่อนแนวนอนในตาราง */
+}
+
+/* จัดช่องค้นหาให้อยู่มุมขวา */
+.dataTables_filter {
+    float: right;
+    text-align: right;
+}
+
+/* ปรับขนาดของ lengthMenu และ search ให้เท่ากัน */
+.dataTables_length select,
+.dataTables_filter input {
+    width: 200px;
+}
+
+/* จัดระยะห่างระหว่างปุ่มและ lengthMenu ให้เหมาะสม */
+.dataTables_wrapper .dt-buttons {
+    margin-bottom: 10px;
+}
+
+div.dataTables_wrapper div.dataTables_filter {
+    margin-top: 5px;
+}
+
+.dataTables_length {
+    float: left;
+    margin-top: 5px;
+}
+
+.dataTables_wrapper .dt-buttons {
+    margin-left: 30px;
+}
+
+/* จัดการการวางตำแหน่งของ pagination และข้อมูลการแสดงผล */
+.dataTables_info {
+    float: left;
+    padding-top: 0.85em; /* ปรับตำแหน่งให้ตรงกับปุ่ม pagination */
+    margin-bottom: 30px;
+}
+
+.dataTables_paginate {
+    float: right;
+    margin-top: -2px; /* ปรับตำแหน่งให้ตรงกับข้อความ "Showing X to Y of Z entries" */
+    margin-bottom: 30px;
+}
+
+/* Table End */
+
+/* Modal Start */
+.modal {
+    transition: opacity 0.1s ease-in-out;
+}
+
+.modal-dialog {
+    transition: transform 0.1s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 1rem);
+}
+
+.modal-content {
+    margin-top: 1rem;  /* ปรับระยะห่างจากขอบบนของหน้าจอ */
+    margin-bottom: 1rem;  /* ปรับระยะห่างจากขอบล่างของหน้าจอ */
+}
+
+.modal.show .modal-dialog {
+    transform: translateY(0);
+}
+
+.modal.fade .modal-dialog {
+    transform: translateY(-50px);
+}
+
+.modal-dialog-custom {
+    max-width: 70%; /* กำหนดความกว้างเป็น 80% ของหน้าจอ */
+}
+
+/* Modal End */
+
+#sidebar::-webkit-scrollbar {
+    width: 12px; /* ความกว้างของ scrollbar */
+}
+
+#sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1; /* สีของพื้นหลัง scrollbar track */
+    border-radius: 10px; /* มุมโค้งของ track */
+}
+
+#sidebar::-webkit-scrollbar-thumb {
+    background: #888; /* สีของ scrollbar thumb */
+    border-radius: 10px; /* มุมโค้งของ thumb */
+}
+
+#sidebar::-webkit-scrollbar-thumb:hover {
+    background: #555; /* สีของ scrollbar thumb เมื่อ hover */
+}
+
+#main-content {
+    height: calc(100vh - 113px);
+    height: 700px;
+    overflow-y: auto;
+}
+
+#main-content::-webkit-scrollbar {
+    width: 12px; /* ความกว้างของ scrollbar */
+}
+
+#main-content::-webkit-scrollbar-track {
+    background: #f1f1f1; /* สีของพื้นหลัง scrollbar track */
+    border-radius: 10px; /* มุมโค้งของ track */
+}
+
+#main-content::-webkit-scrollbar-thumb {
+    background: #888; /* สีของ scrollbar thumb */
+    border-radius: 10px; /* มุมโค้งของ thumb */
+}
+
+#main-content::-webkit-scrollbar-thumb:hover {
+    background: #555; /* สีของ scrollbar thumb เมื่อ hover */
+}
+/* SCROLL BAR END */
+
+/* MENU CUSTOM START */
+.menu-custom:hover a {
+    font-weight: 700 !important;
+    color: #198754 !important;
+}
+/* MENU CUSTOM END */
+
+/* SUB MENU CUSTOM START */
+.sub-menu-custom:hover a {
+    font-weight: 700 !important;
+    color: #198754 !important;
+}
+/* SUB MENU CUSTOM END */
+
+.content-wrapper {
+    flex: 1;
+    display: flex;
+}
+
+#sidebar {
+    height: calc(100vh - 113px) !important;
+    /* margin-top: 113px !important; */
+    /* height: 700px !important; */
+    transition: transform 0.3s ease;
+    transform: translateX(0);
+    position: fixed;
+    left: 0;
+    width: 250px;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+#sidebarToggle {
+    width: 40px;
+    height: 40px;
+    color: black;
+    transition: transform 0.3s ease;
+}
+
+#sidebarToggle:hover {
+    transform: scale(1.05)
+}
+
+#sidebar-content {
+    margin-top: 57px;
+}
+
+#sidebar.collapsed {
+    transform: translateX(-250px);
+}
+
+main {
+    transition: all 0.3s ease-in-out;
+    opacity: 1;
+}
+
+main.hidden {
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+}
+
+.main-content {
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+    flex: 1;
+    padding: 0px;
+}
+
+.full-width {
+    margin-left: 0 !important;
+}
+
+.full-width-bar {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.sidebar .nav-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rotate-icon {
+    transition: transform 0.3s ease-in-out;
+}
+
+.rotate-icon.rotated {
+    transform: rotate(180deg);
+}
+
+.nav-link::after {
+    display: none !important;
+}
+
+.collapse {
+    display: none;
+    transition: height 0.5s ease, display 0.5s ease;
+}
+
+.collapse.show {
+    display: block;
+    height: auto;
+}
+
+.collapsing {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s ease;
+}
+
+.zoom-card {
+    transition: transform 0.3s ease;
+}
+
+.zoom-card:hover {
+    transform: scale(1.05);
+}
+
+.zoom-text {
+    transition: transform 0.1s ease;
+}
+
+.zoom-text:hover {
+    transform: scale(1.15);
+}
+
+@media (max-width: 1400px) {
+    #sidebar.collapsed {
+        transform: translateX(-250px);
+    }
+
+    .main-content {
+        margin-left: translateX(250px);
+    }
+
+    .full-width {
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    #repair_notification_system_table td[data-label] {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 8px 0;
+        border: 0;
+    }
+    
+    #repair_notification_system_table td[data-label]:before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: inline-block;
+        width: 120px; /* ความกว้างของ label */
+    }
+}
