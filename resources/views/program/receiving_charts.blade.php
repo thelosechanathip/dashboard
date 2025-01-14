@@ -104,25 +104,47 @@
                 </div>
             </div>
         {{-- รายการสรุป Chart ที่ส่งไปยังห้องเรียกเก็บ End --}}
-    {{-- Modal End --}}
-    {{-- Offcanvas Start --}}
-        {{-- <div class="offcanvas offcanvas-end" tabindex="-1" id="announcement_and_version_menu" aria-labelledby="offcanvasRightLabel">
-            <div class="offcanvas-header">
-                <h5 id="offcanvasRightLabel">Menu</h5>
-                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-                <div class="d-flex justify-content-start align-items-center">
-                    <ul class="text-white">
-                        <li class="my-2 zoom-text"><a href="#dischange_data" id="dischange_data_setting" class="text-dark text-decoration-none p-2">ข้อมูลคนไข้ Dischange</a></li>
-                        <li class="my-2 zoom-text"><a href="#receiving_charts_data_send" id="receiving_charts_data_send_setting" class="text-dark text-decoration-none p-2">ข้อมูล Chart คนไข้ที่ส่งแพทย์</a></li>
-                        <li class="my-2 zoom-text"><a href="#receiving_charts_data_receive" id="receiving_charts_data_receive_setting" class="text-dark text-decoration-none p-2">ข้อมูล Chart คนไข้ที่รับจากแพทย์</a></li>
-                        <li class="my-2 zoom-text"><a href="#" data-bs-toggle="modal" data-bs-target="#search_data_from_an_modal" id="search_data_from_an_btn" class="text-dark text-decoration-none p-2">ค้นหาข้อมูลจาก AN</a></li>
-                    </ul>
+        {{-- รายการสรุปยังไม่รับ Chart จากตึก Start --}}
+            <div class="modal fade" id="building_from_receiving_charts_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- เพิ่ม modal-xl เพื่อทำให้ Modal ขนาดใหญ่ -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="building_from_receiving_charts_title">รายชื่อคนไข้ที่ Dischange แล้วแต่ยังค้างอยู่ในตึก</h5>
+                            <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="border-bottom pb-2">
+                                <form id="building_from_receiving_charts_form" class="col ms-3 ">
+                                    @csrf
+                                    <div class="mb-1 d-flex align-items-center row gx-3">
+                                        <div class="col-md-8 d-flex align-items-center">
+                                            <!-- เลือกเดือน ตั้งแต่ -->
+                                            <div class="d-flex align-items-center me-3">
+                                                <span class="me-2" style="white-space: nowrap; font-size: 1rem;">เลือกเดือน ตั้งแต่</span>
+                                                <input type="date" class="form-control" id="bfrcs_min_date" name="bfrcs_min_date" placeholder="bfrcs_min_date" required>
+                                            </div>
+            
+                                            <!-- ถึง -->
+                                            <div class="d-flex align-items-center me-3">
+                                                <span class="me-2" style="font-size: 1rem;">ถึง</span>
+                                                <input type="date" class="form-control" id="bfrcs_max_date" name="bfrcs_max_date" placeholder="bfrcs_max_date" required>
+                                            </div>
+            
+                                            <!-- ยืนยัน -->
+                                            <div class="ms-3">
+                                                <button type="submit" id="building_from_receiving_charts_submit" class="btn btn-primary btn-sm">ยืนยัน</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="building_from_receiving_charts_show_all"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div> --}}
-    {{-- Offcanvas End --}}
+        {{-- รายการสรุปยังไม่รับ Chart จากตึก End --}}
+    {{-- Modal End --}}
     <main class="main-content mb-3">
         {{-- Title Start --}}
             <div class="card shadow-lg full-width-bar" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="400">
@@ -360,16 +382,40 @@
             }
 
             $('#dischange_data_setting').on('click', function() {
-                $('#dischange_data').show();
-                $('#dischange_data_setting').addClass('active');
+                // Show the modal
+                $('#building_from_receiving_charts_modal').modal('show');
+                const formData = 0;
+                buildingFromReceivingCharts(formData);
+
+                $('#dischange_data').hide();
+                $('#dischange_data_setting').removeClass('active');
                 $('#receiving_charts_data_send').hide();
                 $('#receiving_charts_data_send_setting').removeClass('active');
                 $('#receiving_charts_data_receive').hide();
                 $('#receiving_charts_data_receive_setting').removeClass('active');
                 $('#receiving_charts_data_send_to_billing_room').hide();
                 $('#receiving_charts_data_send_to_billing_room_setting').removeClass('active');
-                fetchAllDischangeData();
                 $('#announcement_and_version_menu').offcanvas('hide');
+
+                // Listen for the 'hidden' event on the modal
+                $('#building_from_receiving_charts_modal').on('hidden.bs.modal', function() {
+                    // This code will run after the modal has fully hidden
+                    $('#dischange_data').show();
+                    $('#dischange_data_setting').addClass('active');
+                    $('#receiving_charts_data_send').hide();
+                    $('#receiving_charts_data_send_setting').removeClass('active');
+                    $('#receiving_charts_data_receive').hide();
+                    $('#receiving_charts_data_receive_setting').removeClass('active');
+                    $('#receiving_charts_data_send_to_billing_room').hide();
+                    $('#receiving_charts_data_send_to_billing_room_setting').removeClass('active');
+                    $('#announcement_and_version_menu').offcanvas('hide');
+                    $('#building_from_receiving_charts_form')[0].reset();
+                    // $('#building_from_receiving_charts_show_all').hide();
+                    fetchAllDischangeData();
+
+                    // It's a good practice to turn off the event listener to prevent multiple triggers
+                    $(this).off('hidden.bs.modal');
+                });
             });
 
             $('#receiving_charts_data_send_setting').on('click', function() {
@@ -1587,6 +1633,75 @@
                 }
                 // OnClick Modal End
             // All Function Send To Billing Room End
+
+            // Building From Receiving Charts( คนไข้ที่ Dischange แล้วแต่ยังไม่มีการรับ Charts มาจากในตึก ) Start
+                $('#building_from_receiving_charts_submit').on('click', function(e) {
+                    e.preventDefault();
+                    var formData = $('#building_from_receiving_charts_form').serialize();
+                    buildingFromReceivingCharts(formData);
+                });
+
+                function buildingFromReceivingCharts(formData) {
+                    // Show Swal with loading icon
+                    let loadingSwal = Swal.fire({
+                        title: 'กำลังโหลดข้อมูล...',
+                        text: 'โปรดรอสักครู่',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading(); // Show spinner inside the Swal
+                        }
+                    });
+
+                    $.ajax({
+                        // ส่งคำขอข้อมูลไปยัง Route
+                        url: '{{ route('getBuildingFromReceivingCharts') }}',
+                        // Method Get
+                        type: 'GET',
+                        // ส่งข้อมูลด้วยตัวแปร formData
+                        data: formData,
+                        // เมื่อมีการส่ง Response กลับมา
+                        success: function(response) {
+                            // เรียกใช้งาน Function เพื่อปิด Icon Download
+                            Swal.close();
+                            if(response) {
+                                $("#building_from_receiving_charts_show_all").attr('data-source', 'fetchAllBuildingFromReceivingCharts');
+                                $("#building_from_receiving_charts_show_all").html(response);
+                                $("#table-building-from-receiving-charts").DataTable({
+                                    responsive: true,
+                                    order: [4, 'asc'],
+                                    autoWidth: false,
+                                    buttons: ['excel'],
+                                    columnDefs: [
+                                        {
+                                            targets: "_all",
+                                            className: "dt-head-center dt-body-center"
+                                        }
+                                    ],
+                                    dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                    buttons: [
+                                        {
+                                            extend: 'copyHtml5',
+                                            text: 'Copy'
+                                        },
+                                        {
+                                            extend: 'csvHtml5',
+                                            text: 'CSV'
+                                        },
+                                        {
+                                            extend: 'excelHtml5',
+                                            text: 'Excel'
+                                        }
+                                    ],
+                                    language: {
+                                        emptyTable: "Chart คนไข้ที่ Dischange แล้วแต่ยังไม่ได้รับ Chartsมาจากในตึก!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            // Building From Receiving Charts( คนไข้ที่ Dischange แล้วแต่ยังไม่มีการรับ Charts มาจากในตึก ) End
             
         });
     </script>

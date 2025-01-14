@@ -17,7 +17,7 @@
                         </button>
                     </div>
                     <div class="d-flex" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="400">
-                        <h1 class="h2">Admit</h1>
+                        <h1 class="h2"> Admit</h1>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,11 @@
                 </div>
             </div>
         {{-- Result Count Modal End --}}
-        
+        <div class="mt-3 card shadow-lg full-width-bar p-3" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="400">
+            <h1 class="h2">
+                ยอด Admit ตึกชาย, ตึกหญิง, ตึกหลวงตา, LR ณ <span class="text-danger">ปัจจุบันมีจำนวน <span id="result_admit_mfll">100</span> เตียง</span>
+            </h1>
+        </div>
         <div class="mt-3 card shadow-lg full-width-bar p-3" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="400">
             <div class="row gy-4">
                 @foreach($wards as $w)
@@ -62,7 +66,7 @@
             </div>
         </div>
         <div class="mt-3 card shadow-lg full-width-bar p-3">
-            <div class="mt-5 d-flex justify-content-end align-items-center">
+            <div class="mt-3 d-flex justify-content-end align-items-center">
                 <div class="d-flex">
                     <p><span id="setText"></span><span id="setCount"></span></p>
                     @if ($year)
@@ -82,7 +86,7 @@
                                 <option value="1">ปีงบประมาณ</option>
                                 <option value="2">กำหนดเอง</option>
                             </select>
-                            <button type="button" id="submitSelect" class="btn btn-primary">ยืนยัน</button>
+                            {{-- <button type="button" id="submitSelect" class="btn btn-primary">ยืนยัน</button> --}}
                         </div>
                     </form>
                     <form id="yearForm">
@@ -178,7 +182,7 @@
             $('#yearForm').hide();
             $('#allForm').hide();
 
-            $('#submitSelect').click(function() {
+            $('#selectForm').on('change', function() {
                 var selectForm = $('#select').val();
                 if (selectForm != '0' && selectForm == '1') {
                     $('#yearForm').show();
@@ -187,7 +191,9 @@
                     $('#allForm').show();
                     $('#yearForm').hide();
                 } else {
-                    alert('กรุณาเลือกรายการ');
+                    $('#allForm').hide();
+                    $('#yearForm').hide();
+                    fetch_one_year('{{ $year }}');
                 }
             });
 
@@ -226,6 +232,8 @@
                         Swal.close();
 
                         var chartDataYear = response.chartDataYear;
+
+                        $('#result_admit_mfll').text(response.response_result_admit_mfll);
 
                         $('#result_count_btn').text("สรุป Admit ประจำปี");
                         $('#result_count_btn').attr('mode', 'years');

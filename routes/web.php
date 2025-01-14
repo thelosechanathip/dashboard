@@ -376,6 +376,7 @@ Route::middleware(['check.something'])->group(function() {
             Route::post('/report_index_receiving_charts/receivingChartsInsert', [ReceivingChartsController::class, 'receivingChartsInsert'])->name('receivingChartsInsert');
             Route::post('/report_index_receiving_charts/receivingChartsUpdate', [ReceivingChartsController::class, 'receivingChartsUpdate'])->name('receivingChartsUpdate');
             Route::post('/report_index_receiving_charts/receivingChartsUpdateBillingRoom', [ReceivingChartsController::class, 'receivingChartsUpdateBillingRoom'])->name('receivingChartsUpdateBillingRoom');
+            Route::get('getBuildingFromReceivingCharts', [ReceivingChartsController::class, 'getBuildingFromReceivingCharts'])->name('getBuildingFromReceivingCharts');
         // Receiving Charts End
 
         // PCU Start

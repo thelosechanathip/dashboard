@@ -98,6 +98,48 @@ class IptController extends Controller
         }
     // นำปีงบประมาณที่ได้มาจัดหาเดือนที่ถูกต้อง GetYear End
 
+    // Query Count ตึก Male, Female, Loungta, LR Start
+        private function getCountAdmitMFLL(Request $request) {
+            $startTime = microtime(true);
+        
+            // สร้าง Query
+            $query = DB::table('ipt')
+                ->whereNull('dchdate')
+                ->whereIn('ward', ['01', '02', '03', '04'])
+            ;
+        
+            // ดึงข้อมูลจาก Query
+            $ipt01020304_result  = $query->count();
+        
+            // ดึง SQL query พร้อม bindings
+            $sql = $query->toSql();
+            $bindings = $query->getBindings();
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+        
+            $endTime = microtime(true);
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
+        
+            // // ดึง username จาก method someMethod
+            $username = $this->someMethod($request); 
+            
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $ipt_log_data = [
+                'function' => 'getYear',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน IptLogModel
+            IptLogModel::create($ipt_log_data);
+        
+            // ส่งข้อมูลกลับ
+            return $ipt01020304_result ;  // คืนค่าข้อมูลที่ดึงมา
+        }
+    // Query Count ตึก Male, Female, Loungta, LR End
+
     // นำเดือนมาสร้าง Chart GetChartYear Start
         private function getChartYear($response) {
             $chartDataYear = [
@@ -370,10 +412,13 @@ class IptController extends Controller
 
             $response_year = $this->getYear($years['year_old'], $years['year_new'], $request);
 
+            $response_result_admit_mfll = $this->getCountAdmitMFLL($request);
+
             $chartDataYear = $this->getChartYear($response_year);
 
             return response()->json([
-                'chartDataYear' => $chartDataYear
+                'chartDataYear' => $chartDataYear,
+                'response_result_admit_mfll' => $response_result_admit_mfll
             ]);
         }
     // GetIptData End

@@ -670,6 +670,111 @@ class ReceivingChartsController extends Controller
         }
     }
 
+    private function query_building_from_receiving_charts(Request $request, $date) {
+        
+        if(is_array($date)) {
+            $min_date = $date['min_date'];
+            $max_date = $date['max_date'];
+
+            $startTime_1 = microtime(true);
+
+            // สร้าง query ตามช่วงวันที่
+            $query_1 = DB::table('ipt as i')
+                ->join('patient as pt', 'i.hn', '=', 'pt.hn')
+                ->join('doctor as dt', 'i.admdoctor', '=', 'dt.code')
+                ->join('ward as w', 'i.ward', '=', 'w.ward')
+                ->select(
+                    'i.an as an',
+                    'i.hn as hn',
+                    DB::raw("CONCAT(pt.pname, pt.fname, ' ', pt.lname) as fullname"),
+                    'w.name as ward',
+                    'i.dchdate as dch_date',
+                    'dt.name as doctor'
+                )
+                ->whereNull('receive_chart_date_time')
+                ->whereBetween('dchdate', [$min_date, $max_date])
+            ;  // รับข้อมูลทั้งหมด
+
+            // ดึงผลลัพธ์ของ query_1
+            $count_building_from_receiving_charts = $query_1->get();
+        
+            $sql_1 = $query_1->toSql();
+            $bindings_1 = $query_1->getBindings();
+            $fullSql_1 = vsprintf(str_replace('?', "'%s'", $sql_1), $bindings_1);
+        
+            $endTime_1 = microtime(true);
+            $executionTime_1 = $endTime_1 - $startTime_1;
+            $formattedExecutionTime_1 = number_format($executionTime_1, 3);
+        
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+            
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $receiving_charts_log_data = [
+                'function' => 'query_building_from_receiving_charts',
+                'username' => $username,
+                'command_sql' => $fullSql_1,  // เก็บ SQL ที่ถูกแทนค่าจริง
+                'query_time' => $formattedExecutionTime_1,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน ReceivingChartsLogModel
+            ReceivingChartsLogModel::create($receiving_charts_log_data);
+
+            return $count_building_from_receiving_charts;  // คืนค่าผลลัพธ์จาก query
+        } else {
+            $year_new = $date;
+            $year_old = $date - 1;
+
+            $startTime_2 = microtime(true);
+    
+            // สร้าง query ตามปกติ
+            $query_2 = DB::table('ipt as i')
+                ->join('patient as pt', 'i.hn', '=', 'pt.hn')
+                ->join('doctor as dt', 'i.admdoctor', '=', 'dt.code')
+                ->join('ward as w', 'i.ward', '=', 'w.ward')
+                ->select(
+                    'i.an as an',
+                    'i.hn as hn',
+                    DB::raw("CONCAT(pt.pname, pt.fname, ' ', pt.lname) as fullname"),
+                    'w.name as ward',
+                    'i.dchdate as dch_date',
+                    'dt.name as doctor'
+                )
+                ->whereNull('receive_chart_date_time')
+                ->whereBetween('dchdate', [$year_old . '-10-01', $year_new . '-09-30'])
+            ;
+        
+            // ดึงผลลัพธ์ของ query_2
+            $count_building_from_receiving_charts_2 = $query_2->get();
+        
+            $sql_2 = $query_2->toSql();
+            $bindings_2 = $query_2->getBindings();
+            $fullSql_2 = vsprintf(str_replace('?', "'%s'", $sql_2), $bindings_2);
+        
+            $endTime_2 = microtime(true);
+            $executionTime_2 = $endTime_2 - $startTime_2;
+            $formattedExecutionTime_2 = number_format($executionTime_2, 3);
+        
+            // ดึง username จาก method someMethod
+            $username = $this->someMethod($request);
+            
+            // สร้างข้อมูลสำหรับบันทึกใน log
+            $receiving_charts_log_data = [
+                'function' => 'query_count_building_from_receiving_charts',
+                'username' => $username,
+                'command_sql' => $fullSql_2,  // เก็บ SQL ที่ถูกแทนค่าจริง
+                'query_time' => $formattedExecutionTime_2,
+                'operation' => 'SELECT'
+            ];
+        
+            // บันทึกข้อมูลลงใน ReceivingChartsLogModel
+            ReceivingChartsLogModel::create($receiving_charts_log_data);
+        
+            return $count_building_from_receiving_charts_2;
+        }
+    }
+
     private function query_get_data_from_an_ipt(Request $request, $an) {
 
         $startTime_1 = microtime(true);
@@ -834,6 +939,41 @@ class ReceivingChartsController extends Controller
             return $output;           
         } else {
             return '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูล Charts คนไข้ที่ส่งให้ห้องเรียกเก็บภายในวันนี้!</h1>';
+        }
+    }
+
+    private function setting_table_building_from_receiving_charts($query_building_from_receiving_charts) {
+        $output = '';
+
+        if(!$query_building_from_receiving_charts->isEmpty()) {
+            $output .= '<table id="table-building-from-receiving-charts" class="table table-hover table-striped align-middle dt-responsive nowrap" style="width: 100%">
+            <thead class="table-dark">
+              <tr>
+                <th style="width: auto;">AN</th>
+                <th style="width: auto;">HN</th>
+                <th style="width: auto;">Name</th>
+                <th style="width: auto;">Ward</th>
+                <th style="width: auto;">วันที่ Dischange</th>
+                <th style="width: auto;">แพทย์</th>
+              </tr>
+            </thead>
+            <tbody>';
+            $id = 0;
+			foreach ($query_building_from_receiving_charts as $qbfrc) {
+                // ถ้าไม่พบข้อมูล
+                $output .= '<tr>
+                    <td>' . $qbfrc->an . '</td>
+                    <td>' . $qbfrc->hn . '</td>
+                    <td>' . $qbfrc->fullname . '</td>
+                    <td>' . $qbfrc->ward . '</td>
+                    <td>' . $qbfrc->dch_date . '</td>
+                    <td>' . $qbfrc->doctor . '</td>
+                </tr>';
+            }
+            $output .= '</tbody></table>';
+            return $output;           
+        } else {
+            return '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูล Charts คนไข้ Dischange แล้วแต่ยังค้างอยู่ในตึก!</h1>';
         }
     }
 
@@ -1425,4 +1565,33 @@ class ReceivingChartsController extends Controller
             }
         }
     // All Send to Billing Room End
+
+    // Building From Receiving Charts( คนไข้ Dischange แล้วแต่ Charts ยังค้างอยู่ในตึก ) Start
+    public function getBuildingFromReceivingCharts(Request $request) {
+        if($request->has(['bfrcs_min_date', 'bfrcs_max_date'])) {
+            // ดึงค่าจากฟิลด์
+            $min_date = $request->bfrcs_min_date;
+            $max_date = $request->bfrcs_max_date;
+
+            $date = [
+                'min_date' => $min_date,
+                'max_date' => $max_date
+            ];
+
+            $query_building_from_receiving_charts = $this->query_building_from_receiving_charts($request, $date);
+
+            $setting_table_building_from_receiving_charts = $this->setting_table_building_from_receiving_charts($query_building_from_receiving_charts);
+
+            echo $setting_table_building_from_receiving_charts;
+        } else {
+            $year_now = date('Y');
+
+            $query_building_from_receiving_charts = $this->query_building_from_receiving_charts($request, $year_now);
+
+            $setting_table_building_from_receiving_charts = $this->setting_table_building_from_receiving_charts($query_building_from_receiving_charts);
+
+            echo $setting_table_building_from_receiving_charts;
+        }
+    }
+    // Building From Receiving Charts( คนไข้ Dischange แล้วแต่ Charts ยังค้างอยู่ในตึก ) End
 }
