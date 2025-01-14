@@ -30,11 +30,24 @@
                             @csrf
                             <div class="mb-3 d-flex align-items-center row">
                                 <div class="col">
-                                    <span class="w-100">รายการ</span>
+                                    <span class="w-100">เงื่อนไข</span>
                                     <select class="form-select" id="select" aria-label="Default select example">
                                         <option selected value="0">----------</option>
                                         <option value="1">ปีงบประมาณ</option>
                                         <option value="2">กำหนดเอง</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                        <form id="selectIcd10Form" class="me-3">
+                            @csrf
+                            <div class="mb-3 d-flex align-items-center row">
+                                <div class="col">
+                                    <span class="w-100">เงื่อนไขของ ICD10</span>
+                                    <select class="form-select" id="selectIcd10" aria-label="Default select example">
+                                        <option selected value="0">----------</option>
+                                        <option value="1">ICD10 รายการเดียว</option>
+                                        <option value="2">ICD10 หลายๆรายการเดียว</option>
                                     </select>
                                 </div>
                             </div>
@@ -45,8 +58,8 @@
             <div id="year_select" class="mt-3 card shadow-lg full-width-bar p-3" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="400">
                 <form id="yearForm">
                     @csrf
-                    <div class="mb-3 d-flex align-items-center row">
-                        <div class="col">
+                    <div class="mb-3 row">
+                        <div class="col-2">
                             <span>เลือกปีงบ</span>
                             <select class="form-select" id="yearSelect" name="yearSelect" aria-label="Default select example">
                                 <option selected value="0">----------</option>
@@ -55,11 +68,19 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col">
+                        <div class="col-2" id="yearIcd10_1">
                             <span>เลือก ICD10</span>
                             <select class="form-select" id="yearIcd10" name="yearIcd10" aria-label="Default select example"></select>
                         </div>
-                        <div class="col d-flex align-items-center mt-4">
+                        <div class="col-2 yearIcd10_2">
+                            <span>เลือก ICD10 ตัวตั้งต้น</span>
+                            <select class="form-select" id="yearIcd10Min" name="yearIcd10Min" aria-label="Default select example"></select>
+                        </div>
+                        <div class="col-2 yearIcd10_2">
+                            <span>เลือก ICD10 ตัวสิ้นสุด</span>
+                            <select class="form-select" id="yearIcd10Max" name="yearIcd10Max" aria-label="Default select example"></select>
+                        </div>
+                        <div class="col-2 d-flex align-items-center mt-4">
                             <button type="button" id="submitYear" class="btn btn-primary zoom-card">ค้นหาข้อมูล</button>
                         </div>
                     </div>
@@ -81,9 +102,17 @@
                                 <input type="date" class="form-control" id="max_date" name="max_date" placeholder="max_date">
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col" id="dateSelectIcd10_1">
                             <span>เลือก ICD10</span>
                             <select class="form-select" id="dateSelectIcd10" name="dateSelectIcd10" aria-label="Default select example"></select>
+                        </div>
+                        <div class="col-2 dateSelectIcd10_2">
+                            <span>เลือก ICD10 ตัวตั้งต้น</span>
+                            <select class="form-select" id="dateSelectIcdMin" name="dateSelectIcdMin" aria-label="Default select example"></select>
+                        </div>
+                        <div class="col-2 dateSelectIcd10_2">
+                            <span>เลือก ICD10 ตัวสิ้นสุด</span>
+                            <select class="form-select" id="dateSelectIcdMax" name="dateSelectIcdMax" aria-label="Default select example"></select>
                         </div>
                         <div class="col d-flex align-items-center mt-4">
                             <button type="button" id="submitAll" class="btn btn-primary ms-3">ค้นหาข้อมูล</button>
@@ -135,7 +164,107 @@
                         minimumInputLength: 1,  // User must type at least 1 character to trigger the ajax call
                     });
 
+                    $('#yearIcd10Min').select2({
+                        placeholder: 'ค้นหา ICD 10',
+                        allowClear: true,
+                        dropdownParent: $('#icd10_main'),  // Bind the dropdown to a specific element
+                        ajax: {
+                            url: '{{ route('query_icd10') }}',  // Make sure this outputs the correct URL
+                            dataType: 'json',
+                            delay: 250,  // Wait 250 milliseconds after typing stops to send the request
+                            data: function (params) {
+                                return {
+                                    searchTerm: params.term  // This sends the input to the server
+                                };
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: data.results.map(function(item) {
+                                        return { id: item.id, text: item.id + ' : ' + item.text }; // รวม id และ text
+                                    })
+                                };
+                            },
+                            cache: true
+                        },
+                        minimumInputLength: 1,  // User must type at least 1 character to trigger the ajax call
+                    });
+
+                    $('#yearIcd10Max').select2({
+                        placeholder: 'ค้นหา ICD 10',
+                        allowClear: true,
+                        dropdownParent: $('#icd10_main'),  // Bind the dropdown to a specific element
+                        ajax: {
+                            url: '{{ route('query_icd10') }}',  // Make sure this outputs the correct URL
+                            dataType: 'json',
+                            delay: 250,  // Wait 250 milliseconds after typing stops to send the request
+                            data: function (params) {
+                                return {
+                                    searchTerm: params.term  // This sends the input to the server
+                                };
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: data.results.map(function(item) {
+                                        return { id: item.id, text: item.id + ' : ' + item.text }; // รวม id และ text
+                                    })
+                                };
+                            },
+                            cache: true
+                        },
+                        minimumInputLength: 1,  // User must type at least 1 character to trigger the ajax call
+                    });
+
                     $('#dateSelectIcd10').select2({
+                        placeholder: 'ค้นหา ICD 10',
+                        allowClear: true,
+                        dropdownParent: $('#icd10_main'),  // Bind the dropdown to a specific element
+                        ajax: {
+                            url: '{{ route('query_icd10') }}',  // Make sure this outputs the correct URL
+                            dataType: 'json',
+                            delay: 250,  // Wait 250 milliseconds after typing stops to send the request
+                            data: function (params) {
+                                return {
+                                    searchTerm: params.term  // This sends the input to the server
+                                };
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: data.results.map(function(item) {
+                                        return { id: item.id, text: item.id + ' : ' + item.text }; // รวม id และ text
+                                    })
+                                };
+                            },
+                            cache: true
+                        },
+                        minimumInputLength: 1,  // User must type at least 1 character to trigger the ajax call
+                    });
+
+                    $('#dateSelectIcd10Min').select2({
+                        placeholder: 'ค้นหา ICD 10',
+                        allowClear: true,
+                        dropdownParent: $('#icd10_main'),  // Bind the dropdown to a specific element
+                        ajax: {
+                            url: '{{ route('query_icd10') }}',  // Make sure this outputs the correct URL
+                            dataType: 'json',
+                            delay: 250,  // Wait 250 milliseconds after typing stops to send the request
+                            data: function (params) {
+                                return {
+                                    searchTerm: params.term  // This sends the input to the server
+                                };
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: data.results.map(function(item) {
+                                        return { id: item.id, text: item.id + ' : ' + item.text }; // รวม id และ text
+                                    })
+                                };
+                            },
+                            cache: true
+                        },
+                        minimumInputLength: 1,  // User must type at least 1 character to trigger the ajax call
+                    });
+
+                    $('#dateSelectIcd10Max').select2({
                         placeholder: 'ค้นหา ICD 10',
                         allowClear: true,
                         dropdownParent: $('#icd10_main'),  // Bind the dropdown to a specific element
@@ -167,31 +296,102 @@
                 $('#yearForm').hide();
                 $('#year_select').hide();
                 $('#dateSelectForm').hide();
+                // ตัวเลือกรายการ ICD10 Start
+                    $('#selectIcd10Form').hide();
+                    $('#yearIcd10_1').hide();
+                    $('.yearIcd10_2').hide();
+                    $('#dateSelectIcd10_1').hide();
+                    $('.dateSelectIcd10_2').hide();
+                // ตัวเลือกรายการ ICD10 End
             // เริ่มต้น Hide End
+
+            // Function Reset Select 2 Start
+                    function resetSelect2All() {
+                        $('#yearIcd10').val(null).trigger('change');
+                        $('#yearIcd10Min').val(null).trigger('change');
+                        $('#yearIcd10Max').val(null).trigger('change');
+                        $('#dateSelectIcd10').val(null).trigger('change');
+                    }
+            // Function Reset Select 2 End
 
             $('#select').on('change', function() {
                 var selectForm = $('#select').val();
                 if (selectForm != '0' && selectForm == '1') { // 1 = Year
+                    // ตัวเลือกรายการ ICD10 Start
+                        $('#selectIcd10Form').show();
+                        $('#selectIcd10Form')[0].reset();
+                        $('#yearIcd10_1').hide();
+                        $('.yearIcd10_2').hide();
+                        $('#dateSelectIcd10_1').hide();
+                        $('#selectIcd10Form').on('change', function() {
+                            var selectIcd10Form = $('#selectIcd10').val();
+
+                            if (selectIcd10Form != '0' && selectIcd10Form == '1' && selectForm != '0' && selectForm == '1') {
+                                resetSelect2All();
+                                $('#yearIcd10_1').show();
+                                $('.yearIcd10_2').hide();
+                            } else if(selectIcd10Form != '0' && selectIcd10Form == '2' && selectForm != '0' && selectForm == '1') {
+                                resetSelect2All();
+                                $('#yearIcd10_1').hide();
+                                $('.yearIcd10_2').show();
+                            } else {
+                                resetSelect2All();
+                                $('#yearIcd10_1').hide();
+                                $('.yearIcd10_2').hide();
+                                $('#report_patients_utilizing_icd10_codes_table').hide();
+                            }
+                        });
+                    // ตัวเลือกรายการ ICD10 End
                     $('#yearForm').show();
                     $('#year_select').show();
                     $('#dateSelectForm').hide();
                     $('#dateSelectForm')[0].reset();
                     $('#report_patients_utilizing_icd10_codes_table').hide();
-                    $('#yearIcd10').val(null).trigger('change');
-                    $('#dateSelectIcd10').val(null).trigger('change');
+                    resetSelect2All();
                 } else if (selectForm != '0' && selectForm == '2') { // 2 = กำหนดเอง
+                    // ตัวเลือกรายการ ICD10 Start
+                        $('#selectIcd10Form').show();
+                        $('#yearIcd10_1').hide();
+                        $('.yearIcd10_2').hide();
+                        $('#selectIcd10Form')[0].reset();
+                        $('#dateSelectIcd10_1').hide();
+                        $('#selectIcd10Form').on('change', function() {
+                            var dateSelectIcd10_1 = $('#selectIcd10').val();
+
+                            if (dateSelectIcd10_1 != '0' && dateSelectIcd10_1 == '1' && selectForm != '0' && selectForm == '2') {
+                                resetSelect2All();
+                                $('#dateSelectIcd10_1').show();
+                                $('.dateSelectIcd10_2').hide();
+                            } else if(dateSelectIcd10_1 != '0' && dateSelectIcd10_1 == '2' && selectForm != '0' && selectForm == '2') {
+                                resetSelect2All();
+                                $('#dateSelectIcd10_1').hide();
+                                $('.dateSelectIcd10_2').show();
+                            } else {
+                                resetSelect2All();
+                                $('#dateSelectIcd10_1').hide();
+                                $('.dateSelectIcd10_2').hide();
+                                $('#report_patients_utilizing_icd10_codes_table').hide();
+                            }
+                        });
+                    // ตัวเลือกรายการ ICD10 End
                     $('#dateSelectForm').show();
                     $('#year_select').show();
                     $('#yearForm').hide();
                     $('#yearForm')[0].reset();
                     $('#report_patients_utilizing_icd10_codes_table').hide();
+                    resetSelect2All();
                 } else {
+                    // ตัวเลือกรายการ ICD10 Start
+                        $('#selectIcd10Form').hide();
+                        $('#yearIcd10_1').hide();
+                        $('#dateSelectIcd10_1').hide();
+                    // ตัวเลือกรายการ ICD10 End
+                    
                     $('#yearForm')[0].reset();
                     $('#dateSelectForm')[0].reset();
                     $('#year_select').hide();
                     $('#report_patients_utilizing_icd10_codes_table').hide();
-                    $('#yearIcd10').val(null).trigger('change'); // Reset Select2
-                    $('#dateSelectIcd10').val(null).trigger('change'); // Reset Select2
+                    resetSelect2All();
                 }
             });
 
