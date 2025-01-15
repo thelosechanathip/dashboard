@@ -1028,4 +1028,218 @@ class IptController extends Controller
             ]); // ส่งค่าจำนวนข้อมูลกลับไป
         }
     // GetResultWard End
+
+    // GetResultCountAdmissionPointsSummaryYears Start
+        public function getResultCountAdmissionPointsSummaryYears(Request $request) {
+            $year = $request->years;
+            $years = $this->check_year($year);
+
+            $startTime = microtime(true);
+
+            $daily_count_query = DB::table('ipt as i')
+                ->join('ipt_admit_queue as iaq', 'i.vn', '=', 'iaq.vn')
+                ->join('kskdepartment as kskd', 'iaq.request_depcode', '=', 'kskd.depcode')
+                ->join('doctor as dt', 'iaq.doctor', '=', 'dt.code')
+                ->select('kskd.department', DB::raw('COUNT(*) as result'))
+                ->whereBetween('i.regdate', [$years['year_old'].'-10-01', $years['year_new'].'-09-30'])
+                ->groupBy('kskd.department')
+            ;
+
+            $daily_count = $daily_count_query->get();
+
+            // ดึง SQL query พร้อมกับ bindings
+            $sql = $daily_count_query->toSql();
+            $bindings = $daily_count_query->getBindings();
+
+            // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+            $endTime = microtime(true);
+
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
+
+            $username = $this->someMethod($request);    
+
+            $ipt_log_data = [
+                'function' => 'getResultCountAdmissionPointsSummaryYears',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
+            IptLogModel::create($ipt_log_data);
+
+            $output = '';
+            if (count($daily_count) > 0) {
+                $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_admission_points_summary_table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 5%;">ลำดับ</th>
+                            <th style="width: 20%;">แผนก</th>
+                            <th style="width: 75%;">จำนวนที่มีการส่ง Admit</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+                $id = 0;
+                foreach ($daily_count as $dc) {
+                    $output .= '<tr>
+                        <td>' . ++$id . '</td>
+                        <td class="text-start">' . $dc->department . '</td>
+                        <td>' . $dc->result . '</td>
+                    </tr>';
+                }
+                $output .= '</tbody></table>';
+            } else {
+                $output .= '<h1 class="text-center text-secondary my-5">ไม่มีจำนวนจุดต่างๆที่มีการส่ง Admit ประจำปีบน Database!</h1>';
+            }
+
+            // ส่งข้อมูล HTML กลับ
+            return response($output);
+        }
+    // GetResultCountAdmissionPointsSummaryYears End
+
+    // GetResultCountAdmissionPointsSummaryMonth Start
+        public function getResultCountAdmissionPointsSummaryMonth(Request $request) {
+            $year = $request->years;
+
+            $month = $request->month;
+
+            $month_int = $this->getMonthNumber($month);
+
+            $startTime = microtime(true);
+
+            // Query ที่ใช้การ concatenate string เพื่อเชื่อมตัวแปร $year
+            $daily_count_query = DB::table('ipt as i')
+                ->join('ipt_admit_queue as iaq', 'i.vn', '=', 'iaq.vn')
+                ->join('kskdepartment as kskd', 'iaq.request_depcode', '=', 'kskd.depcode')
+                ->join('doctor as dt', 'iaq.doctor', '=', 'dt.code')
+                ->select('kskd.department', DB::raw('COUNT(*) as result'))
+                ->where('i.regdate', 'like', "$year-$month_int-%")
+                ->groupBy('kskd.department')
+            ;
+
+            $daily_count = $daily_count_query->get();
+
+            // ดึง SQL query พร้อมกับ bindings
+            $sql = $daily_count_query->toSql();
+            $bindings = $daily_count_query->getBindings();
+
+            // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+            $endTime = microtime(true);
+
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
+
+            $username = $this->someMethod($request);    
+
+            $ipt_log_data = [
+                'function' => 'getResultCountAdmissionPointsSummaryMonth',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
+            IptLogModel::create($ipt_log_data);
+
+            $output = '';
+            if (count($daily_count) > 0) {
+                $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_admission_points_summary_table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 5%;">ลำดับ</th>
+                            <th style="width: 20%;">แผนก</th>
+                            <th style="width: 75%;">จำนวนที่มีการส่ง Admit</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+                $id = 0;
+                foreach ($daily_count as $dc) {
+                    $output .= '<tr>
+                        <td>' . ++$id . '</td>
+                        <td class="text-start">' . $dc->department . '</td>
+                        <td>' . $dc->result . '</td>
+                    </tr>';
+                }
+                $output .= '</tbody></table>';
+            } else {
+                $output .= '<h1 class="text-center text-secondary my-5">ไม่มีจำนวนจุดต่างๆที่มีการส่ง Admit ประจำเดือนบน Database!</h1>';
+            }
+
+            // ส่งข้อมูล HTML กลับ
+            return response($output);
+        }
+    // GetResultCountAdmissionPointsSummaryMonth End
+
+    // GetResultCountAdmissionPointsSummaryDate Start
+        public function getResultCountAdmissionPointsSummaryDate(Request $request) {
+            $date = $request->date;
+
+            $startTime = microtime(true);
+
+            // Query ที่ใช้การ concatenate string เพื่อเชื่อมตัวแปร $year
+            $daily_count_query = DB::table('ipt as i')
+                ->join('ipt_admit_queue as iaq', 'i.vn', '=', 'iaq.vn')
+                ->join('kskdepartment as kskd', 'iaq.request_depcode', '=', 'kskd.depcode')
+                ->join('doctor as dt', 'iaq.doctor', '=', 'dt.code')
+                ->select('kskd.department', DB::raw('COUNT(*) as result'))
+                ->where('i.regdate', '=', "$date")
+                ->groupBy('kskd.department')
+            ;
+
+            $daily_count = $daily_count_query->get();
+
+            // ดึง SQL query พร้อมกับ bindings
+            $sql = $daily_count_query->toSql();
+            $bindings = $daily_count_query->getBindings();
+
+            // แทนที่เครื่องหมาย `?` ด้วยค่าจริงที่ถูก bind
+            $fullSql = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+            $endTime = microtime(true);
+
+            $executionTime = $endTime - $startTime;
+            $formattedExecutionTime = number_format($executionTime, 3);
+
+            $username = $this->someMethod($request);    
+
+            $ipt_log_data = [
+                'function' => 'getResultCountAdmissionPointsSummaryDate',
+                'username' => $username,
+                'command_sql' => $fullSql,
+                'query_time' => $formattedExecutionTime,
+                'operation' => 'SELECT'
+            ];
+            IptLogModel::create($ipt_log_data);
+
+            $output = '';
+            if (count($daily_count) > 0) {
+                $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="result_count_admission_points_summary_table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 5%;">ลำดับ</th>
+                            <th style="width: 20%;">แผนก</th>
+                            <th style="width: 75%;">จำนวนที่มีการส่ง Admit</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+                $id = 0;
+                foreach ($daily_count as $dc) {
+                    $output .= '<tr>
+                        <td>' . ++$id . '</td>
+                        <td class="text-start">' . $dc->department . '</td>
+                        <td>' . $dc->result . '</td>
+                    </tr>';
+                }
+                $output .= '</tbody></table>';
+            } else {
+                $output .= '<h1 class="text-center text-secondary my-5">ไม่มีจำนวนจุดต่างๆที่มีการส่ง Admit ประจำวันบน Database!</h1>';
+            }
+
+            // ส่งข้อมูล HTML กลับ
+            return response($output);
+        }
+    // GetResultCountAdmissionPointsSummaryDate End
 }

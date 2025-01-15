@@ -37,6 +37,21 @@
                 </div>
             </div>
         {{-- Result Count Modal End --}}
+        {{-- Result Count Admission Points Summary Modal Start --}}
+            <div class="modal fade" id="result_count_admission_points_summary_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- เพิ่ม modal-xl เพื่อทำให้ Modal ขนาดใหญ่ -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="result_count_admission_points_summary_title"></h5>
+                            <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="result_count_admission_points_summary_show_all"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{-- Result Count Admission Points Summary Modal End --}}
         <div class="mt-3 card shadow-lg full-width-bar p-3" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="400">
             <h1 class="h2">
                 ยอด Admit ตึกชาย, ตึกหญิง, ตึกหลวงตา, LR ณ <span class="text-danger">ปัจจุบันมีจำนวน <span id="result_admit_mfll">100</span> เตียง</span>
@@ -121,11 +136,15 @@
                     </form>
                 </div>
                 <div class="d-flex align-items-center justify-content-end">
-                    <button type="button" class="btn btn-success zoom-card type_modal_add" id="result_count_btn" data-bs-toggle="modal" data-bs-target="#result_count_modal"></button>
+                    <button type="button" class="btn btn-success zoom-card type_modal_add" id="result_count_admission_points_summary_btn" data-bs-toggle="modal" data-bs-target="#result_count_admission_points_summary_modal"></button>
+                    <button type="button" class="btn btn-success zoom-card type_modal_add ms-3" id="result_count_btn" data-bs-toggle="modal" data-bs-target="#result_count_modal"></button>
                 </div>
             </div>
         </div>
         <div class="mt-3 card shadow-lg full-width-bar p-3" id="show_all_data">
+            <div class="mt-1">
+                <button class="btn btn-danger" id="goBack" style="display: none;"></button>
+            </div>
             <div class="row mt-1">
                 <div class="col">
                     <canvas id="myChart" width="300" height="100"></canvas>
@@ -209,8 +228,30 @@
                 }
             }
 
-            function fetch_one_year(year) {
+            // Go Back Start
+                $('#goBack').on('click', function() {
+                    let mode = $(this).attr('mode');
+                    if(mode == 'year') {
+                        let year = $(this).attr('data-year');
+                        $('#goBack').hide();
+                        $('#myChart').show();
+                        fetch_one_year(year);(year);
+                    } else if(mode == 'month') {
+                        let year = $(this).attr('data-year');
+                        let month = $(this).attr('data-month');
+                        $('#myChart').show();
+                        fetch_daily_data(year, month);
+                        $('#goBack').hide();
+                        $('#goBack').show().text("กลับไปยังหน้าปีงบประมาณ").attr({
+                            'mode' : 'year',
+                            'data-year' : year
+                        });
+                    }
+                });
+            // Go Back End
 
+            function fetch_one_year(year) {
+                $('#goBack').hide();
                 // Show Swal with loading icon
                 let loadingSwal = Swal.fire({
                     title: 'กำลังโหลดข้อมูล...',
@@ -235,9 +276,15 @@
 
                         $('#result_admit_mfll').text(response.response_result_admit_mfll);
 
-                        $('#result_count_btn').text("สรุป Admit ประจำปี");
-                        $('#result_count_btn').attr('mode', 'years');
-                        $('#result_count_btn').attr('data-year', year);
+                        $('#result_count_btn').text("สรุป Admit ประจำปี").attr({
+                            'mode' : 'years',
+                            'data-year' : year
+                        });
+
+                        $('#result_count_admission_points_summary_btn').text("สรุปจำนวนจุดต่างๆที่มีการส่ง Admit ประจำปี").attr({
+                            'mode' : 'years',
+                            'data-year' : year
+                        });
 
                         if (chart) {
                             chart.destroy();
@@ -254,32 +301,37 @@
                                     }
                                 },
                                 onClick: function(evt, elements) {
+                                    $('#goBack').show().text("กลับไปยังหน้าปีงบประมาณ").attr({
+                                        'mode' : 'year',
+                                        'data-year' : year
+                                    });
+
                                     if (elements.length > 0) {
                                         var index = elements[0]._index;
                                         var datasetIndex = elements[0]._datasetIndex;
                                         var month_count = chartDataYear.datasets[datasetIndex].data[index].toLocaleString();
                                         var month = chartDataYear.labels[index];
-                                        var year = $('#yearSelect').val();
+                                        var yearSelect = $('#yearSelect').val();
 
-                                        if(parseInt(year) == 0) {
+                                        if(parseInt(yearSelect) == 0) {
                                             var defaultYear = '{{ $year }}';
+                                            
                                             if(parseInt(month_count) == 0) {
-                                                $('#budgetYear').hide();
                                                 setText(month_count);
                                             } else {
-                                                $('#budgetYear').hide();
                                                 setText(month_count);
                                             }
+                                            $('#budgetYear').hide();
                                             fetch_daily_data(defaultYear, month);
                                         } else {
+                                            $('#backButton').show();
                                             if(parseInt(month_count) == 0) {
-                                                $('#budgetYear').hide();
                                                 setText(month_count);
                                             } else {
-                                                $('#budgetYear').hide();
                                                 setText(month_count);
                                             }
-                                            fetch_daily_data(year, month);
+                                            $('#budgetYear').hide();
+                                            fetch_daily_data(yearSelect, month);
                                         }
                                     }
                                 }
@@ -331,9 +383,13 @@
 
                         $('#result_count_btn').text("สรุป Admit ประจำเดือน");
                         $('#result_count_btn').attr('mode', 'month');
-
                         $('#result_count_btn').attr('data-year', year);
                         $('#result_count_btn').attr('data-month', month);
+
+                        $('#result_count_admission_points_summary_btn').text("สรุปจำนวนจุดต่างๆที่มีการส่ง Admit ประจำเดือน");
+                        $('#result_count_admission_points_summary_btn').attr('mode', 'month');
+                        $('#result_count_admission_points_summary_btn').attr('data-year', year);
+                        $('#result_count_admission_points_summary_btn').attr('data-month', month);
 
                         var chartDataDaily = response.chartDataDaily;
 
@@ -352,10 +408,19 @@
                                     }
                                 },
                                 onClick: function(evt, elements) {
+                                    $('#goBack').show().text("กลับไปยังหน้าเดือน").attr({
+                                        'mode' : 'month',
+                                        'data-year' : year,
+                                        'data-month' : month
+                                    });
+
                                     if (elements.length > 0) {
 
                                         $('#result_count_btn').text("สรุป Admit ประจำวัน");
                                         $('#result_count_btn').attr('mode', 'date');
+
+                                        $('#result_count_admission_points_summary_btn').text("สรุปจำนวนจุดต่างๆที่มีการส่ง Admit ประจำวัน");
+                                        $('#result_count_admission_points_summary_btn').attr('mode', 'date');
 
                                         var index = elements[0]._index;
                                         var datasetIndex = elements[0]._datasetIndex;
@@ -363,6 +428,7 @@
                                         var date = chartDataDaily.labels[index];
 
                                         $('#result_count_btn').attr('data-date', date);
+                                        $('#result_count_admission_points_summary_btn').attr('data-date', date);
 
                                         // console.log(date);
                                         if(parseInt(date_count) == 0) {
@@ -587,6 +653,74 @@
                         success: function(response) {
                             $("#result_count_show_all").html(response);
                             $("#result_count_table").DataTable();
+                        }
+                    });
+                }
+            });
+
+            $('#result_count_admission_points_summary_btn').on('click', function() {
+                let mode = $(this).attr('mode');
+                if(mode === 'years') {
+                    let years = $(this).attr('data-year');
+                    $('#result_count_admission_points_summary_title').text('สรุปจำนวนจุดต่างๆที่มีการส่ง Admit ประจำปี: ' + (parseInt(years) + 543) );
+                    $.ajax({
+                        url: '{{ route('getResultCountAdmissionPointsSummaryYears') }}',
+                        data: { years: years },
+                        method: 'GET',
+                        success: function(response) {
+                            // แสดง HTML ที่ได้รับจาก response
+                            $("#result_count_admission_points_summary_show_all").html(response);
+                            // เปิดใช้งาน DataTables บนตารางที่ได้รับ
+                            $("#result_count_admission_points_summary_table").DataTable({
+                                // order: [0, 'ASC']
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX error:', status, error);
+                        }
+                    });
+                } else if(mode === 'month') {
+                    
+                    let month = $(this).attr('data-month');
+                    let years; // ประกาศตัวแปร years ข้างนอก if-else
+
+                    if (month === 'ตุลาคม' || month === 'พฤศจิกายน' || month === 'ธันวาคม') {
+                        years = $(this).attr('data-year') - 1; // กำหนดค่าตัวแปร years โดยไม่ต้องใช้ let
+                    } else {
+                        years = $(this).attr('data-year'); // กำหนดค่าตัวแปร years โดยไม่ต้องใช้ let
+                    }
+
+                    $('#result_count_admission_points_summary_title').text('สรุปจำนวนจุดต่างๆที่มีการส่ง Admit เดือน: ' + month);
+                    $.ajax({
+                        url: '{{ route('getResultCountAdmissionPointsSummaryMonth') }}',
+                        data: {
+                            years: years,
+                            month: month
+                        },
+                        method: 'GET',
+                        success: function(response) {
+                            // แสดง HTML ที่ได้รับจาก response
+                            $("#result_count_admission_points_summary_show_all").html(response);
+                            // เปิดใช้งาน DataTables บนตารางที่ได้รับ
+                            $("#result_count_admission_points_summary_table").DataTable({
+                                // order: [0, 'ASC']
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX error:', status, error);
+                        }
+                    });
+                } else if(mode === 'date') {
+                    // สรุปรายงานประจำวัน
+                    let date = $(this).attr('data-date');  // ดึงค่า date จาก data-attribute
+                    $('#result_count_admission_points_summary_title').text('สรุปจำนวนจุดต่างๆที่มีการส่ง Admit ประจำวัน: ' + date);
+                    $.ajax({
+                        url: '{{ route('getResultCountAdmissionPointsSummaryDate') }}',
+                        data: { date: date },  // ส่งค่า date ผ่าน AJAX
+                        method: 'GET',
+                        success: function(response) {
+                            $("#result_count_admission_points_summary_show_all").html(response);
+                            $("#result_count_admission_points_summary_table").DataTable();
                         }
                     });
                 }

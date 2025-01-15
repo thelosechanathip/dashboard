@@ -134,6 +134,9 @@ Route::middleware(['check.something'])->group(function() {
             Route::get('getResultCountDateDoctor', [IptController::class, 'getResultCountDateDoctor'])->name('getResultCountDateDoctor');
             Route::get('checkStatusWard', [IptController::class, 'checkStatusWard'])->name('checkStatusWard');
             Route::get('getResultWard', [IptController::class, 'getResultWard'])->name('getResultWard');
+            Route::get('getResultCountAdmissionPointsSummaryYears', [IptController::class, 'getResultCountAdmissionPointsSummaryYears'])->name('getResultCountAdmissionPointsSummaryYears');
+            Route::get('getResultCountAdmissionPointsSummaryMonth', [IptController::class, 'getResultCountAdmissionPointsSummaryMonth'])->name('getResultCountAdmissionPointsSummaryMonth');
+            Route::get('getResultCountAdmissionPointsSummaryDate', [IptController::class, 'getResultCountAdmissionPointsSummaryDate'])->name('getResultCountAdmissionPointsSummaryDate');
         // Ipt End
 
         // Ward Start
