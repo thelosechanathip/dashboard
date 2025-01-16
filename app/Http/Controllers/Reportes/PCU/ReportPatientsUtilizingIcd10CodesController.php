@@ -330,44 +330,43 @@ class ReportPatientsUtilizingIcd10CodesController extends Controller
                     $error = $this->messageError("เกิดข้อผิดพลาดกรุณาติดต่อ IT ให้หาทางแก้ไขโดยด่วน!");
                     return $error;
                 } else {
-                    if($request->yearIcd10) {
-                        $icd10 = $request->yearIcd10;
+                    if($request->has(['yearIcd10Min', 'yearIcd10Max'])) {
+                        $icd10 = [$request->yearIcd10Min, $request->yearIcd10Max];
                         $query->where(function ($query) use ($icd10) {
-                            $query->where('vs.pdx', $icd10)
-                                ->orWhere('vs.dx0', $icd10)
-                                ->orWhere('vs.dx1', $icd10)
-                                ->orWhere('vs.dx2', $icd10)
-                                ->orWhere('vs.dx3', $icd10)
-                                ->orWhere('vs.dx4', $icd10)
-                                ->orWhere('vs.dx5', $icd10);
+                            $query->whereBetween('vs.pdx', $icd10)
+                                ->orWhereBetween('vs.dx0', $icd10)
+                                ->orWhereBetween('vs.dx1', $icd10)
+                                ->orWhereBetween('vs.dx2', $icd10)
+                                ->orWhereBetween('vs.dx3', $icd10)
+                                ->orWhereBetween('vs.dx4', $icd10)
+                                ->orWhereBetween('vs.dx5', $icd10);
                             })
                         ;
                         $query->whereBetween('vs.vstdate', ["{$year_change['year_old']}-10-01", "{$year_change['year_new']}-09-30"]);
-                    } else if($request->yearIcd10Min || $request->yearIcd10Max) {
-                        if($request->yearIcd10Min) {
-                            if($request->yearIcd10Max) {
-                                $icd10_min = $request->yearIcd10Min;
-                                $icd10_max = $request->yearIcd10Max;
-                                $icd10 = [$icd10_min, $icd10_max];
-                                $query->where(function ($query) use ($icd10) {
-                                    $query->whereBetween('vs.pdx', $icd10)
-                                        ->orWhereBetween('vs.dx0', $icd10)
-                                        ->orWhereBetween('vs.dx1', $icd10)
-                                        ->orWhereBetween('vs.dx2', $icd10)
-                                        ->orWhereBetween('vs.dx3', $icd10)
-                                        ->orWhereBetween('vs.dx4', $icd10)
-                                        ->orWhereBetween('vs.dx5', $icd10);
-                                    })
-                                ;
-                                $query->whereBetween('vs.vstdate', ["{$year_change['year_old']}-10-01", "{$year_change['year_new']}-09-30"]);
-                            } else {
-                                $error = $this->messageError("กรุณาเลือก ICD10 ตัวสิ้นสุด!");
-                            return $error;
-                            }
-                        } else {
-                            $error = $this->messageError("กรุณาเลือก ICD10 ตัวตั้งต้น!");
-                            return $error;
+                    }   else if ($request->has('yearIcd10In')) {
+                        $yearIcd10Ins = $request->input('yearIcd10In');
+    
+                        // Check if the input is a string and convert it to an array
+                        if (is_string($yearIcd10Ins)) {
+                            $yearIcd10Ins = [$yearIcd10Ins];  // Convert to array
                         }
+
+                        foreach ($yearIcd10Ins as $code) {
+                            $icd10[] = $code;
+                        }
+
+                        $query->where(function ($query) use ($icd10) {
+                            $query->whereIn('vs.pdx', $icd10)
+                                ->orWhereIn('vs.dx0', $icd10)
+                                ->orWhereIn('vs.dx1', $icd10)
+                                ->orWhereIn('vs.dx2', $icd10)
+                                ->orWhereIn('vs.dx3', $icd10)
+                                ->orWhereIn('vs.dx4', $icd10)
+                                ->orWhereIn('vs.dx5', $icd10);
+                            })
+                        ;
+                        
+                        $query->whereBetween('vs.vstdate', ["{$year_change['year_old']}-10-01", "{$year_change['year_new']}-09-30"]);
                     } else {
                         $error = $this->messageError("กรุณาเลือก ICD10 ที่ต้องการค้นหา!");
                         return $error;
@@ -378,6 +377,29 @@ class ReportPatientsUtilizingIcd10CodesController extends Controller
                     if($request->max_date) {
                         if($request->dateSelectIcd10) {
                             $icd10 = $request->dateSelectIcd10;
+                            $query->where(function ($query) use ($icd10) {
+                                $query->where('vs.pdx', $icd10)
+                                    ->orWhere('vs.dx0', $icd10)
+                                    ->orWhere('vs.dx1', $icd10)
+                                    ->orWhere('vs.dx2', $icd10)
+                                    ->orWhere('vs.dx3', $icd10)
+                                    ->orWhere('vs.dx4', $icd10)
+                                    ->orWhere('vs.dx5', $icd10);
+                                })
+                            ;
+                            $query->whereBetween('vs.vstdate', [$request->min_date, $request->max_date]);
+                        } else if($request->has(['dateSelectIcdMin', 'dateSelectIcdMax'])) {
+                            $icd10 = [$request->dateSelectIcdMin, $request->dateSelectIcdMax];
+                            $query->where(function ($query) use ($icd10) {
+                                $query->whereBetween('vs.pdx', $icd10)
+                                    ->orWhereBetween('vs.dx0', $icd10)
+                                    ->orWhereBetween('vs.dx1', $icd10)
+                                    ->orWhereBetween('vs.dx2', $icd10)
+                                    ->orWhereBetween('vs.dx3', $icd10)
+                                    ->orWhereBetween('vs.dx4', $icd10)
+                                    ->orWhereBetween('vs.dx5', $icd10);
+                                })
+                            ;
                             $query->whereBetween('vs.vstdate', [$request->min_date, $request->max_date]);
                         } else {
                             $error = $this->messageError("กรุณาเลือก ICD10 ที่ต้องการค้นหา!");
