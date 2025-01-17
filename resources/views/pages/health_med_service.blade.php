@@ -467,7 +467,8 @@
                                                         ],
                                                         language: {
                                                             emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                                        }
+                                                        },
+                                                        "scrollX": true
                                                     });
                                                 }
                                             });
@@ -510,7 +511,8 @@
                                                         ],
                                                         language: {
                                                             emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                                        }
+                                                        },
+                                                        "scrollX": true
                                                     });
                                                 },
                                                 error: function(xhr, status, error) {
@@ -556,7 +558,8 @@
                                                         ],
                                                         language: {
                                                             emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                                        }
+                                                        },
+                                                        "scrollX": true
                                                     });
                                                 },
                                                 error: function(xhr, status, error) {
@@ -602,7 +605,8 @@
                                                         ],
                                                         language: {
                                                             emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                                        }
+                                                        },
+                                                        "scrollX": true
                                                     });
                                                 },
                                                 error: function(xhr, status, error) {
@@ -648,7 +652,8 @@
                                                         ],
                                                         language: {
                                                             emptyTable: "ไม่มีรายการ ICD 10!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                                        }
+                                                        },
+                                                        "scrollX": true
                                                     });
                                                 },
                                                 error: function(xhr, status, error) {
@@ -801,7 +806,8 @@
                                     ],
                                     language: {
                                         emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                    }
+                                    },
+                                    "scrollX": true
                                 });
                             },
                             error: function(xhr, status, error) {
@@ -847,7 +853,8 @@
                                     ],
                                     language: {
                                         emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                    }
+                                    },
+                                    "scrollX": true
                                 });
                             },
                             error: function(xhr, status, error) {
@@ -893,7 +900,8 @@
                                     ],
                                     language: {
                                         emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                    }
+                                    },
+                                    "scrollX": true
                                 });
                             },
                             error: function(xhr, status, error) {
@@ -942,7 +950,8 @@
                                     ],
                                     language: {
                                         emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                    }
+                                    },
+                                    "scrollX": true
                                 });
                             },
                             error: function(xhr, status, error) {
@@ -991,7 +1000,8 @@
                                     ],
                                     language: {
                                         emptyTable: "ไม่มีรายการ ICD10!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                    }
+                                    },
+                                    "scrollX": true
                                 });
                             },
                             error: function(xhr, status, error) {
@@ -1067,7 +1077,8 @@
                                     ],
                                     language: {
                                         emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                    }
+                                    },
+                                    "scrollX": true
                                 });
                             },
                             error: function(xhr, status, error) {
@@ -1116,7 +1127,8 @@
                                     ],
                                     language: {
                                         emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                    }
+                                    },
+                                    "scrollX": true
                                 });
                             },
                             error: function(xhr, status, error) {
@@ -1165,7 +1177,8 @@
                                     ],
                                     language: {
                                         emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                    }
+                                    },
+                                    "scrollX": true
                                 });
                             },
                             error: function(xhr, status, error) {
@@ -1214,7 +1227,8 @@
                                     ],
                                     language: {
                                         emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                    }
+                                    },
+                                    "scrollX": true
                                 });
                             },
                             error: function(xhr, status, error) {
@@ -1263,7 +1277,8 @@
                                     ],
                                     language: {
                                         emptyTable: "ไม่มีรายการ ICD10!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                    }
+                                    },
+                                    "scrollX": true
                                 });
                             },
                             error: function(xhr, status, error) {

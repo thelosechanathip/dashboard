@@ -329,67 +329,176 @@ class ReportPatientsUtilizingIcd10CodesController extends Controller
                 if($year_change == false) {
                     $error = $this->messageError("เกิดข้อผิดพลาดกรุณาติดต่อ IT ให้หาทางแก้ไขโดยด่วน!");
                     return $error;
-                } else {
+                }   else {
                     if($request->has(['yearIcd10Min', 'yearIcd10Max'])) {
-                        $icd10 = [$request->yearIcd10Min, $request->yearIcd10Max];
-                        $query->where(function ($query) use ($icd10) {
-                            $query->whereBetween('vs.pdx', $icd10)
-                                ->orWhereBetween('vs.dx0', $icd10)
-                                ->orWhereBetween('vs.dx1', $icd10)
-                                ->orWhereBetween('vs.dx2', $icd10)
-                                ->orWhereBetween('vs.dx3', $icd10)
-                                ->orWhereBetween('vs.dx4', $icd10)
-                                ->orWhereBetween('vs.dx5', $icd10);
-                            })
-                        ;
-                        $query->whereBetween('vs.vstdate', ["{$year_change['year_old']}-10-01", "{$year_change['year_new']}-09-30"]);
-                    }   else if ($request->has('yearIcd10In')) {
-                        $yearIcd10Ins = $request->input('yearIcd10In');
+                        if($request->has('yearIcd10NotIn')) {
+                            $icd10 = [$request->yearIcd10Min, $request->yearIcd10Max];
+                            $query->where(function ($query) use ($icd10) {
+                                $query->whereBetween('vs.pdx', $icd10)
+                                    ->orWhereBetween('vs.dx0', $icd10)
+                                    ->orWhereBetween('vs.dx1', $icd10)
+                                    ->orWhereBetween('vs.dx2', $icd10)
+                                    ->orWhereBetween('vs.dx3', $icd10)
+                                    ->orWhereBetween('vs.dx4', $icd10)
+                                    ->orWhereBetween('vs.dx5', $icd10);
+                                })
+                            ;
+
+                            $yearIcd10NotIns = $request->input('yearIcd10NotIn');
     
-                        // Check if the input is a string and convert it to an array
-                        if (is_string($yearIcd10Ins)) {
-                            $yearIcd10Ins = [$yearIcd10Ins];  // Convert to array
-                        }
+                            // Check if the input is a string and convert it to an array
+                            if (is_string($yearIcd10NotIns)) {
+                                $yearIcd10NotIns = [$yearIcd10NotIns];  // Convert to array
+                            }
 
-                        foreach ($yearIcd10Ins as $code) {
-                            $icd10[] = $code;
-                        }
+                            foreach ($yearIcd10NotIns as $code) {
+                                $icd10Not[] = $code;
+                            }
 
-                        $query->where(function ($query) use ($icd10) {
-                            $query->whereIn('vs.pdx', $icd10)
-                                ->orWhereIn('vs.dx0', $icd10)
-                                ->orWhereIn('vs.dx1', $icd10)
-                                ->orWhereIn('vs.dx2', $icd10)
-                                ->orWhereIn('vs.dx3', $icd10)
-                                ->orWhereIn('vs.dx4', $icd10)
-                                ->orWhereIn('vs.dx5', $icd10);
-                            })
-                        ;
-                        
-                        $query->whereBetween('vs.vstdate', ["{$year_change['year_old']}-10-01", "{$year_change['year_new']}-09-30"]);
+                            $query->where(function ($query) use ($icd10Not) {
+                                $query->whereNotIn('vs.pdx', $icd10Not)
+                                    ->whereNotIn('vs.dx0', $icd10Not)
+                                    ->whereNotIn('vs.dx1', $icd10Not)
+                                    ->whereNotIn('vs.dx2', $icd10Not)
+                                    ->whereNotIn('vs.dx3', $icd10Not)
+                                    ->whereNotIn('vs.dx4', $icd10Not)
+                                    ->whereNotIn('vs.dx5', $icd10Not);
+                                })
+                            ;
+                            
+                            $query->whereBetween('vs.vstdate', ["{$year_change['year_old']}-10-01", "{$year_change['year_new']}-09-30"]);
+                        } else {
+                            $icd10 = [$request->yearIcd10Min, $request->yearIcd10Max];
+                            $query->where(function ($query) use ($icd10) {
+                                $query->whereBetween('vs.pdx', $icd10)
+                                    ->orWhereBetween('vs.dx0', $icd10)
+                                    ->orWhereBetween('vs.dx1', $icd10)
+                                    ->orWhereBetween('vs.dx2', $icd10)
+                                    ->orWhereBetween('vs.dx3', $icd10)
+                                    ->orWhereBetween('vs.dx4', $icd10)
+                                    ->orWhereBetween('vs.dx5', $icd10);
+                                })
+                            ;
+                            $query->whereBetween('vs.vstdate', ["{$year_change['year_old']}-10-01", "{$year_change['year_new']}-09-30"]);
+                        }
+                    }   else if ($request->has('yearIcd10In')) {
+                        if($request->has('yearIcd10NotIn')) {
+                            $yearIcd10Ins = $request->input('yearIcd10In');
+    
+                            // Check if the input is a string and convert it to an array
+                            if (is_string($yearIcd10Ins)) {
+                                $yearIcd10Ins = [$yearIcd10Ins];  // Convert to array
+                            }
+
+                            foreach ($yearIcd10Ins as $code) {
+                                $icd10[] = $code;
+                            }
+
+                            $query->where(function ($query) use ($icd10) {
+                                $query->whereIn('vs.pdx', $icd10)
+                                    ->orWhereIn('vs.dx0', $icd10)
+                                    ->orWhereIn('vs.dx1', $icd10)
+                                    ->orWhereIn('vs.dx2', $icd10)
+                                    ->orWhereIn('vs.dx3', $icd10)
+                                    ->orWhereIn('vs.dx4', $icd10)
+                                    ->orWhereIn('vs.dx5', $icd10);
+                                })
+                            ;
+
+                            $yearIcd10NotIns = $request->input('yearIcd10NotIn');
+    
+                            // Check if the input is a string and convert it to an array
+                            if (is_string($yearIcd10NotIns)) {
+                                $yearIcd10NotIns = [$yearIcd10NotIns];  // Convert to array
+                            }
+
+                            foreach ($yearIcd10NotIns as $code) {
+                                $icd10Not[] = $code;
+                            }
+
+                            $query->where(function ($query) use ($icd10Not) {
+                                $query->whereNotIn('vs.pdx', $icd10Not)
+                                    ->whereNotIn('vs.dx0', $icd10Not)
+                                    ->whereNotIn('vs.dx1', $icd10Not)
+                                    ->whereNotIn('vs.dx2', $icd10Not)
+                                    ->whereNotIn('vs.dx3', $icd10Not)
+                                    ->whereNotIn('vs.dx4', $icd10Not)
+                                    ->whereNotIn('vs.dx5', $icd10Not);
+                                })
+                            ;
+                            
+                            $query->whereBetween('vs.vstdate', ["{$year_change['year_old']}-10-01", "{$year_change['year_new']}-09-30"]);
+                        } else {
+                            $yearIcd10Ins = $request->input('yearIcd10In');
+    
+                            // Check if the input is a string and convert it to an array
+                            if (is_string($yearIcd10Ins)) {
+                                $yearIcd10Ins = [$yearIcd10Ins];  // Convert to array
+                            }
+
+                            foreach ($yearIcd10Ins as $code) {
+                                $icd10[] = $code;
+                            }
+
+                            $query->where(function ($query) use ($icd10) {
+                                $query->whereIn('vs.pdx', $icd10)
+                                    ->orWhereIn('vs.dx0', $icd10)
+                                    ->orWhereIn('vs.dx1', $icd10)
+                                    ->orWhereIn('vs.dx2', $icd10)
+                                    ->orWhereIn('vs.dx3', $icd10)
+                                    ->orWhereIn('vs.dx4', $icd10)
+                                    ->orWhereIn('vs.dx5', $icd10);
+                                })
+                            ;
+                            
+                            $query->whereBetween('vs.vstdate', ["{$year_change['year_old']}-10-01", "{$year_change['year_new']}-09-30"]);
+                        }
                     } else {
                         $error = $this->messageError("กรุณาเลือก ICD10 ที่ต้องการค้นหา!");
                         return $error;
                     }
                 }
             } else if($request->min_date || $request->max_date) {
-                if($request->min_date) {
-                    if($request->max_date) {
-                        if($request->dateSelectIcd10) {
-                            $icd10 = $request->dateSelectIcd10;
+                if($request->min_date != Null && $request->max_date != Null) {
+                    if($request->has(['dateSelectIcd10Min', 'dateSelectIcd10Max'])) {
+                        if($request->has('dateSelectIcd10NotIn')) {
+                            $icd10 = [$request->dateSelectIcd10Min, $request->dateSelectIcd10Max];
                             $query->where(function ($query) use ($icd10) {
-                                $query->where('vs.pdx', $icd10)
-                                    ->orWhere('vs.dx0', $icd10)
-                                    ->orWhere('vs.dx1', $icd10)
-                                    ->orWhere('vs.dx2', $icd10)
-                                    ->orWhere('vs.dx3', $icd10)
-                                    ->orWhere('vs.dx4', $icd10)
-                                    ->orWhere('vs.dx5', $icd10);
+                                $query->whereBetween('vs.pdx', $icd10)
+                                    ->orWhereBetween('vs.dx0', $icd10)
+                                    ->orWhereBetween('vs.dx1', $icd10)
+                                    ->orWhereBetween('vs.dx2', $icd10)
+                                    ->orWhereBetween('vs.dx3', $icd10)
+                                    ->orWhereBetween('vs.dx4', $icd10)
+                                    ->orWhereBetween('vs.dx5', $icd10);
                                 })
                             ;
+
+                            $dateSelectIcd10NotIns = $request->input('dateSelectIcd10NotIn');
+    
+                            // Check if the input is a string and convert it to an array
+                            if (is_string($dateSelectIcd10NotIns)) {
+                                $dateSelectIcd10NotIns = [$dateSelectIcd10NotIns];  // Convert to array
+                            }
+
+                            foreach ($dateSelectIcd10NotIns as $code) {
+                                $icd10Not[] = $code;
+                            }
+
+                            $query->where(function ($query) use ($icd10Not) {
+                                $query->whereNotIn('vs.pdx', $icd10Not)
+                                    ->whereNotIn('vs.dx0', $icd10Not)
+                                    ->whereNotIn('vs.dx1', $icd10Not)
+                                    ->whereNotIn('vs.dx2', $icd10Not)
+                                    ->whereNotIn('vs.dx3', $icd10Not)
+                                    ->whereNotIn('vs.dx4', $icd10Not)
+                                    ->whereNotIn('vs.dx5', $icd10Not);
+                                })
+                            ;
+
                             $query->whereBetween('vs.vstdate', [$request->min_date, $request->max_date]);
-                        } else if($request->has(['dateSelectIcdMin', 'dateSelectIcdMax'])) {
-                            $icd10 = [$request->dateSelectIcdMin, $request->dateSelectIcdMax];
+                        } else {
+                            $icd10 = [$request->dateSelectIcd10Min, $request->dateSelectIcd10Max];
                             $query->where(function ($query) use ($icd10) {
                                 $query->whereBetween('vs.pdx', $icd10)
                                     ->orWhereBetween('vs.dx0', $icd10)
@@ -401,16 +510,85 @@ class ReportPatientsUtilizingIcd10CodesController extends Controller
                                 })
                             ;
                             $query->whereBetween('vs.vstdate', [$request->min_date, $request->max_date]);
+                        }
+                    } else if ($request->has('dateSelectIcd10In')) {
+                        if($request->has('dateSelectIcd10NotIn')) {
+                            $dateSelectIcd10Ins = $request->input('dateSelectIcd10In');
+    
+                            // Check if the input is a string and convert it to an array
+                            if (is_string($dateSelectIcd10Ins)) {
+                                $dateSelectIcd10Ins = [$dateSelectIcd10Ins];  // Convert to array
+                            }
+
+                            foreach ($dateSelectIcd10Ins as $code) {
+                                $icd10[] = $code;
+                            }
+
+                            $query->where(function ($query) use ($icd10) {
+                                $query->whereIn('vs.pdx', $icd10)
+                                    ->orWhereIn('vs.dx0', $icd10)
+                                    ->orWhereIn('vs.dx1', $icd10)
+                                    ->orWhereIn('vs.dx2', $icd10)
+                                    ->orWhereIn('vs.dx3', $icd10)
+                                    ->orWhereIn('vs.dx4', $icd10)
+                                    ->orWhereIn('vs.dx5', $icd10);
+                                })
+                            ;
+
+                            $dateSelectIcd10NotIns = $request->input('dateSelectIcd10NotIn');
+    
+                            // Check if the input is a string and convert it to an array
+                            if (is_string($dateSelectIcd10NotIns)) {
+                                $dateSelectIcd10NotIns = [$dateSelectIcd10NotIns];  // Convert to array
+                            }
+
+                            foreach ($dateSelectIcd10NotIns as $code) {
+                                $icd10Not[] = $code;
+                            }
+
+                            $query->where(function ($query) use ($icd10Not) {
+                                $query->whereNotIn('vs.pdx', $icd10Not)
+                                    ->whereNotIn('vs.dx0', $icd10Not)
+                                    ->whereNotIn('vs.dx1', $icd10Not)
+                                    ->whereNotIn('vs.dx2', $icd10Not)
+                                    ->whereNotIn('vs.dx3', $icd10Not)
+                                    ->whereNotIn('vs.dx4', $icd10Not)
+                                    ->whereNotIn('vs.dx5', $icd10Not);
+                                })
+                            ;
+                            
+                            $query->whereBetween('vs.vstdate', [$request->min_date, $request->max_date]);
                         } else {
-                            $error = $this->messageError("กรุณาเลือก ICD10 ที่ต้องการค้นหา!");
-                            return $error;
+                            $dateSelectIcd10Ins = $request->input('dateSelectIcd10In');
+    
+                            // Check if the input is a string and convert it to an array
+                            if (is_string($dateSelectIcd10Ins)) {
+                                $dateSelectIcd10Ins = [$dateSelectIcd10Ins];  // Convert to array
+                            }
+
+                            foreach ($dateSelectIcd10Ins as $code) {
+                                $icd10[] = $code;
+                            }
+
+                            $query->where(function ($query) use ($icd10) {
+                                $query->whereIn('vs.pdx', $icd10)
+                                    ->orWhereIn('vs.dx0', $icd10)
+                                    ->orWhereIn('vs.dx1', $icd10)
+                                    ->orWhereIn('vs.dx2', $icd10)
+                                    ->orWhereIn('vs.dx3', $icd10)
+                                    ->orWhereIn('vs.dx4', $icd10)
+                                    ->orWhereIn('vs.dx5', $icd10);
+                                })
+                            ;
+                            
+                            $query->whereBetween('vs.vstdate', [$request->min_date, $request->max_date]);
                         }
                     } else {
-                        $error = $this->messageError("กรุณาเลือกวันสิ้นสุดของข้อมูลที่ต้องการ!");
+                        $error = $this->messageError("กรุณาเลือก ICD10 ที่ต้องการค้นหา!");
                         return $error;
                     }
                 } else {
-                    $error = $this->messageError("กรุณาเลือกวันเริ่มต้นของข้อมูลที่ต้องการ!");
+                    $error = $this->messageError("กรุณาเลือกวันที่ต้องการหาข้อมูล!");
                     return $error;
                 }
             } else {

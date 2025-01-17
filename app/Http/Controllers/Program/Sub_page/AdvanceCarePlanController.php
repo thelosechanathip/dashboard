@@ -279,7 +279,7 @@ class AdvanceCarePlanController extends Controller
             $acp_model = AdvanceCarePlanModel::orderBy('id', 'desc')->get();
             $output = '';
             if ($acp_model->count() > 0) {
-                $output .= '<table class="table table-hover table-striped table-bordered table-sm text-center align-middle" id="table_advance_care_plan_fetch_data">
+                $output .= '<table class="table table-hover table-bordered table-rounded align-middle dt-responsive nowrap" style="width: 100%" id="table_advance_care_plan_fetch_data">
                 <thead class="table-dark">
                     <tr>
                         <th style="width: auto;">ลำดับ</th>

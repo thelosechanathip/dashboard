@@ -76,7 +76,8 @@ class AnnouncementAndVersionController extends Controller
             $version_model = VersionModel::orderBy('id', 'desc')->get();
             $output = '';
             if ($version_model->count() > 0) {
-                $output .= '<table class="table table-striped table-bordered table-sm text-center align-middle" id="version_table">
+                $output .= '<div class="table-responsive">';
+                $output .= '<table class="table table-hover table-bordered table-striped align-middle dt-responsive nowrap" style="width: 100%" id="version_table">
                 <thead class="table-dark">
                     <tr>
                         <th style="width: auto;">ลำดับ</th>
@@ -102,6 +103,7 @@ class AnnouncementAndVersionController extends Controller
                     </tr>';
                 }
                 $output .= '</tbody></table>';
+                $output .= '</div>';
                 echo $output;
             } else {
                 echo '<h1 class="text-center text-secondary my-5">ไม่มีข้อมูล Version บน Database!</h1>';

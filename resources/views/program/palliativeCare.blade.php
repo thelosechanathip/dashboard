@@ -977,7 +977,8 @@
                                         extend: 'excelHtml5',
                                         text: 'Excel'
                                     }
-                                ]
+                                ],
+                                "scrollX": true
                             });
                         }
                     }
@@ -1111,7 +1112,8 @@
                                         extend: 'excelHtml5',
                                         text: 'Excel'
                                     }
-                                ]
+                                ],
+                                "scrollX": true
                             });
                         }
                     });
@@ -1166,7 +1168,8 @@
                                         extend: 'excelHtml5',
                                         text: 'Excel'
                                     }
-                                ]
+                                ],
+                                "scrollX": true
                             });
                         }
                     });
@@ -1229,7 +1232,8 @@
                                             extend: 'excelHtml5',
                                             text: 'Excel'
                                         }
-                                    ]
+                                    ],
+                                    "scrollX": true
                                 });
                             }
                         }
@@ -1293,7 +1297,8 @@
                                             extend: 'excelHtml5',
                                             text: 'Excel'
                                         }
-                                    ]
+                                    ],
+                                    "scrollX": true
                                 });
                             }
                         }
@@ -1349,7 +1354,8 @@
                                         extend: 'excelHtml5',
                                         text: 'Excel'
                                     }
-                                ]
+                                ],
+                                "scrollX": true
                             });
                         }
                     });
@@ -1412,7 +1418,8 @@
                                             extend: 'excelHtml5',
                                             text: 'Excel'
                                         }
-                                    ]
+                                    ],
+                                    "scrollX": true
                                 });
                             }
                         }
@@ -1476,7 +1483,8 @@
                                             extend: 'excelHtml5',
                                             text: 'Excel'
                                         }
-                                    ]
+                                    ],
+                                    "scrollX": true
                                 });
                             }
                         }
@@ -1532,7 +1540,8 @@
                                         extend: 'excelHtml5',
                                         text: 'Excel'
                                     }
-                                ]
+                                ],
+                                "scrollX": true
                             });
                         }
                     });
@@ -1595,7 +1604,8 @@
                                             extend: 'excelHtml5',
                                             text: 'Excel'
                                         }
-                                    ]
+                                    ],
+                                    "scrollX": true
                                 });
                             }
                         }
@@ -1659,7 +1669,8 @@
                                             extend: 'excelHtml5',
                                             text: 'Excel'
                                         }
-                                    ]
+                                    ],
+                                    "scrollX": true
                                 });
                             }
                         }

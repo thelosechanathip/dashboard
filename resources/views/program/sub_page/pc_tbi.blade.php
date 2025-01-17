@@ -504,7 +504,8 @@
                                         extend: 'excelHtml5',
                                         text: 'Excel'
                                     }
-                                ]
+                                ],
+                                "scrollX": true
                             });
                         }
                     }

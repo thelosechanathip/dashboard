@@ -87,14 +87,10 @@
                 </div>
             </div>
         {{-- Title แสดงข้อมูล ชื่อผู้ใช้งาน และ แผนก End --}}
-        <div class="mt-3 card shadow-lg w-100" id="">
-            <div class="row w-100">
-                <div class="col-12 w-100 d-flex justify-content-center align-items-center">
-                    <div class="mx-5 w-100">
-                        <div class="my-5 ms-0 w-100">
-                            <div class="w-100" id="advance_care_plan_fetch_data"></div>
-                        </div>
-                    </div>
+        <div class="mt-3 card shadow-lg w-100" id="advance_care_plan_list_name_table">
+            <div class="mx-5 w-auto">
+                <div class="my-5 ms-0 w-auto">
+                    <div class="w-auto" id="advance_care_plan_fetch_data"></div>
                 </div>
             </div>
         </div>
@@ -260,7 +256,32 @@
                         Swal.close();
                         $("#advance_care_plan_fetch_data").html(response);
                         $("#table_advance_care_plan_fetch_data").DataTable({
-                            order: [0, 'desc']
+                            responsive: true,
+                            order: [0, 'desc'],
+                            autoWidth: false,
+                            buttons: ['excel'],
+                            columnDefs: [
+                                {
+                                    targets: "_all",
+                                    className: "dt-head-center dt-body-center"
+                                }
+                            ],
+                            dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                            buttons: [
+                                {
+                                    extend: 'copyHtml5',
+                                    text: 'Copy'
+                                },
+                                {
+                                    extend: 'csvHtml5',
+                                    text: 'CSV'
+                                },
+                                {
+                                    extend: 'excelHtml5',
+                                    text: 'Excel'
+                                }
+                            ],
+                            // "scrollX": true
                         });
                     }
                 });

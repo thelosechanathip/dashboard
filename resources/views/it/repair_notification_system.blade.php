@@ -202,7 +202,7 @@
                             Swal.close();
                             $("#repair_notification_system_show_data_all").html(response);
                             $("#repair_notification_system_table").DataTable({
-                                // order: [0, 'ASC']
+                                "scrollX": true
                             });
                         }
                     });

@@ -201,7 +201,7 @@
         </div>
     {{-- Offcanvas End --}}
     <main class="main-content">
-        <div class="">
+        <div class="full-width-bar">
             <div class="mt-3 card shadow-lg full-width-bar p-3" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="400">
                 <div class="my-1 d-flex justify-content-between align-content-center">
                     <h1>กำหนดสิทธิ์การเข้าถึง</h1>
@@ -454,7 +454,32 @@
                             Swal.close();
                             $("#type_show_data_all").html(response);
                             $("#type_table").DataTable({
-                                // order: [0, 'ASC']
+                                responsive: true,
+                                order: [0, 'desc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
+                                
                             });
                         }
                     });
@@ -621,7 +646,32 @@
                             Swal.close();
                             $("#type_accessibility_show_data_all").html(response);
                             $("#type_accessibility_table").DataTable({
-                                // order: [0, 'ASC']
+                                responsive: true,
+                                order: [0, 'desc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
+                                
                             });
                         }
                     });
@@ -787,7 +837,32 @@
                             Swal.close();
                             $("#status_show_data_all").html(response);
                             $("#status_table").DataTable({
-                                // order: [0, 'DESC']
+                                responsive: true,
+                                order: [0, 'desc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
+                                
                             });
                         }
                     });
@@ -954,7 +1029,32 @@
                             Swal.close();
                             $("#module_show_data_all").html(response);
                             $("#module_table").DataTable({
-                                // order: [0, 'DESC']
+                                responsive: true,
+                                order: [0, 'desc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
+                                
                             });
                         }
                     });
@@ -1266,7 +1366,32 @@
                             Swal.close();
                             $("#accessibility_show_data_all").html(response);
                             $("#accessibility_table").DataTable({
-                                // order: [0, 'DESC']
+                                responsive: true,
+                                order: [0, 'asc'],
+                                autoWidth: false,
+                                buttons: ['excel'],
+                                columnDefs: [
+                                    {
+                                        targets: "_all",
+                                        className: "dt-head-center dt-body-center"
+                                    }
+                                ],
+                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                buttons: [
+                                    {
+                                        extend: 'copyHtml5',
+                                        text: 'Copy'
+                                    },
+                                    {
+                                        extend: 'csvHtml5',
+                                        text: 'CSV'
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: 'Excel'
+                                    }
+                                ],
+                                
                             });
                         }
                     });

@@ -672,7 +672,7 @@
                             $("#result_count_admission_points_summary_show_all").html(response);
                             // เปิดใช้งาน DataTables บนตารางที่ได้รับ
                             $("#result_count_admission_points_summary_table").DataTable({
-                                // order: [0, 'ASC']
+                                "scrollX": true
                             });
                         },
                         error: function(xhr, status, error) {
@@ -703,7 +703,7 @@
                             $("#result_count_admission_points_summary_show_all").html(response);
                             // เปิดใช้งาน DataTables บนตารางที่ได้รับ
                             $("#result_count_admission_points_summary_table").DataTable({
-                                // order: [0, 'ASC']
+                                "scrollX": true
                             });
                         },
                         error: function(xhr, status, error) {
@@ -720,7 +720,9 @@
                         method: 'GET',
                         success: function(response) {
                             $("#result_count_admission_points_summary_show_all").html(response);
-                            $("#result_count_admission_points_summary_table").DataTable();
+                            $("#result_count_admission_points_summary_table").DataTable({
+                                "scrollX": true
+                            });
                         }
                     });
                 }

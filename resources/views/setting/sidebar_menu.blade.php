@@ -234,7 +234,7 @@
                             Swal.close();
                             $("#sidebar_main_menu_show_data_all").html(response);
                             $("#sidebar_main_menu_table").DataTable({
-                                // order: [0, 'ASC']
+                                
                             });
                         }
                     });
@@ -457,7 +457,7 @@
                             Swal.close();
                             $("#sidebar_sub1_menu_show_data_all").html(response);
                             $("#sidebar_sub1_menu_table").DataTable({
-                                // order: [0, 'ASC']
+                                
                             });
                         }
                     });

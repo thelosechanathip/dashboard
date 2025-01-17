@@ -589,7 +589,8 @@
                             ],
                             language: {
                                 emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                            }
+                            },
+                            
                         });
                     },
                     error: function(xhr, status, error) {
@@ -660,7 +661,8 @@
                                 ],
                                 language: {
                                     emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                }
+                                },
+                                
                             });
                         }
                     }
@@ -715,7 +717,8 @@
                                 ],
                             language: {
                                 emptyTable: "Chart คนไข้ที่ส่งให้แพทย์ภายในวัน รับ Chartจากแพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                            }
+                            },
+                            
                         });
                     },
                     error: function(xhr, status, error) {
@@ -786,7 +789,8 @@
                                 ],
                                 language: {
                                     emptyTable: "Chart คนไข้ที่ส่งให้แพทย์ภายในวัน รับ Chartจากแพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                }
+                                },
+                                
                             });
                         }
                     }
@@ -879,33 +883,34 @@
                         $("#table-receiving-charts-data-receive").html(response);
                         $("#table-list-receiving-charts-data-receive").DataTable({
                             responsive: true,
-                                order: [0, 'asc'],
-                                autoWidth: false,
-                                buttons: ['excel'],
-                                columnDefs: [
-                                    {
-                                        targets: "_all",
-                                        className: "dt-head-center dt-body-center"
-                                    }
-                                ],
-                                dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
-                                buttons: [
-                                    {
-                                        extend: 'copyHtml5',
-                                        text: 'Copy'
-                                    },
-                                    {
-                                        extend: 'csvHtml5',
-                                        text: 'CSV'
-                                    },
-                                    {
-                                        extend: 'excelHtml5',
-                                        text: 'Excel'
-                                    }
-                                ],
+                            order: [0, 'asc'],
+                            autoWidth: false,
+                            buttons: ['excel'],
+                            columnDefs: [
+                                {
+                                    targets: "_all",
+                                    className: "dt-head-center dt-body-center"
+                                }
+                            ],
+                            dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                            buttons: [
+                                {
+                                    extend: 'copyHtml5',
+                                    text: 'Copy'
+                                },
+                                {
+                                    extend: 'csvHtml5',
+                                    text: 'CSV'
+                                },
+                                {
+                                    extend: 'excelHtml5',
+                                    text: 'Excel'
+                                }
+                            ],
                             language: {
                                 emptyTable: "Chart คนไข้ที่ส่งให้แพทย์ภายในวัน รับ Chartจากแพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                            }
+                            },
+                            
                         });
                     },
                     error: function(xhr, status, error) {
@@ -974,9 +979,7 @@
                                         text: 'Excel'
                                     }
                                 ],
-                                // language: {
-                                //     emptyTable: "Chart คนไข้ที่ส่งให้แพทย์ภายในวัน รับ Chart จากแพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                // }
+                                
                             });
                         }
                     }
@@ -1041,7 +1044,8 @@
                                 ],
                                 language: {
                                     emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                }
+                                },
+                                
                             });
                         },
                         error: function(xhr, status, error) {
@@ -1071,7 +1075,8 @@
                                 destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
                                 language: {
                                     emptyTable: "Chart คนไข้ที่ Dischange ภายในวันส่ง Chart ไปให้แพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                }
+                                },
+                                
                             });
                         },
                         error: function(xhr, status, error) {
@@ -1141,7 +1146,8 @@
                                 ],
                                 language: {
                                     emptyTable: "ไม่มี Charts คนไข้ที่ส่งไปให้แพทย์ภายในวัน!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                }
+                                },
+                                
                             });
                         },
                         error: function(xhr, status, error) {
@@ -1171,7 +1177,8 @@
                                 destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
                                 language: {
                                     emptyTable: "ไม่มี Charts คนไข้ที่ส่งไปให้แพทย์ภายในวัน!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                }
+                                },
+                                
                             });
                         },
                         error: function(xhr, status, error) {
@@ -1219,7 +1226,8 @@
                                 destroy: true,  // เพื่อป้องกันการซ้อนของ DataTables
                                 language: {
                                     emptyTable: "ไม่มี Charts คนไข้ที่รับจากแพทย์ภายในวัน!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                }
+                                },
+                                
                             });
                         },
                         error: function(xhr, status, error) {
@@ -1272,7 +1280,8 @@
                                 ],
                                 language: {
                                     emptyTable: "ไม่มี Charts คนไข้ที่รับจากแพทย์ภายในวัน!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                }
+                                },
+                                
                             });
                         },
                         error: function(xhr, status, error) {
@@ -1446,7 +1455,8 @@
                                         ],
                                     language: {
                                         emptyTable: "Chart คนไข้ที่ส่งให้ห้องเรียกเก็บภายในวัน รับ Chart จากแพทย์หมดแล้ว!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                    }
+                                    },
+                                    
                                 });
                             },
                             error: function(xhr, status, error) {
@@ -1695,7 +1705,8 @@
                                     ],
                                     language: {
                                         emptyTable: "Chart คนไข้ที่ Dischange แล้วแต่ยังไม่ได้รับ Chartsมาจากในตึก!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
-                                    }
+                                    },
+                                    
                                 });
                             }
                         }

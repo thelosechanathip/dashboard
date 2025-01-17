@@ -290,6 +290,7 @@
                             $("#version_show_data_all").html(response);
                             $("#version_table").DataTable({
                                 // order: [0, 'ASC']
+                                
                             });
                         }
                     });
@@ -459,7 +460,7 @@
                             Swal.close();
                             $("#version_detail_show_data_all").html(response);
                             $("#version_detail_table").DataTable({
-                                // order: [0, 'ASC']
+                                
                             });
                         }
                     });
@@ -643,7 +644,7 @@
                             Swal.close();
                             $("#fiscal_year_show_data_all").html(response);
                             $("#fiscal_year_table").DataTable({
-                                // order: [0, 'ASC']
+                                
                             });
                         }
                     });

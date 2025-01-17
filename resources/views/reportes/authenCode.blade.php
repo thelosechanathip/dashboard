@@ -219,7 +219,8 @@
                                     extend: 'excelHtml5',
                                     text: 'Excel'
                                 }
-                            ]
+                            ],
+                            
                         });
                     }
                 });
@@ -280,7 +281,8 @@
                         extend: 'excelHtml5',
                         text: 'Excel'
                     }
-                ]
+                ],
+                
             });
 
         });

@@ -47,7 +47,8 @@
                         
                         $("#system_information_table").DataTable({
                             paging: false,  // ปิดการแบ่งหน้าเพื่อแสดงข้อมูลทั้งหมด
-                            order: [0, 'ASC']
+                            order: [0, 'ASC'],
+                            "scrollX": true
                         });
                     }
                 });

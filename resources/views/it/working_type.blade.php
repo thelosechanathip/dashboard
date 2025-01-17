@@ -117,7 +117,7 @@
                             Swal.close();
                             $("#working_type_show_data_all").html(response);
                             $("#working_type_table").DataTable({
-                                // order: [0, 'ASC']
+                                "scrollX": true
                             });
                         }
                     });
