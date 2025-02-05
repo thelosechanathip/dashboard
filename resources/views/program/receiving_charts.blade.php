@@ -15,7 +15,7 @@
 
 @section('content')
     {{-- Modal Start --}}
-            {{-- รายการสรุปคนไข้ Dischange Start --}}
+        {{-- รายการสรุปคนไข้ Dischange Start --}}
             <div class="modal fade" id="count_dischange_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- เพิ่ม modal-xl เพื่อทำให้ Modal ขนาดใหญ่ -->
                     <div class="modal-content">
@@ -144,6 +144,46 @@
                 </div>
             </div>
         {{-- รายการสรุปยังไม่รับ Chart จากตึก End --}}
+        {{-- รายการสรุปยังไม่รับ Chart จากแพทย์ Start --}}
+            <div class="modal fade" id="doctor_from_receiving_charts_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- เพิ่ม modal-xl เพื่อทำให้ Modal ขนาดใหญ่ -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="doctor_from_receiving_charts_title">รายชื่อคนไข้ที่ Dischange แล้วแต่ยังค้างอยู่กับแพทย์</h5>
+                            <button type="button" class="btn-close zoom-card" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="border-bottom pb-2">
+                                <form id="doctor_from_receiving_charts_form" class="col ms-3 ">
+                                    @csrf
+                                    <div class="mb-1 d-flex align-items-center row gx-3">
+                                        <div class="col-md-8 d-flex align-items-center">
+                                            <!-- เลือกเดือน ตั้งแต่ -->
+                                            <div class="d-flex align-items-center me-3">
+                                                <span class="me-2" style="white-space: nowrap; font-size: 1rem;">เลือกเดือน ตั้งแต่</span>
+                                                <input type="date" class="form-control" id="dfrcs_min_date" name="dfrcs_min_date" placeholder="dfrcs_min_date" required>
+                                            </div>
+            
+                                            <!-- ถึง -->
+                                            <div class="d-flex align-items-center me-3">
+                                                <span class="me-2" style="font-size: 1rem;">ถึง</span>
+                                                <input type="date" class="form-control" id="dfrcs_max_date" name="dfrcs_max_date" placeholder="dfrcs_max_date" required>
+                                            </div>
+            
+                                            <!-- ยืนยัน -->
+                                            <div class="ms-3">
+                                                <button type="submit" id="doctor_from_receiving_charts_submit" class="btn btn-primary btn-sm">ยืนยัน</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="doctor_from_receiving_charts_show_all"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{-- รายการสรุปยังไม่รับ Chart จากแพทย์ End --}}
     {{-- Modal End --}}
     <main class="main-content mb-3">
         {{-- Title Start --}}
@@ -419,6 +459,11 @@
             });
 
             $('#receiving_charts_data_send_setting').on('click', function() {
+                // Show the modal
+                $('#doctor_from_receiving_charts_modal').modal('show');
+                const formData = 0;
+                doctorFromReceivingCharts(formData);
+
                 $('#receiving_charts_data_send').show();
                 $('#receiving_charts_data_send_setting').addClass('active');
                 $('#dischange_data').hide();
@@ -1713,6 +1758,76 @@
                     });
                 }
             // Building From Receiving Charts( คนไข้ที่ Dischange แล้วแต่ยังไม่มีการรับ Charts มาจากในตึก ) End
+
+            // Doctor From Receiving Charts( คนไข้ที่ Dischange แล้วแต่ยังไม่มีการรับ Charts จากแพทย์ ) Start
+                $('#doctor_from_receiving_charts_submit').on('click', function(e) {
+                    e.preventDefault();
+                    var formData = $('#doctor_from_receiving_charts_form').serialize();
+                    doctorFromReceivingCharts(formData);
+                });
+
+                function doctorFromReceivingCharts(formData) {
+                    // Show Swal with loading icon
+                    let loadingSwal = Swal.fire({
+                        title: 'กำลังโหลดข้อมูล...',
+                        text: 'โปรดรอสักครู่',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading(); // Show spinner inside the Swal
+                        }
+                    });
+
+                    $.ajax({
+                        // ส่งคำขอข้อมูลไปยัง Route
+                        url: '{{ route('getDoctorFromReceivingCharts') }}',
+                        // Method Get
+                        type: 'GET',
+                        // ส่งข้อมูลด้วยตัวแปร formData
+                        data: formData,
+                        // เมื่อมีการส่ง Response กลับมา
+                        success: function(response) {
+                            // เรียกใช้งาน Function เพื่อปิด Icon Download
+                            Swal.close();
+                            if(response) {
+                                $("#doctor_from_receiving_charts_show_all").attr('data-source', 'fetchAllDoctorFromReceivingCharts');
+                                $("#doctor_from_receiving_charts_show_all").html(response);
+                                $("#table-doctor-from-receiving-charts").DataTable({
+                                    responsive: true,
+                                    order: [4, 'asc'],
+                                    autoWidth: false,
+                                    buttons: ['excel'],
+                                    columnDefs: [
+                                        {
+                                            targets: "_all",
+                                            className: "dt-head-center dt-body-center"
+                                        }
+                                    ],
+                                    dom: '<"top"Bfl>rt<"bottom"ip><"clear">',
+                                    buttons: [
+                                        {
+                                            extend: 'copyHtml5',
+                                            text: 'Copy'
+                                        },
+                                        {
+                                            extend: 'csvHtml5',
+                                            text: 'CSV'
+                                        },
+                                        {
+                                            extend: 'excelHtml5',
+                                            text: 'Excel'
+                                        }
+                                    ],
+                                    language: {
+                                        emptyTable: "Chart คนไข้ที่ Dischange แล้วแต่ยังไม่ได้รับ Charts มาจากแพทย์!"  // ข้อความที่จะแสดงเมื่อไม่มีข้อมูล
+                                    },
+                                    
+                                });
+                            }
+                        }
+                    });
+                }
+            // Doctor From Receiving Charts( คนไข้ที่ Dischange แล้วแต่ยังไม่มีการรับ Charts จากแพทย์ ) End
             
         });
     </script>

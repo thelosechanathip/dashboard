@@ -6,7 +6,9 @@
 
 @section('content')
     <main class="main-content mb-5">
-        <div class="bg-light" id="show-data"></div>
+        {{-- <div class="bg-light" id="show-data"></div> --}}
+        <h1>Show Data</h1>
+        <button class="btn btn-success" id="fetch_data">ShowConsoleLog</button>
     </main>
 @endsection
 
@@ -15,17 +17,17 @@
         $(document).ready(function() {
             function queryData() {
                 $.ajax({
-                    url: '{{ route('itFetchDataAll') }}',
+                    url: '127.0.0.1:3000/api/users',
                     method: 'get',
                     success: function(response) {
-                        Swal.close();
-                        $("#show-data").html(response);
-                        $("#show_data_table").DataTable({
-                            // order: [0, 'ASC']
-                        });
+                        // Swal.close();
+                        console.log(response);
                     }
                 });
             }
+            $('#fetch_data').on('click', function() {
+                queryData();
+            });
         });
     </script>
 @endsection

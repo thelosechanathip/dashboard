@@ -43,9 +43,11 @@
                             <tr><td><a href="{{ route('report_z242_index', ['id' => $sidebar_sub1_menu_id]) }}" class="link-dark fw-bold text-decoration-none fs-5 link_hover" id="hover_text">รายงาน Z242</a></td></tr>
                             <tr><td><a href="{{ route('report_z251_index', ['id' => $sidebar_sub1_menu_id]) }}" class="link-dark fw-bold text-decoration-none fs-5 link_hover">รายงาน Z251</a></td></tr>
                             <tr><td><a href="{{ route('report_patients_utilizing_icd10_codes_index', ['id' => $sidebar_sub1_menu_id]) }}" class="link-dark fw-bold text-decoration-none fs-5 link_hover">( อยู่ในขั้นตอนการพัฒนา )รายงานรายชื่อคนไข้ที่มารับบริการด้วย ICD10 ที่เลือกเอง</a></td></tr>
+                            <tr><td><a href="{{ route('report_choresterol_index', ['id' => $sidebar_sub1_menu_id]) }}" class="link-dark fw-bold text-decoration-none fs-5 link_hover">รายงาน รายชื่อผู้ป่วยอายุ 45-70 ปี ที่ตรวจ Cholesterol โดยไม่รวม ICD10 (E70-E79, Z136) และไม่ใช้ Simvastatin, Atorvastatin</a></td></tr>
+                            <tr><td><a href="{{ route('report_fbs_index', ['id' => $sidebar_sub1_menu_id]) }}" class="link-dark fw-bold text-decoration-none fs-5 link_hover">รายชื่อคนไข้ตรวจ FBS อายุ 35-59 (ไม่รวม ICD E10-E14)</a></td></tr>
                             <tr><td><a href="{{ route('report_cxr_41003_41004_index', ['id' => $sidebar_sub1_menu_id]) }}" class="link-dark fw-bold text-decoration-none fs-5 link_hover">รายงาน X-ray CXR 41003 & 41004</a></td></tr>
                             <tr><td><a href="{{ route('report_mixed_building_index', ['id' => $sidebar_sub1_menu_id]) }}" class="link-dark fw-bold text-decoration-none fs-5 link_hover">รายงาน Admit ตึกรวม</a></td></tr>
-                            <tr><td><a href="{{ route('report_monk_nun_index', ['id' => $sidebar_sub1_menu_id]) }}" class="link-dark fw-bold text-decoration-none fs-5 link_hover">รายงานรายชื่อพระและแม่ชี</a></td></tr>
+                            <tr><td><a href="{{ route('report_monk_nun_index', ['id' => $sidebar_sub1_menu_id]) }}" class="link-dark fw-bold text-decoration-none fs-5 link_hover">รายงาน รายชื่อพระและแม่ชี</a></td></tr>
                         </tbody>
                     </table>
                 </div>

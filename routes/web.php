@@ -21,6 +21,8 @@ use App\Http\Controllers\Reportes\PCU\ReportZ237Controller;
 use App\Http\Controllers\Reportes\PCU\ReportZ242Controller;
 use App\Http\Controllers\Reportes\PCU\ReportZ251Controller;
 use App\Http\Controllers\Reportes\PCU\ReportPatientsUtilizingIcd10CodesController;
+use App\Http\Controllers\Reportes\PCU\ReportChoresterolController;
+use App\Http\Controllers\Reportes\PCU\ReportFBSController;
 use App\Http\Controllers\Reportes\PCU\ReportCXR4100341004Controller;
 use App\Http\Controllers\Reportes\PCU\ReportMixedBuildingController;
 use App\Http\Controllers\Reportes\PCU\ReportMonkNunController;
@@ -380,6 +382,7 @@ Route::middleware(['check.something'])->group(function() {
             Route::post('/report_index_receiving_charts/receivingChartsUpdate', [ReceivingChartsController::class, 'receivingChartsUpdate'])->name('receivingChartsUpdate');
             Route::post('/report_index_receiving_charts/receivingChartsUpdateBillingRoom', [ReceivingChartsController::class, 'receivingChartsUpdateBillingRoom'])->name('receivingChartsUpdateBillingRoom');
             Route::get('getBuildingFromReceivingCharts', [ReceivingChartsController::class, 'getBuildingFromReceivingCharts'])->name('getBuildingFromReceivingCharts');
+            Route::get('getDoctorFromReceivingCharts', [ReceivingChartsController::class, 'getDoctorFromReceivingCharts'])->name('getDoctorFromReceivingCharts');
         // Receiving Charts End
 
         // PCU Start
@@ -402,6 +405,16 @@ Route::middleware(['check.something'])->group(function() {
                 Route::get('getReportZ251FetchYear', [ReportZ251Controller::class, 'getReportZ251FetchYear'])->name('getReportZ251FetchYear');
                 Route::get('getReportZ251FetchAll', [ReportZ251Controller::class, 'getReportZ251FetchAll'])->name('getReportZ251FetchAll');
             // Report Z251 End
+
+            // Report Choresterol codes Start
+                Route::get('report_choresterol_index/{id}', [ReportChoresterolController::class, 'index'])->name('report_choresterol_index');
+                Route::get('getReportChoresterolFetch', [ReportChoresterolController::class, 'getReportChoresterolFetch'])->name('getReportChoresterolFetch');
+            // Report Choresterol codes End
+            
+            // Report FBS codes Start
+                Route::get('report_fbs_index/{id}', [ReportFBSController::class, 'index'])->name('report_fbs_index');
+                Route::get('getReportFBSFetch', [ReportFBSController::class, 'getReportFBSFetch'])->name('getReportFBSFetch');
+            // Report FBS codes End
 
             // Report Patients Utilizing ICD10 codes Start
                 Route::get('report_patients_utilizing_icd10_codes_index/{id}', [ReportPatientsUtilizingIcd10CodesController::class, 'index'])->name('report_patients_utilizing_icd10_codes_index');
