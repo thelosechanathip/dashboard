@@ -2,17 +2,24 @@
 
 1. โคลนรีโพซิทอรี:
     ```bash
-    git clone https://github.com/thelosechanathip/dashboard.git
+        git clone https://github.com/thelosechanathip/dashboard.git
     ```
 
 2. เข้าไปยังไดเรกทอรีของโปรเจกต์:
     ```bash
-    cd dashboard
+        cd dashboard
     ```
 
 3. ติดตั้งแพ็กเกจที่จำเป็น:
     ```bash
-    npm install
+        npm install
+    ```
+
+4. ติดตั้ง Database ของ dashboard_setting:
+    ```bash
+        วิธีที่ 1 : เปิด File dashboard_setting.sql แล้ว Copy คำสั่งไป Run เพื่อทำการติดตั้ง Database ของ dashboard_setting
+        วิธีที่ 2 : นำ File dashboard_setting.sql ไป import เข้าไปในฐานข้อมูลที่ต้องการใช้งาน Database ของ dashboard_setting
+
     ```
 
 ## โครงสร้างไฟล์หลักๆ (File Structure)
