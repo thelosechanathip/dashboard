@@ -22,10 +22,13 @@ use App\Http\Controllers\Reportes\PCU\ReportZ242Controller;
 use App\Http\Controllers\Reportes\PCU\ReportZ251Controller;
 use App\Http\Controllers\Reportes\PCU\ReportPatientsUtilizingIcd10CodesController;
 use App\Http\Controllers\Reportes\PCU\ReportChoresterolController;
+use App\Http\Controllers\Reportes\PCU\ReportNotChoresterolController;
 use App\Http\Controllers\Reportes\PCU\ReportFBSController;
 use App\Http\Controllers\Reportes\PCU\ReportCXR4100341004Controller;
 use App\Http\Controllers\Reportes\PCU\ReportMixedBuildingController;
 use App\Http\Controllers\Reportes\PCU\ReportMonkNunController;
+use App\Http\Controllers\Reportes\MedicalRecord\RMedicalRecordController;
+use App\Http\Controllers\Reportes\MedicalRecord\ReportPatientsWithNoServiceHistoryController;
 use App\Http\Controllers\Program\ReceivingChartsController;
 use App\Http\Controllers\Program\PalliativeCareController;
 use App\Http\Controllers\Program\Sub_page\AdvanceCarePlanController;
@@ -410,6 +413,11 @@ Route::middleware(['check.something'])->group(function() {
                 Route::get('report_choresterol_index/{id}', [ReportChoresterolController::class, 'index'])->name('report_choresterol_index');
                 Route::get('getReportChoresterolFetch', [ReportChoresterolController::class, 'getReportChoresterolFetch'])->name('getReportChoresterolFetch');
             // Report Choresterol codes End
+
+            // Report Choresterol codes Start
+                Route::get('report_not_choresterol_index/{id}', [ReportNotChoresterolController::class, 'index'])->name('report_not_choresterol_index');
+                Route::get('getReportNotChoresterolFetch', [ReportNotChoresterolController::class, 'getReportNotChoresterolFetch'])->name('getReportNotChoresterolFetch');
+            // Report Choresterol codes End
             
             // Report FBS codes Start
                 Route::get('report_fbs_index/{id}', [ReportFBSController::class, 'index'])->name('report_fbs_index');
@@ -440,6 +448,14 @@ Route::middleware(['check.something'])->group(function() {
                 Route::get('getReportMonkNunFetchSelectDate', [ReportMonkNunController::class, 'getReportMonkNunFetchSelectDate'])->name('getReportMonkNunFetchSelectDate');
             // Report Monk & Nun( พระและแม่ชี ) End
         // PCU End
+
+        // Medical Record Start
+            Route::get('r_mr_index/{id}', [RMedicalRecordController::class, 'index'])->name('r_mr_index');
+            // Patients With no Service History Start
+                Route::get('report_pwnsh_index/{id}', [ReportPatientsWithNoServiceHistoryController::class, 'index'])->name('report_pwnsh_index');
+                Route::get('getReportPatientsWithNoServiceHistoryFetch', [ReportPatientsWithNoServiceHistoryController::class, 'getReportPatientsWithNoServiceHistoryFetch'])->name('getReportPatientsWithNoServiceHistoryFetch');
+            // Patients With no Service History End
+        // Medical Record End
     // Reportes End
 
     // IT Start

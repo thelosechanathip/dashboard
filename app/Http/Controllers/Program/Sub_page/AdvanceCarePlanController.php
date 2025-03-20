@@ -235,7 +235,7 @@ class AdvanceCarePlanController extends Controller
             }
         
             $output = ''; // เริ่มต้นตัวแปร output เป็นค่าว่าง
-        
+            $i = 0;
             foreach ($acp_model as $am) {
                 if($am->file_acp != '') {
                     $file_acp = '
@@ -251,7 +251,7 @@ class AdvanceCarePlanController extends Controller
                 }
                 $output .= '
                     <div class="mt-4 d-flex justify-content-center align-items-center fw-bold">
-                        <p><i class="bi bi-house-fill me-2"></i>รายละเอียดของ Advance Care Plan บันทึกครั้งที่ : '. $am->id .'<i class="bi bi-house-fill ms-2"></i></p>
+                        <p><i class="bi bi-house-fill me-2"></i>รายละเอียดของ Advance Care Plan บันทึกครั้งที่ : '. ++$i .'<i class="bi bi-house-fill ms-2"></i></p>
                     </div>
                     <div class="mt-2 row">
                         <div class="col-4 border p-3">
@@ -267,7 +267,8 @@ class AdvanceCarePlanController extends Controller
                             <div><span class="text-danger">วัน - เวลาที่บันทึกข้อมูล : </span>' . $am->created_at . '</div>
                             <div><span class="text-danger">วัน - เวลาที่อัพเดทข้อมูล : </span>' . $am->updated_at . '</div>
                         </div>
-                    </div>';
+                    </div>'
+                ;
             }                      
         
             return response()->json($output); // ส่งข้อมูล HTML ที่สร้างไปยัง Ajax
